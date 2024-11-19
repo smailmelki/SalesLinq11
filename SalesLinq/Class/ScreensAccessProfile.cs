@@ -1,10 +1,7 @@
 ﻿using SalesLinq.Forms;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SalesLinq.Class
 {
@@ -27,13 +24,14 @@ namespace SalesLinq.Class
                 ParentScreenID = parent.ScreenID;
             else
                 ParentScreenID = 0;
-                Actions = new List<Master.Actions>() {
-                        Master.Actions.Add,
-                        Master.Actions.Delete,
-                        Master.Actions.Edit,
-                        Master.Actions.Open,
-                        Master.Actions.Print,
-                        Master.Actions.Show,
+            Actions = new List<Master.Actions>()
+            {
+                Master.Actions.Show,
+                Master.Actions.Open,
+                Master.Actions.Add,
+                Master.Actions.Edit,
+                Master.Actions.Delete,
+                Master.Actions.Print,
             };
         }
 
@@ -80,12 +78,18 @@ namespace SalesLinq.Class
         ///  زر اضافة عميل تابع لمجموعة العملاء
         /// </summary>
         public static ScreensAccessProfile AddCustomer = new ScreensAccessProfile("frm_Customer", Customers)
-        { ScreenCaption = "اضافة عميل" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "اضافة عميل"
+        };
         /// <summary>
         /// زر عرض العملاء تابع لمجموعة العملاء
         /// /// </summary>
         public static ScreensAccessProfile ViewCustomer = new ScreensAccessProfile("frm_CustomerList", Customers)
-        { ScreenCaption = "عرض العملاء" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "عرض العملاء"
+        };
         /// <summary>
         /// زر مجموعة الموردون 
         /// </summary>
@@ -148,6 +152,11 @@ namespace SalesLinq.Class
             Actions = new List<Master.Actions>() { Master.Actions.Show },
             ScreenCaption = "الأصناف"
         };
+        /// <summary>
+        /// زر عرض الأصناف تابع لمجموعة الأصناف
+        /// </summary>
+        public static ScreensAccessProfile ProductCategory = new ScreensAccessProfile(nameof(frm_ProductCategory), Products)
+        { ScreenCaption = "مجموعات الأصناف" };
         /// <summary>
         /// زر اضافة صنف تابع لمجموعة الأصناف
         /// </summary>
@@ -270,11 +279,7 @@ namespace SalesLinq.Class
         /// </summary>
         public static ScreensAccessProfile AddCashOut = new ScreensAccessProfile(nameof(frm_CashNoteOut), Finance)
         { ScreenCaption = "اضافة سند دفع نقدي" };  
-        /// <summary>
-        /// زر عرض الأصناف تابع لمجموعة الأصناف
-        /// </summary>
-        public static ScreensAccessProfile ProductCategory = new ScreensAccessProfile(nameof(frm_ProductCategory), Products)
-        { ScreenCaption = "مجموعات الأصناف" };
+
 
 
 

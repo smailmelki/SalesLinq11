@@ -11,7 +11,7 @@ namespace SalesLinq.Forms
         public bool IsNew;
         public string PartName;
         public int PartID;
-        //public string ErrorText = "هذا الحقل مطلوب";
+
         public static string ErrorText
         {
             get

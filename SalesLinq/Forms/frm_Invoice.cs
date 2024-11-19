@@ -93,7 +93,6 @@ namespace SalesLinq.Forms
                     chk_PostToStore.Checked = true;
                     lyc_SourceID.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;//اظهار زر المصدر في شاشة مردود المشتريات
                     lyc_SelectSourceItems.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;//اظهار زر اظافة عناصر الفاتورة في شاشة مردود المبيعات
-
                     break;
                 case Master.InvoiceType.SalesReturn:
                     this.Text = "فاتورة مردود مبيعات";// تسمية الفورم حسب نوع الفاتورة
@@ -568,7 +567,7 @@ namespace SalesLinq.Forms
             {
                 DAL.CustomersAndVendore account;
 
-                if (Convert.ToByte(lkp_PartType.EditValue) == (byte)Master.PartType.Vendor)//int or byte
+                if (Convert.ToByte(lkp_PartType.EditValue) == (byte)Master.PartType.Vendor)
                 {
                     account = Session.vendores.SingleOrDefault(x => x.ID == id);
                 }
@@ -990,9 +989,9 @@ namespace SalesLinq.Forms
 
                     double value = Convert.ToDouble(ReadValue); //تحويل القيمة الى رقمي
                     value = value / (Math.Pow(10, Session.GlobalSettings.DivideValueBy));// تحويل من الغرام الى الكيلوغرام
-                    if (Session.GlobalSettings.ReadMode == Session.GlobalSettings.ReadValueMode.Weight)//اذا كان الكودبار خاص بقرائة الوزن
+                    if (Session.GlobalSettings.ReadMode == Master.ReadValueMode.Weight)//اذا كان الكودبار خاص بقرائة الوزن
                         row.ItemQty = value;
-                    else if (Session.GlobalSettings.ReadMode == Session.GlobalSettings.ReadValueMode.Price)//اذا كان الكودبار خاص بقرائة السعر
+                    else if (Session.GlobalSettings.ReadMode == Master.ReadValueMode.Price)//اذا كان الكودبار خاص بقرائة السعر
                     {
                         itemv = Session.ProductView.FirstOrDefault(x => x.Units.Select(u => u.Barcode).Contains(ItemCode));// جلب الأصناف التي تحتوي على الكود المكتوب في الخلية
                         if (itemv != null)
@@ -1534,15 +1533,15 @@ namespace SalesLinq.Forms
                     Invoice.PartID = Session.Defualts.Customer;// رقم العميل
                     Invoice.Branch = Session.Defualts.Store;// رقم المخزن الافتراضي للمبيعات
                     break;
-                case Master.InvoiceType.SalesReturn:
-                    Invoice.PartType = (int)Master.PartType.Customer; // نوع طرف التعامل عميل
-                    Invoice.Branch = Session.Defualts.Store;// رقم المخزن الافتراضي للمبيعات
-                    Invoice.PartID = Session.Defualts.Customer;// رقم العميل
-                    break;
                 case Master.InvoiceType.PurchaseReturn:
                     Invoice.PartType = (int)Master.PartType.Vendor; // نوع طرف التعامل مورد
-                    Invoice.Branch = Session.Defualts.Store;// رقم المخزن الافتراضي للمبيعات
                     Invoice.PartID = Session.Defualts.Vendor;//رقم المورد
+                    Invoice.Branch = Session.Defualts.RamStore;// رقم المخزن الافتراضي لمردود المشتريات
+                    break;
+                case Master.InvoiceType.SalesReturn:
+                    Invoice.PartType = (int)Master.PartType.Customer; // نوع طرف التعامل عميل
+                    Invoice.PartID = Session.Defualts.Customer;// رقم العميل
+                    Invoice.Branch = Session.Defualts.Store;// رقم المخزن الافتراضي لمردود المبيعات
                     break;
                 default:
                     throw new NotImplementedException();
@@ -1627,9 +1626,10 @@ namespace SalesLinq.Forms
             SetData();
 
             var items = gridView1.DataSource as Collection<DAL.InvoiceDetail>;  // <DAL.InvoiceDetail> متغير لقاعدة بيانات الغريد فيو على شكل
+            /// تقسيم التكلفة على الأصناف
             switch (Type)
             {
-                case Master.InvoiceType.Purchase:
+                case Master.InvoiceType.Purchase:// في حالة فاتورة مشتريات
                     if (Invoice.Expences > 0) // في حالة وجود مصاريف أخرى
                     {
                         var total = items.Sum(x => x.TotalPrice);                           //السعر الكلي
@@ -1644,7 +1644,7 @@ namespace SalesLinq.Forms
                         args.Content = distributionOption;
                         ((XtraBaseArgs)args).Buttons = new DialogResult[]
                             {
-                    DialogResult.OK
+                                DialogResult.OK
                             };
                         args.Showing += Args_Showing;
                         XtraDialog.Show(args);
@@ -1668,10 +1668,10 @@ namespace SalesLinq.Forms
                         }
                     }
                     break;
-                case Master.InvoiceType.Sales:
+                case Master.InvoiceType.Sales:// في حالة فاتورة مبيعات
                     break;
-                case Master.InvoiceType.PurchaseReturn:
-                case Master.InvoiceType.SalesReturn:
+                case Master.InvoiceType.PurchaseReturn:// في حالة فاتورة مردود مشتريات
+                case Master.InvoiceType.SalesReturn:// في حالة فاتورة مردود مبيعات
                     //TODO 
                     break;
                 default:
@@ -1680,6 +1680,7 @@ namespace SalesLinq.Forms
 
 
             #region Journals القيود
+            #region شرح مختصر للقيود
             // المخزن - حساب المخزن
             // حساب المورد
 
@@ -1761,25 +1762,25 @@ namespace SalesLinq.Forms
 
             //           حساب العميل               - دائن - 1370
             //  حساب الخزنة               - مدين -          1370
-
+            #endregion
             ////////////////////////// القيود  ///////////////////////////////
             db.Journals.DeleteAllOnSubmit(db.Journals.Where(x => x.SourceType == (byte)Type && x.SourceID == Invoice.ID));//حذف القيود في حالة التعديل على فاتورة قديمة
             db.SubmitChanges();
-            var store = db.Stores.Single(x => x.ID == Invoice.Branch);//المخزن
-            var drawer = db.Drawers.Single(x => x.ID == Invoice.Drawer);//الخزنة
-            string msg;
-            int StoreAccount;
-            int TaxAccount;
-            int partAcountID;
-            int DiscountAccount;
-            bool IsPartCredit;
-            bool InsertCostOfSoldGoodsJournal;
-            bool IsIn;
+            var store = db.Stores.Single(x => x.ID == Invoice.Branch);      //المخزن
+            var drawer = db.Drawers.Single(x => x.ID == Invoice.Drawer);    //الخزنة
+            string msg;                             // عبارة القيد
+            int StoreAccount;                       // حساب المخزن
+            int TaxAccount;                         // حساب الضريبة
+            int partAcountID;                       // مورد أو عميل
+            int DiscountAccount;                    // حساب الخصم النقدي
+            bool IsPartCredit;                      // دائن أو مدين
+            bool InsertCostOfSoldGoodsJournal;      // يوجد تكلفة للبضاعة المباعة
+            bool IsIn;                              // بضاعة داخلة أو خارجة
             partAcountID = db.CustomersAndVendores.Single(x => x.ID == Invoice.PartID).AccountID;// مورد أو عميل
 
             switch (Type)
             {
-                case Master.InvoiceType.Purchase:
+                case Master.InvoiceType.Purchase://في حالة فاتورة مشتريات
                     StoreAccount = store.InventoryAccountID;                       // حساب المخزون
                     TaxAccount = Session.Defualts.PurchaseTax;                     // حساب ضريبة الشراء
                     DiscountAccount = Session.Defualts.DiscountReceivedAccountID;  // حساب الخصم النقدي المكتسب
@@ -1788,26 +1789,26 @@ namespace SalesLinq.Forms
                     InsertCostOfSoldGoodsJournal = false;                               // لا يوجد تكلفة للبضاعة المباعة في الشراء
                     msg = $"  فاتورة شراء رقم {Invoice.ID} للعميل {glkp_PartID.Text}";// رقم الفاتورة واسم المتعامل
                     break;
-                case Master.InvoiceType.Sales:
-                    StoreAccount = store.SalesAccountID;
-                    TaxAccount = Session.Defualts.SalesTax;
-                    DiscountAccount = Session.Defualts.DiscountAllowedAccountID;
+                case Master.InvoiceType.Sales: //في حالة فاتورة مبيعات
+                    StoreAccount = store.SalesAccountID;                           // حساب المبيعات
+                    TaxAccount = Session.Defualts.SalesTax;                        //حساب ضريبة البيع
+                    DiscountAccount = Session.Defualts.DiscountAllowedAccountID;   // حساب الخصم النقدي المسموح به
                     IsPartCredit = false;
                     IsIn = false;
-                    InsertCostOfSoldGoodsJournal = true;
+                    InsertCostOfSoldGoodsJournal = true;                          
                     msg = $"  فاتورة مبيعات رقم {Invoice.ID} للعميل {glkp_PartID.Text}";// رقم الفاتورة واسم المتعامل
                     break;
-                case Master.InvoiceType.PurchaseReturn:
+                case Master.InvoiceType.PurchaseReturn://في حالة فاتورة مردود مشتريات
                     StoreAccount = store.InventoryAccountID;                       // حساب المخزون
                     TaxAccount = Session.Defualts.PurchaseTax;                     // حساب ضريبة الشراء
                     DiscountAccount = Session.Defualts.DiscountReceivedAccountID;  // حساب الخصم النقدي المكتسب
-                    IsPartCredit = true;
+                    IsPartCredit = false;
                     IsIn = false;
                     InsertCostOfSoldGoodsJournal = false;                               // لا يوجد تكلفة للبضاعة المباعة في الشراء
-                    msg = $"  فاتورة شراء رقم {Invoice.ID} للعميل {glkp_PartID.Text}";// رقم الفاتورة واسم المتعامل
+                    msg = $"  فاتورة مردود شراء رقم {Invoice.ID} للعميل {glkp_PartID.Text}";// رقم الفاتورة واسم المتعامل
                     break;
 
-                case Master.InvoiceType.SalesReturn:
+                case Master.InvoiceType.SalesReturn://في حالة فاتورة مردود مبيعات
                     StoreAccount = store.SalesReturnAccountID;
                     TaxAccount = Session.Defualts.SalesTax;
                     DiscountAccount = Session.Defualts.DiscountAllowedAccountID;
@@ -1825,8 +1826,8 @@ namespace SalesLinq.Forms
             {
                 AccountID = partAcountID,
                 Code = 54545,
-                Credit = (IsPartCredit) ? Invoice.Total + Invoice.TaxValue + Invoice.Expences : 0,
                 Debit = (!IsPartCredit) ? Invoice.Total + Invoice.TaxValue + Invoice.Expences : 0,
+                Credit = (IsPartCredit) ? Invoice.Total + Invoice.TaxValue + Invoice.Expences : 0,
                 InsertDate = Invoice.Date,
                 Notes = msg,
                 SourceID = Invoice.ID,
@@ -1837,8 +1838,8 @@ namespace SalesLinq.Forms
             {
                 AccountID = StoreAccount,
                 Code = 54545,
-                Credit = (!IsPartCredit) ? Invoice.Total + Invoice.Expences : 0,
                 Debit = (IsPartCredit) ? Invoice.Total + Invoice.Expences : 0,
+                Credit = (!IsPartCredit) ? Invoice.Total + Invoice.Expences : 0,
                 InsertDate = Invoice.Date,
                 Notes = msg,
                 SourceID = Invoice.ID,
@@ -1850,8 +1851,8 @@ namespace SalesLinq.Forms
                 {
                     AccountID = TaxAccount,
                     Code = 54545,
-                    Credit = (!IsPartCredit) ? Invoice.TaxValue : 0,
                     Debit = (IsPartCredit) ? Invoice.TaxValue : 0,
+                    Credit = (!IsPartCredit) ? Invoice.TaxValue : 0,
                     InsertDate = Invoice.Date,
                     Notes = msg + "- ضريبة مضافة",
                     SourceID = Invoice.ID,
@@ -1864,8 +1865,8 @@ namespace SalesLinq.Forms
                 {
                     AccountID = DiscountAccount,
                     Code = 54545,
-                    Credit = (IsPartCredit) ? Invoice.DiscountValue : 0,
                     Debit = (!IsPartCredit) ? Invoice.DiscountValue : 0,
+                    Credit = (IsPartCredit) ? Invoice.DiscountValue : 0,
                     InsertDate = Invoice.Date,
                     Notes = msg + "- خصم ",
                     SourceID = Invoice.ID,
@@ -1875,8 +1876,8 @@ namespace SalesLinq.Forms
                 {
                     AccountID = partAcountID,
                     Code = 54545,
-                    Credit = (!IsPartCredit) ? Invoice.DiscountValue : 0,
                     Debit = (IsPartCredit) ? Invoice.DiscountValue : 0,
+                    Credit = (!IsPartCredit) ? Invoice.DiscountValue : 0,
                     InsertDate = Invoice.Date,
                     Notes = msg + "- خصم ",
                     SourceID = Invoice.ID,
@@ -1904,8 +1905,8 @@ namespace SalesLinq.Forms
                         {
                             AccountID = store.InventoryAccountID,
                             Code = 54545,
-                            Credit = (IsPartCredit) ? Cost : 0,
                             Debit = (!IsPartCredit) ? Cost : 0,
+                            Credit = (IsPartCredit) ? Cost : 0,
                             InsertDate = Invoice.Date,
                             Notes = msg + "- نقل الباعة للبيع",
                             SourceID = Invoice.ID,
@@ -1915,8 +1916,8 @@ namespace SalesLinq.Forms
                         {
                             AccountID = db.Stores.Single(x => x.ID == otherStore).InventoryAccountID,
                             Code = 54545,
-                            Credit = (!IsPartCredit) ? Cost : 0,
                             Debit = (IsPartCredit) ? Cost : 0,
+                            Credit = (!IsPartCredit) ? Cost : 0,
                             InsertDate = Invoice.Date,
                             Notes = msg + "- نقل الباعة للبيع",
                             SourceID = Invoice.ID,
@@ -1931,8 +1932,8 @@ namespace SalesLinq.Forms
                 {
                     AccountID = store.InventoryAccountID,
                     Code = 54545,
-                    Credit = (!IsPartCredit) ? TotalCost : 0,
                     Debit = (IsPartCredit) ? TotalCost : 0,
+                    Credit = (!IsPartCredit) ? TotalCost : 0,
                     InsertDate = Invoice.Date,
                     Notes = msg + "- تكلفة البضاعة المباعة",
                     SourceID = Invoice.ID,
@@ -1942,8 +1943,8 @@ namespace SalesLinq.Forms
                 {
                     AccountID = store.CostOfSoldGoodsAccountID,
                     Code = 54545,
-                    Credit = (IsPartCredit) ? TotalCost : 0,
                     Debit = (!IsPartCredit) ? TotalCost : 0,
+                    Credit = (IsPartCredit) ? TotalCost : 0,
                     InsertDate = Invoice.Date,
                     Notes = msg + "- تكلفة البضاعة المباعة",
                     SourceID = Invoice.ID,
@@ -1956,8 +1957,8 @@ namespace SalesLinq.Forms
                 {
                     AccountID = drawer.AccountID,
                     Code = 54545,
-                    Credit = (IsPartCredit) ? Invoice.Paid : 0,
                     Debit = (!IsPartCredit) ? Invoice.Paid : 0,
+                    Credit = (IsPartCredit) ? Invoice.Paid : 0,
                     InsertDate = Invoice.Date,
                     Notes = msg + "- سداد",
                     SourceID = Invoice.ID,
@@ -1967,8 +1968,8 @@ namespace SalesLinq.Forms
                 {
                     AccountID = partAcountID,
                     Code = 54545,
-                    Credit = (!IsPartCredit) ? Invoice.Paid : 0,
                     Debit = (IsPartCredit) ? Invoice.Paid : 0,
+                    Credit = (!IsPartCredit) ? Invoice.Paid : 0,
                     InsertDate = Invoice.Date,
                     Notes = msg + "- سداد",
                     SourceID = Invoice.ID,
@@ -1980,7 +1981,6 @@ namespace SalesLinq.Forms
 
             ////////////////////////// القيود  ///////////////////////////////
             #endregion
-
 
             foreach (var row in items)
                 row.InvoiceID = Invoice.ID;
@@ -1994,21 +1994,20 @@ namespace SalesLinq.Forms
                     var unitView = Session.ProductView.Single(x => x.ID == row.ItemID).Units.Single(x => x.UnitID == row.ItemUnitID);
                     db.StoreLogs.InsertOnSubmit(new DAL.StoreLog()
                     {
-                        ProductID = row.ItemID,
-                        InsertTime = Invoice.PostDate.Value,
-                        SourceID = row.ID,
                         SourceType = (byte)Type,
-                        Notes = msg,
-                        IsInTransaction = IsIn,
+                        SourceID = row.ID,
+                        ProductID = row.ItemID,
                         StoreID = row.StoreID,
                         Qty = row.ItemQty * unitView.Factor,
-                        CostValue = row.CostValue / unitView.Factor
-
+                        IsInTransaction = IsIn,
+                        CostValue = row.CostValue / unitView.Factor,
+                        InsertTime = Invoice.PostDate.Value,
+                        Notes = msg
                     });
                 }
             db.SubmitChanges();
-            PartID = Invoice.ID;
-            PartName = Invoice.Code + " - " + glkp_PartID.Text;
+            PartID = Invoice.ID;                                    // تسجيل حركة المستخدم
+            PartName = Invoice.Code + " - " + glkp_PartID.Text;     // تسجيل حركة المستخدم
             base.Save();
             // تحديث البيانات في شاشة قائمة الفواتير
             var forms = Application.OpenForms.Cast<Form>().Where(x => x.Name == this.Name + "List");// يبحث عن الفورم باسمها
@@ -2027,8 +2026,7 @@ namespace SalesLinq.Forms
         {
             using (var db = new DAL.DBDataContext())
             {
-                db.StoreLogs
-                                .DeleteAllOnSubmit(
+                db.StoreLogs.DeleteAllOnSubmit(
                                 db.StoreLogs.Where(x => x.SourceType == type &&
                                 db.InvoiceDetails.Where(i => i.InvoiceID == invoiceID).Select(d => d.ID).Contains(x.SourceID)));
                 db.SubmitChanges();
@@ -2079,7 +2077,7 @@ namespace SalesLinq.Forms
 
             if (CheckActionAuthorization(name, Master.Actions.Print) == false)
                 return;
-            /////////////////////////// من أجل صلاحيات المستخدم /////////////////////////////
+            ///////////////////////////////////////////////////////
 
             using (var db = new DAL.DBDataContext())
             {
@@ -2197,10 +2195,9 @@ namespace SalesLinq.Forms
                     msg = $"لا يمكن حذف الفاتورةرقم {id} حيث يوجد سندات أخرى مرتبطة بها";
                     return false;
                 }
-                DB.StoreLogs.DeleteAllOnSubmit(
-                     DB.StoreLogs.Where(x => x.SourceType == Invoice.InvoiceType &&
-                     DB.InvoiceDetails.Where(y => y.InvoiceID == id)
-                     .Select(y => y.ID).Contains(x.SourceID)));
+                DB.StoreLogs.DeleteAllOnSubmit(DB.StoreLogs.Where(x => x.SourceType == Invoice.InvoiceType && DB.InvoiceDetails.Where(y => y.InvoiceID == id).Select(y => y.ID).Contains(x.SourceID)));
+                DB.SubmitChanges();
+                DB.Journals.DeleteAllOnSubmit(DB.Journals.Where(y => y.SourceID == id));
                 DB.SubmitChanges();
                 DB.InvoiceDetails.DeleteAllOnSubmit(DB.InvoiceDetails.Where(y => y.InvoiceID == id));
                 DB.SubmitChanges();

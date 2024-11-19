@@ -35,5 +35,17 @@ namespace SalesLinq.UserControls
 
             this.Height = 80;
         }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // CostDistributionOption
+            // 
+            this.Name = "CostDistributionOption";
+            this.Size = new System.Drawing.Size(391, 193);
+            this.ResumeLayout(false);
+
+        }
     }
 }

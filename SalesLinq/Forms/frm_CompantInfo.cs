@@ -8,6 +8,8 @@ namespace SalesLinq.Forms
 {
     public partial class frm_CompantInfo : XtraForm
     {
+        DAL.DBDataContext db ;
+        DAL.CompanyInfo info ;
         public frm_CompantInfo()
         {
             InitializeComponent();
@@ -38,21 +40,15 @@ namespace SalesLinq.Forms
                 txtName.ErrorText = ("الرجاء ادخال اسم الشركة");
                 return;
             }
-            DAL.DBDataContext db = new DAL.DBDataContext();
-            DAL.CompanyInfo info = db.CompanyInfos.FirstOrDefault();
+            db = new DAL.DBDataContext();
+            info = db.CompanyInfos.FirstOrDefault();
             // اذا كانت البانات فارغة نضيف جديد
             if (info == null)
             {
                 info = new DAL.CompanyInfo();
                 db.CompanyInfos.InsertOnSubmit(info);
             }
-
-            info.CompanyName = txtName.Text;
-            info.Mobile = txtMobile.Text;
-            info.Phone = txtPhone.Text;
-            info.Address = txtAddress.Text;
-            if (pictureEdit1.Image != null)
-                info.Logo = Utils.GetByteFromImage(pictureEdit1.Image);
+            setData();
             db.SubmitChanges();// اعتماد التغييرات
             Session.ResetCompanyInfo();
             XtraMessageBox.Show("تمت عملية الحفظ بنجاح");
@@ -60,8 +56,8 @@ namespace SalesLinq.Forms
 
         void getData()
         {
-            DAL.DBDataContext db = new DAL.DBDataContext();
-            DAL.CompanyInfo info = db.CompanyInfos.FirstOrDefault();
+            db = new DAL.DBDataContext();
+            info = db.CompanyInfos.FirstOrDefault();
             if (info == null)
                 return;
             txtName.Text = info.CompanyName;
@@ -70,6 +66,15 @@ namespace SalesLinq.Forms
             txtAddress.Text = info.Address;
             if (info.Logo != null)
                 pictureEdit1.Image = Utils.GetImageFromByteArray(info.Logo.ToArray());
+        }
+        void setData()
+        {
+            info.CompanyName = txtName.Text;
+            info.Mobile = txtMobile.Text;
+            info.Phone = txtPhone.Text;
+            info.Address = txtAddress.Text;
+            if (pictureEdit1.Image != null)
+                info.Logo = Utils.GetByteFromImage(pictureEdit1.Image);
         }
     }
 }

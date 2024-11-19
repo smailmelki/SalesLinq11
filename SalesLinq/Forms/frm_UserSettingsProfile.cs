@@ -47,6 +47,9 @@ namespace SalesLinq.Forms
         {
             profile = new DAL.UserSettingsProfile();
             textEdit1.Text = profile.Name;
+            btn_Delete.Enabled = false;
+            IsNew = true;
+            //base.New();
         }
         /// <summary>
         /// تصميم شاشة نماذج الاعدادات بالكود
@@ -232,5 +235,6 @@ namespace SalesLinq.Forms
                 trans.Parameters.EffectOptions = PushEffectOptions.FromTop;
             xtraTabControl1.Transition.TransitionType = trans;
         }
+
     }
 }

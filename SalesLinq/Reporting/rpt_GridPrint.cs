@@ -56,9 +56,25 @@ namespace SalesLinq.Reporting
             link.Component = gridControl;
             rpt.printableComponentContainer1.PrintableComponent = link;
             rpt.PrintingSystem.Document.AutoFitToPagesWidth = 1;
-            rpt.ShowRibbonPreviewDialog();                                      // يطبع التقرير وبعد اغلاقه يرجع المود السابق في اختيار الأعمدة
+                                              
+            switch (Session.CurrentSettings.InvoicePrintMode)
+            {
+                case Master.PrintMode.Direct:
+                    rpt.Print();
+                    break;
+                case Master.PrintMode.ShowPreview:
+                    //rpt.ShowPreview();
+                    rpt.ShowRibbonPreviewDialog();
+                    break;
+                case Master.PrintMode.ShowDialog:
+                    rpt.PrintDialog();
+                    break;
+                default:
+                    rpt.ShowPreview();
+                    break;
+            }
 
-            view.OptionsSelection.MultiSelectMode = mode;
+            view.OptionsSelection.MultiSelectMode = mode;    // يطبع التقرير وبعد اغلاقه يرجع المود السابق في اختيار الأعمدة
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
-using DevExpress.XtraReports.UI;
+﻿using DevExpress.XtraReports.UI;
 using SalesLinq.Class;
 
 namespace SalesLinq.Reporting
@@ -65,6 +61,8 @@ namespace SalesLinq.Reporting
             rpt.DetailReport.DataMember = "Products";
             rpt.BindData();
             // الطباعة بحسب اعدادات المستخدم
+            
+               
             switch (Session.CurrentSettings.InvoicePrintMode)
             {
                 case Master.PrintMode.Direct:
@@ -72,21 +70,22 @@ namespace SalesLinq.Reporting
                     break;
                 case Master.PrintMode.ShowPreview:
                     rpt.ShowPreview();
+                    //rpt.ShowRibbonPreviewDialog();
                     break;
                 case Master.PrintMode.ShowDialog:
                     rpt.PrintDialog();
                     break;
                 default:
+                    rpt.ShowPreview();
                     break;
             }
-            rpt.ShowPreview();
         }
         /// <summary>
         /// دالة التفقيط في الفاتورة
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Lbl_NetText_BeforePrint(object sender, System.Drawing.Printing.PrintEventArgs e)
+        private void Lbl_NetText_BeforePrint(object sender, System.ComponentModel.CancelEventArgs e)
         {
             lbl_NetText.Text = NumberToText.Utils.ConvertMoneyToArabicText(lbl_Net.Text);
         }
@@ -95,7 +94,7 @@ namespace SalesLinq.Reporting
         /// دالة الترقيم المتسلسل في الفاتورة
         /// </summary>
         int index = 1;
-        private void Cell_Index_BeforePrint(object sender, System.Drawing.Printing.PrintEventArgs e)
+        private void Cell_Index_BeforePrint(object sender, System.ComponentModel.CancelEventArgs e)
         {
             cell_Index.Text = (index++).ToString();
         }
@@ -104,7 +103,7 @@ namespace SalesLinq.Reporting
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Lbl_Code_BeforePrint(object sender, System.Drawing.Printing.PrintEventArgs e)
+        private void Lbl_Code_BeforePrint(object sender, System.ComponentModel.CancelEventArgs e)
         {
             index = 1;
         }

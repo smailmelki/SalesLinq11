@@ -34,7 +34,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(351, 466);
+            this.ClientSize = new System.Drawing.Size(429, 554);
             this.Name = "frm_UserSettingsProfileList";
             this.Text = "نماذج اعدادات المستخدمين";
             this.Load += new System.EventHandler(this.Frm_UserSettingsProfileList_Load);

@@ -97,7 +97,7 @@
             // 
             this.btn_Save.Caption = "حفظ";
             this.btn_Save.Id = 1;
-            this.btn_Save.ImageOptions.SvgImage = global::SalesLinq.Properties.Resources.save;
+            this.btn_Save.ImageOptions.SvgImage = global::SalesLinq.Properties.Resources.save4;
             this.btn_Save.Name = "btn_Save";
             this.btn_Save.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.Btn_Save_ItemClick);
             // 
@@ -114,7 +114,7 @@
             // 
             this.barDockControlBottom.CausesValidation = false;
             this.barDockControlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.barDockControlBottom.Location = new System.Drawing.Point(0, 228);
+            this.barDockControlBottom.Location = new System.Drawing.Point(0, 236);
             this.barDockControlBottom.Manager = this.barManager1;
             this.barDockControlBottom.Margin = new System.Windows.Forms.Padding(4);
             this.barDockControlBottom.Size = new System.Drawing.Size(611, 0);
@@ -126,7 +126,7 @@
             this.barDockControlLeft.Location = new System.Drawing.Point(0, 26);
             this.barDockControlLeft.Manager = this.barManager1;
             this.barDockControlLeft.Margin = new System.Windows.Forms.Padding(4);
-            this.barDockControlLeft.Size = new System.Drawing.Size(0, 202);
+            this.barDockControlLeft.Size = new System.Drawing.Size(0, 210);
             // 
             // barDockControlRight
             // 
@@ -135,7 +135,7 @@
             this.barDockControlRight.Location = new System.Drawing.Point(611, 26);
             this.barDockControlRight.Manager = this.barManager1;
             this.barDockControlRight.Margin = new System.Windows.Forms.Padding(4);
-            this.barDockControlRight.Size = new System.Drawing.Size(0, 202);
+            this.barDockControlRight.Size = new System.Drawing.Size(0, 210);
             // 
             // layoutControl1
             // 
@@ -150,7 +150,7 @@
             this.layoutControl1.Name = "layoutControl1";
             this.layoutControl1.OptionsView.RightToLeftMirroringApplied = true;
             this.layoutControl1.Root = this.Root;
-            this.layoutControl1.Size = new System.Drawing.Size(611, 202);
+            this.layoutControl1.Size = new System.Drawing.Size(611, 210);
             this.layoutControl1.TabIndex = 4;
             this.layoutControl1.Text = "layoutControl1";
             // 
@@ -161,7 +161,7 @@
             this.pictureEdit1.Name = "pictureEdit1";
             this.pictureEdit1.Properties.ShowCameraMenuItem = DevExpress.XtraEditors.Controls.CameraMenuItemVisibility.Auto;
             this.pictureEdit1.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Zoom;
-            this.pictureEdit1.Size = new System.Drawing.Size(173, 133);
+            this.pictureEdit1.Size = new System.Drawing.Size(173, 141);
             this.pictureEdit1.StyleController = this.layoutControl1;
             this.pictureEdit1.TabIndex = 8;
             // 
@@ -213,7 +213,7 @@
             this.layoutControlGroup1,
             this.layoutControlGroup2});
             this.Root.Name = "Root";
-            this.Root.Size = new System.Drawing.Size(611, 202);
+            this.Root.Size = new System.Drawing.Size(611, 210);
             this.Root.TextVisible = false;
             // 
             // layoutControlGroup1
@@ -224,7 +224,7 @@
             this.layoutControlItem5});
             this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
             this.layoutControlGroup1.Name = "layoutControlGroup1";
-            this.layoutControlGroup1.Size = new System.Drawing.Size(201, 182);
+            this.layoutControlGroup1.Size = new System.Drawing.Size(201, 190);
             this.layoutControlGroup1.Text = "شعار الشركة";
             // 
             // layoutControlItem5
@@ -232,7 +232,7 @@
             this.layoutControlItem5.Control = this.pictureEdit1;
             this.layoutControlItem5.Location = new System.Drawing.Point(0, 0);
             this.layoutControlItem5.Name = "layoutControlItem5";
-            this.layoutControlItem5.Size = new System.Drawing.Size(177, 137);
+            this.layoutControlItem5.Size = new System.Drawing.Size(177, 145);
             this.layoutControlItem5.TextSize = new System.Drawing.Size(0, 0);
             this.layoutControlItem5.TextVisible = false;
             // 
@@ -248,7 +248,7 @@
             this.emptySpaceItem1});
             this.layoutControlGroup2.Location = new System.Drawing.Point(201, 0);
             this.layoutControlGroup2.Name = "layoutControlGroup2";
-            this.layoutControlGroup2.Size = new System.Drawing.Size(390, 182);
+            this.layoutControlGroup2.Size = new System.Drawing.Size(390, 190);
             this.layoutControlGroup2.Text = "بيانات الشركة";
             // 
             // layoutControlItem1
@@ -292,20 +292,19 @@
             this.emptySpaceItem1.AllowHotTrack = false;
             this.emptySpaceItem1.Location = new System.Drawing.Point(0, 120);
             this.emptySpaceItem1.Name = "emptySpaceItem1";
-            this.emptySpaceItem1.Size = new System.Drawing.Size(366, 17);
+            this.emptySpaceItem1.Size = new System.Drawing.Size(366, 25);
             this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
             // 
             // frm_CompantInfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(611, 228);
+            this.ClientSize = new System.Drawing.Size(611, 236);
             this.Controls.Add(this.layoutControl1);
             this.Controls.Add(this.barDockControlLeft);
             this.Controls.Add(this.barDockControlRight);
             this.Controls.Add(this.barDockControlBottom);
             this.Controls.Add(this.barDockControlTop);
-            this.IconOptions.SvgImage = global::SalesLinq.Properties.Resources.about;
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frm_CompantInfo";

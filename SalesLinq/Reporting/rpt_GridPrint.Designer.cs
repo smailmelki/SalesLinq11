@@ -65,7 +65,7 @@
             // lbl_CompanyPhone
             // 
             this.lbl_CompanyPhone.AnchorHorizontal = ((DevExpress.XtraReports.UI.HorizontalAnchorStyles)((DevExpress.XtraReports.UI.HorizontalAnchorStyles.Left | DevExpress.XtraReports.UI.HorizontalAnchorStyles.Right)));
-            this.lbl_CompanyPhone.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Bold);
+            this.lbl_CompanyPhone.Font = new DevExpress.Drawing.DXFont("Arial", 11F, DevExpress.Drawing.DXFontStyle.Bold);
             this.lbl_CompanyPhone.LocationFloat = new DevExpress.Utils.PointFloat(0F, 75.33334F);
             this.lbl_CompanyPhone.Multiline = true;
             this.lbl_CompanyPhone.Name = "lbl_CompanyPhone";
@@ -79,7 +79,7 @@
             // lbl_CompanyAddress
             // 
             this.lbl_CompanyAddress.AnchorHorizontal = ((DevExpress.XtraReports.UI.HorizontalAnchorStyles)((DevExpress.XtraReports.UI.HorizontalAnchorStyles.Left | DevExpress.XtraReports.UI.HorizontalAnchorStyles.Right)));
-            this.lbl_CompanyAddress.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Bold);
+            this.lbl_CompanyAddress.Font = new DevExpress.Drawing.DXFont("Arial", 11F, DevExpress.Drawing.DXFontStyle.Bold);
             this.lbl_CompanyAddress.LocationFloat = new DevExpress.Utils.PointFloat(0F, 42.66667F);
             this.lbl_CompanyAddress.Multiline = true;
             this.lbl_CompanyAddress.Name = "lbl_CompanyAddress";
@@ -93,7 +93,7 @@
             // lbl_CompanyName
             // 
             this.lbl_CompanyName.AnchorHorizontal = ((DevExpress.XtraReports.UI.HorizontalAnchorStyles)((DevExpress.XtraReports.UI.HorizontalAnchorStyles.Left | DevExpress.XtraReports.UI.HorizontalAnchorStyles.Right)));
-            this.lbl_CompanyName.Font = new System.Drawing.Font("Arial", 14F, System.Drawing.FontStyle.Bold);
+            this.lbl_CompanyName.Font = new DevExpress.Drawing.DXFont("Arial", 14F, DevExpress.Drawing.DXFontStyle.Bold);
             this.lbl_CompanyName.LocationFloat = new DevExpress.Utils.PointFloat(0F, 10.00001F);
             this.lbl_CompanyName.Multiline = true;
             this.lbl_CompanyName.Name = "lbl_CompanyName";
@@ -227,7 +227,7 @@
             // Cell_ReportName
             // 
             this.Cell_ReportName.CanGrow = false;
-            this.Cell_ReportName.Font = new System.Drawing.Font("Arial", 26F, System.Drawing.FontStyle.Bold);
+            this.Cell_ReportName.Font = new DevExpress.Drawing.DXFont("Arial", 26F, DevExpress.Drawing.DXFontStyle.Bold);
             this.Cell_ReportName.Multiline = true;
             this.Cell_ReportName.Name = "Cell_ReportName";
             this.Cell_ReportName.Padding = new DevExpress.XtraPrinting.PaddingInfo(10, 10, 10, 10, 100F);
@@ -248,7 +248,7 @@
             // Cell_ReportFilter
             // 
             this.Cell_ReportFilter.CanGrow = false;
-            this.Cell_ReportFilter.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Bold);
+            this.Cell_ReportFilter.Font = new DevExpress.Drawing.DXFont("Arial", 11F, DevExpress.Drawing.DXFontStyle.Bold);
             this.Cell_ReportFilter.ForeColor = System.Drawing.Color.Gray;
             this.Cell_ReportFilter.Multiline = true;
             this.Cell_ReportFilter.Name = "Cell_ReportFilter";
@@ -270,8 +270,8 @@
             this.ReportHeader});
             this.BorderColor = System.Drawing.Color.Silver;
             this.BorderWidth = 4F;
-            this.Font = new System.Drawing.Font("Arial", 9.75F);
-            this.Margins = new System.Drawing.Printing.Margins(25, 25, 108, 25);
+            this.Font = new DevExpress.Drawing.DXFont("Arial", 9.75F);
+            this.Margins = new DevExpress.Drawing.DXMargins(25, 25, 108, 25);
             this.PageHeight = 1169;
             this.PageWidth = 827;
             this.PaperKind = System.Drawing.Printing.PaperKind.A4;

@@ -8,14 +8,10 @@ using DevExpress.XtraGrid.Views.Grid;
 using SalesLinq.Forms;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace SalesLinq.Class
 {
@@ -73,13 +69,31 @@ namespace SalesLinq.Class
             ByQty,
         }
 
+        public static List<ValueAndID> PrintModeTypesList = new List<ValueAndID>()
+            {
+                new ValueAndID() { ID=(int)PrintMode.Direct,Name="طباعة مباشرة"},
+                new ValueAndID() { ID=(int)PrintMode.ShowDialog,Name="اعددات الطباعة"},
+                new ValueAndID() { ID=(int)PrintMode.ShowPreview,Name="معاينة قبل الطباعة"}
+            };
+
         public enum PrintMode
         {
-            Direct,
+            Direct = 1,
             ShowPreview,
             ShowDialog
         }
 
+        public static List<ValueAndID> ReadValueModeList = new List<ValueAndID>()
+            {
+                new ValueAndID() { ID=(byte)ReadValueMode.Weight,Name="وزن"},
+                new ValueAndID() { ID=(byte)ReadValueMode.Price,Name="سعر"}
+            };
+
+        public enum ReadValueMode
+        {
+            Weight=1,
+            Price
+        }
 
 
         public static List<ValueAndID> InvoicesPartTypesList = new List<ValueAndID>()
@@ -108,7 +122,7 @@ namespace SalesLinq.Class
             };
         public enum PayMethods
         {
-            Cash=1,
+            Cash = 1,
             Credit
         }
 
@@ -146,7 +160,7 @@ namespace SalesLinq.Class
             Print
         }
 
-        public static int FindRowHandelByRowObject(this GridView view , object row)
+        public static int FindRowHandelByRowObject(this GridView view, object row)
         {
             if (row != null)
             {
@@ -218,7 +232,7 @@ namespace SalesLinq.Class
         /// </summary>
         /// <param name="lkp">LookUpEditBase يستقبل </param>
         /// <returns>يرجع صحيح اذا كانت رقمية و ليست صفر ويرجع خطأ اذا كانت غير ذلك ويظهر الخطأ</returns>
-        public static bool IsEditValueValideAndNotZero(this LookUpEditBase lkp , bool SetErrur = true)
+        public static bool IsEditValueValideAndNotZero(this LookUpEditBase lkp, bool SetErrur = true)
         {
             if (lkp.IsEditValueOfTypeInt() == false || Convert.ToInt32(lkp.EditValue) == 0)
             {
@@ -235,7 +249,7 @@ namespace SalesLinq.Class
         /// <returns>يظهر الخطأ ويرجع صحيح اذا كانت صيغة تاريخ ويرجع خطأ اذا كانت غير ذلك</returns>
         public static bool IsDateValide(this DateEdit dt)
         {
-            if (dt.DateTime.Year < 1950) 
+            if (dt.DateTime.Year < 1950)
             {
                 dt.ErrorText = frm_Master.ErrorText;
                 return false;
@@ -250,11 +264,11 @@ namespace SalesLinq.Class
         public static bool IsEditValueOfTypeInt(this LookUpEditBase edit)
         {
             var val = edit.EditValue;
-            bool test =(val is int || val is byte);
+            bool test = (val is int || val is byte);
             return test;
         }
         // انشاء ريبوزيتوري ايتم مع اعطائه بعض القيم الافتراضية مسبقا
-        public static void InitializeData(this RepositoryItemLookUpEditBase repo, object datasource,GridColumn column,GridControl grid)
+        public static void InitializeData(this RepositoryItemLookUpEditBase repo, object datasource, GridColumn column, GridControl grid)
         {
             InitializeData(repo, datasource, column, grid, "Name", "ID");
         }
@@ -275,7 +289,7 @@ namespace SalesLinq.Class
             repo.DataSource = datasource;
             repo.DisplayMember = displayMember;
             repo.ValueMember = valueMember;
-            repo.NullText = "";
+            repo.NullText = string.Empty;
             repo.BestFitMode = DevExpress.XtraEditors.Controls.BestFitMode.BestFitResizePopup;
             if (column != null)
                 column.ColumnEdit = repo;
@@ -301,7 +315,7 @@ namespace SalesLinq.Class
             lkp.Properties.ShowHeader = false;
             //lkp.Properties.PopulateColumns(datasource);
             //lkp.Properties.Columns[valueMember].Visible = false;
-            lkp.Properties.NullText = "";
+            lkp.Properties.NullText = string.Empty;
         }
 
         public static void InitializeData(this GridLookUpEdit lkp, object datasource)
@@ -314,7 +328,7 @@ namespace SalesLinq.Class
             lkp.Properties.DataSource = datasource;
             lkp.Properties.DisplayMember = displayMember;
             lkp.Properties.ValueMember = valueMember;
-            lkp.Properties.NullText = "";
+            lkp.Properties.NullText = string.Empty;
 
             lkp.Properties.ValidateOnEnterKey = true;
             lkp.Properties.AllowNullInput = DefaultBoolean.False;
@@ -337,9 +351,9 @@ namespace SalesLinq.Class
         {
             if (Number == string.Empty || Number == null)
                 return "1";
-            string str1 = "";
+            string str1 = string.Empty;
             foreach (char c in Number)
-                str1 = char.IsDigit(c) ? str1 + c.ToString() : "";
+                str1 = char.IsDigit(c) ? str1 + c.ToString() : string.Empty;
             if (str1 == string.Empty)
                 return Number + "1";
             string str2 = str1.Insert(0, "1");
@@ -379,7 +393,7 @@ namespace SalesLinq.Class
             BinaryFormatter formatter = new BinaryFormatter();
             using (MemoryStream stream = new MemoryStream())
             {
-                formatter.Serialize(stream,obj);
+                formatter.Serialize(stream, obj);
                 return stream.ToArray();
             };
         }
@@ -390,7 +404,7 @@ namespace SalesLinq.Class
         /// <param name="propertyName"></param>
         /// <param name="profileID"></param>
         /// <returns>ترجع قيمة الخاصية</returns>
-        public static byte[] GetPropertyValue(string propertyName,int profileID)
+        public static byte[] GetPropertyValue(string propertyName, int profileID)
         {
             using (var db = new DAL.DBDataContext())
             {

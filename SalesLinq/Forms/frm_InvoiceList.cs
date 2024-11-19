@@ -146,6 +146,11 @@ namespace SalesLinq.Forms
         {
             frm_Main.OpenForm(new frm_Invoice(Type,id));
         }
+
+        public override void New()
+        {
+            frm_Main.OpenForm(new frm_Invoice(Type));
+        }
         /// <summary>
         /// تعبئة الفورم ببيانات الفواتير حسب النوع
         /// </summary>
@@ -376,9 +381,6 @@ namespace SalesLinq.Forms
             //base.Print();
         }
 
-        public override void New()
-        {
-            frm_Main.OpenForm(new frm_Invoice(Type));
-        }
+
     }
 }

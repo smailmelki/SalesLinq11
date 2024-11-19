@@ -150,7 +150,7 @@ namespace SalesLinq.Forms
             db.SubmitChanges();
            
             PartID = CusVnd.ID; // لتسجيل حركات المستخدم
-            PartName = CusVnd.Name; // لتسجيل حركات المستخدم
+            PartName = CusVnd.Name; // لتسجيل حركات المستخدم DESKTOP-R4T3N57\Smail
             base.Save();
             if (CloseAfterSave)
                 this.Close();

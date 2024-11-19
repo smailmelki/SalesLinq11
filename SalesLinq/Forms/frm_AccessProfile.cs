@@ -35,6 +35,7 @@ namespace SalesLinq.Forms
         {
             profile = new DAL.UserAccessProfileName();
             textEdit1.Text = profile.Name;
+            btn_Delete.Enabled = false;
             treeList1.CustomNodeCellEdit += TreeList1_CustomNodeCellEdit;
         }
         /// <summary>

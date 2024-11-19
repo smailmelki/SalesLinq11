@@ -99,7 +99,5 @@ namespace SalesLinq.Forms
                 Application.Exit();
             }
         }
-
-
     }
 }

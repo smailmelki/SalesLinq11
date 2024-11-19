@@ -96,7 +96,7 @@ namespace SalesLinq.DAL
     #endregion
 		
 		public DBDataContext() : 
-				base(global::SalesLinq.Properties.Settings.Default.SalesDBConnectionString1, mappingSource)
+				base(global::SalesLinq.Properties.Settings.Default.SalesDBConnectionString, mappingSource)
 		{
 			OnCreated();
 		}

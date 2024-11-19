@@ -11,11 +11,11 @@ namespace SalesLinq.Class
 
         public static class Defualts
         {
-            public static int Drawer {get => UserSettings.General.DefaultDrawer; }       //  الخزنة ... الدرج الافتراضي
-            public static int Customer { get => UserSettings.General.DefaultCustomer; }  // العميل الافتراضي
-            public static int Vendor { get => UserSettings.General.DefaultVendor; }      //  المورد الافتراضي
-            public static int Store { get => UserSettings.General.DefaultStore; }        //  المخزن الافتراضي في حالة البيع
-            public static int RamStore { get => UserSettings.General.DefaultRowStore; }  //  المخزن الافتراضي في حالة الشراء
+            public static int Drawer {get => UserSettings.Default.DefaultDrawer; }       //  الخزنة ... الدرج الافتراضي
+            public static int Customer { get => UserSettings.Default.DefaultCustomer; }  // العميل الافتراضي
+            public static int Vendor { get => UserSettings.Default.DefaultVendor; }      //  المورد الافتراضي
+            public static int Store { get => UserSettings.Default.DefaultStore; }        //  المخزن الافتراضي في حالة البيع
+            public static int RamStore { get => UserSettings.Default.DefaultRowStore; }  //  المخزن الافتراضي في حالة الشراء
             public static int DiscountAllowedAccountID { get => 8; }//خصم نقدي مسموح به 44
             public static int DiscountReceivedAccountID { get => 9; }//44 خصم نقدي مكتسب
             public static int SalesTax { get => 17; }//ضريبة مضافة للبيع 
@@ -45,7 +45,7 @@ namespace SalesLinq.Class
         /// </summary>
         public static class CurrentSettings
         {
-            public static PrintMode InvoicePrintMode { get => PrintMode.ShowPreview; }            
+            public static Master.PrintMode InvoicePrintMode { get => UserSettings.Genera.PrintMode; }
         }
         public static UserSettingsTemplate _userSettings;
         public static UserSettingsTemplate UserSettings
@@ -62,23 +62,14 @@ namespace SalesLinq.Class
         /// </summary>
         public static class GlobalSettings
         {
-            public static bool ReadFromScaleBarcode { get => true; }// قبول القراءة من باركود الميزان
-            public static string ScaleBarcodePrefix { get => "21"; }//رمز يبتدئ به باركود الميزان
+            public static bool ReadFromScaleBarcode { get => UserSettings.Genera.AcceptReadFromScaleBarcode; }// قبول القراءة من باركود الميزان
             public static byte ProductCodeLength { get => 5; }//عدد الأرقام التي  تعبر على رمز الصنف في الباركود
             public static byte BarcodeLength { get => 13; }//عدد الأرقام التي  يحتويها الباركود
             public static byte ValueCodeLength { get => 5; }//عدد الأرقام التي  تعبر على وزن أو سعر الصنف في الباركود 
-            public static ReadValueMode ReadMode { get => ReadValueMode.Price; }// باركود خاص بالوزن أو بالسعر
+            public static Master.ReadValueMode ReadMode { get => UserSettings.Genera.ReadValueMode; }// باركود خاص بالوزن أو بالسعر
             public static Boolean IgnoreCheckDigit { get => true; }//يحتوي على رقم التحقق في آخر الباركود
-            public static byte DivideValueBy { get => 2; }//للتحويل من الغرام الى الكيلوغرام
-            /// <summary>
-            /// خاص بنوع الباركود - وزن أو سعر
-            /// </summary>
-            public enum ReadValueMode
-            {
-                Weight,
-                Price
-            }
-
+            public static string ScaleBarcodePrefix { get => (Session.GlobalSettings.ReadMode == Master.ReadValueMode.Price) ? "21" : "20"; }//رمز يبتدئ به باركود الميزان
+            public static int DivideValueBy { get => (Session.GlobalSettings.ReadMode == Master.ReadValueMode.Price) ? 2:3; }//للتحويل من الغرام الى الكيلوغرام أو من 1 الى 100 حسب السعر أو الوزن
         }
 
         /// <summary>
@@ -105,19 +96,71 @@ namespace SalesLinq.Class
         /// </summary>
         private static BindingList<DAL.Product> _Products;
         public static BindingList<DAL.Product> Products
-        { get
+        {
+            get
             {
-                if(_Products == null)
+                if (_Products == null)
                 {
-                    using (var db=new DAL.DBDataContext())
+                    using (var db = new DAL.DBDataContext())
                     {
                         _Products = new BindingList<DAL.Product>(db.Products.ToList());
                     }
-                    DataBaseWatcher.Products = new TableDependency.SqlClient.SqlTableDependency<DAL.Product>(Properties.Settings.Default.SalesDBConnectionString);
+                    DataBaseWatcher.Products = new TableDependency.SqlClient.SqlTableDependency<DAL.Product>(Properties.Settings.Default.SalesDBConnectionString, executeUserPermissionCheck: false);
                     DataBaseWatcher.Products.OnChanged += DataBaseWatcher.Products_Changed; //DataBaseWatcher.Products_Changed حدث التغيير في حالة البيانات يشغل الدالة 
                     DataBaseWatcher.Products.Start();
                 }
                 return _Products;
+            }
+        }
+
+        /// <summary>
+        /// دالة ترجع قائمة وحدات الأصناف
+        /// </summary>
+        private static BindingList<DAL.ProductUnit> _ProductUnits;
+        public static BindingList<DAL.ProductUnit> ProductUnits
+        {
+            get
+            {
+                if (_ProductUnits == null)
+                {
+                    using (var db = new DAL.DBDataContext())
+                    {
+                        _ProductUnits = new BindingList<DAL.ProductUnit>(db.ProductUnits.ToList());
+                    }
+                    DataBaseWatcher.ProductUnitsWatcher = new TableDependency.SqlClient.SqlTableDependency<DataBaseWatcher.ProductUnits>(Properties.Settings.Default.SalesDBConnectionString, executeUserPermissionCheck: false);
+                    DataBaseWatcher.ProductUnitsWatcher.OnChanged += DataBaseWatcher.ProductUnits_Changed; //DataBaseWatcher.Products_Changed حدث التغيير في حالة البيانات يشغل الدالة 
+                    DataBaseWatcher.ProductUnitsWatcher.Start();
+                }
+                return _ProductUnits;
+            }
+        }
+
+        private static BindingList<ProductBalance> productsBalances;
+        public static BindingList<ProductBalance> ProductsBalances
+        {
+            get
+            {
+                if (productsBalances == null)
+                {
+                    using (var db = new DAL.DBDataContext())
+                    {
+                        var data = from sl in db.StoreLogs
+                                   group sl by new { sl.ProductID, sl.StoreID } into g
+                                   select new ProductBalance
+                                   {
+                                       Balance =
+                                       (g.Where(x => x.IsInTransaction == true).Sum(x => (double?)x.Qty) ?? 0) -
+                                       (g.Where(x => x.IsInTransaction == false).Sum(x => (double?)x.Qty) ?? 0),
+                                       ProductID = g.Key.ProductID,
+                                       StoreID = g.Key.StoreID
+                                   };
+                        productsBalances = new BindingList<ProductBalance>(data.ToList());
+                    }
+                    DataBaseWatcher.StoreLog = new TableDependency.SqlClient.SqlTableDependency<DAL.StoreLog>(Properties.Settings.Default.SalesDBConnectionString, executeUserPermissionCheck: false);
+                    DataBaseWatcher.StoreLog.OnChanged += DataBaseWatcher.StoreLog_Changed; //DataBaseWatcher.StoreLogs_Changed حدث التغيير في حالة البيانات يشغل الدالة 
+                    DataBaseWatcher.StoreLog.Start();
+                }
+                return productsBalances;
             }
         }
 
@@ -172,35 +215,6 @@ namespace SalesLinq.Class
                     }
                 }
                     return productViewClasses;
-            }
-        }
-
-        private static BindingList<ProductBalance> productsBalances;
-        public static BindingList<ProductBalance> ProductsBalances
-        {
-            get
-            {
-                if (productsBalances == null)
-                {
-                    using (var db=new DAL.DBDataContext())
-                    {
-                        var data = from sl in db.StoreLogs
-                                   group sl by new { sl.ProductID, sl.StoreID } into g
-                                   select new ProductBalance
-                                   {
-                                       Balance =
-                                       (g.Where(x => x.IsInTransaction == true).Sum(x => (double?)x.Qty) ?? 0) -
-                                       (g.Where(x => x.IsInTransaction == false).Sum(x => (double?)x.Qty) ?? 0),
-                                       ProductID = g.Key.ProductID,
-                                       StoreID = g.Key.StoreID
-                                   };
-                        productsBalances = new BindingList<ProductBalance>(data.ToList());
-                    }
-                    DataBaseWatcher.StoreLog = new TableDependency.SqlClient.SqlTableDependency<DAL.StoreLog>(Properties.Settings.Default.SalesDBConnectionString);
-                    DataBaseWatcher.StoreLog.OnChanged += DataBaseWatcher.StoreLog_Changed; //DataBaseWatcher.StoreLogs_Changed حدث التغيير في حالة البيانات يشغل الدالة 
-                    DataBaseWatcher.StoreLog.Start();
-                }
-                return productsBalances;
             }
         }
 
@@ -295,7 +309,7 @@ namespace SalesLinq.Class
                     {
                         _vendores = new BindingList<DAL.CustomersAndVendore>(db.CustomersAndVendores.Where(x => x.IsCustomer == false).ToList());
                     }
-                    DataBaseWatcher.Vendors = new TableDependency.SqlClient.SqlTableDependency<CustomersAndVendores>(Properties.Settings.Default.SalesDBConnectionString, filter: new DataBaseWatcher.VendorsOnly());
+                    DataBaseWatcher.Vendors = new TableDependency.SqlClient.SqlTableDependency<DataBaseWatcher.CustomersAndVendores>(Properties.Settings.Default.SalesDBConnectionString, filter: new DataBaseWatcher.VendorsOnly(), executeUserPermissionCheck: false);
                     DataBaseWatcher.Vendors.OnChanged += DataBaseWatcher.Vendors_Changed;
                     DataBaseWatcher.Vendors.Start();
                 }
@@ -317,7 +331,7 @@ namespace SalesLinq.Class
                     {
                         _Accounts = new BindingList<DAL.Account>(db.Accounts.ToList());
                     }
-                    DataBaseWatcher.AccountsList = new TableDependency.SqlClient.SqlTableDependency<Accounts>(Properties.Settings.Default.SalesDBConnectionString);
+                    DataBaseWatcher.AccountsList = new TableDependency.SqlClient.SqlTableDependency<DataBaseWatcher.Accounts>(Properties.Settings.Default.SalesDBConnectionString, executeUserPermissionCheck: false);
                     DataBaseWatcher.AccountsList.OnChanged += DataBaseWatcher.Accounts_Changed;
                     DataBaseWatcher.AccountsList.Start();
                 }
@@ -340,6 +354,9 @@ namespace SalesLinq.Class
                     {
                         _drawer = new BindingList<DAL.Drawer>(db.Drawers.ToList());
                     }
+                    DataBaseWatcher.DrawersWatcher = new TableDependency.SqlClient.SqlTableDependency<DataBaseWatcher.Drawers>(Properties.Settings.Default.SalesDBConnectionString, executeUserPermissionCheck: false);
+                    DataBaseWatcher.DrawersWatcher.OnChanged += DataBaseWatcher.Drawer_Changed;
+                    DataBaseWatcher.DrawersWatcher.Start();
                 }
                 return _drawer;
             }
@@ -358,7 +375,7 @@ namespace SalesLinq.Class
                     {
                         _store = new BindingList<DAL.Store>(db.Stores.ToList());
                     }
-                    DataBaseWatcher.StoresWatcher = new TableDependency.SqlClient.SqlTableDependency<DataBaseWatcher.Stores>(Properties.Settings.Default.SalesDBConnectionString);
+                    DataBaseWatcher.StoresWatcher = new TableDependency.SqlClient.SqlTableDependency<DataBaseWatcher.Stores>(Properties.Settings.Default.SalesDBConnectionString, executeUserPermissionCheck: false);
                     DataBaseWatcher.StoresWatcher.OnChanged += DataBaseWatcher.Store_Changed;
                     DataBaseWatcher.StoresWatcher.Start();
                 }
@@ -426,7 +443,7 @@ namespace SalesLinq.Class
                         _customers = new BindingList<DAL.CustomersAndVendore>(db.CustomersAndVendores.Where(x => x.IsCustomer == true).ToList());
                     }
 
-                    DataBaseWatcher.Customers = new TableDependency.SqlClient.SqlTableDependency<CustomersAndVendores>(Properties.Settings.Default.SalesDBConnectionString, filter: new DataBaseWatcher.CustomersOnly());
+                    DataBaseWatcher.Customers = new TableDependency.SqlClient.SqlTableDependency<DataBaseWatcher.CustomersAndVendores>(Properties.Settings.Default.SalesDBConnectionString, filter: new DataBaseWatcher.CustomersOnly(), executeUserPermissionCheck: false);
                     DataBaseWatcher.Customers.OnChanged += DataBaseWatcher.Customer_Changed;
                     DataBaseWatcher.Customers.Start();
                 }
@@ -445,5 +462,4 @@ namespace SalesLinq.Class
             }
         }
     }
-
 }

@@ -5,7 +5,6 @@ using SalesLinq.Class;
 using SalesLinq.Properties;
 using System;
 using System.Drawing;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -16,7 +15,9 @@ namespace SalesLinq.Forms
     {
         // Static من أجل جعل الفورم الرئيسية ثابتة
         private static frm_Main _Instance;
-        public static frm_Main Instance { get
+        public static frm_Main Instance
+        {
+            get
             {
                 if (_Instance == null)
                     _Instance = new frm_Main();
@@ -33,7 +34,7 @@ namespace SalesLinq.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AccordionControl1_ElementClick(object sender, DevExpress.XtraBars.Navigation.ElementClickEventArgs e)
+        private void AccordionControl1_ElementClick(object sender, ElementClickEventArgs e)
         {
             var tag = e.Element.Tag as string;
             if (tag != string.Empty)
@@ -111,7 +112,7 @@ namespace SalesLinq.Forms
             }
         }
 
-        public static void OpenForm(Form frm,bool OpenInDialog =false)
+        public static void OpenForm(Form frm, bool OpenInDialog = false)
         {
             if (Session.User.UserType == (byte)Master.UserType.Admin)
             {
@@ -122,9 +123,9 @@ namespace SalesLinq.Forms
                 return;
             }
             var screen = Session.ScreenAccesses.SingleOrDefault(x => x.ScreenName == frm.Name);
-            if (screen!=null)
+            if (screen != null)
             {
-                if(screen.CanOpen==true)
+                if (screen.CanOpen == true)
                 {
                     if (OpenInDialog)
                         frm.ShowDialog();
@@ -137,7 +138,7 @@ namespace SalesLinq.Forms
                 {
                     XtraMessageBox.Show(
                                         text: " غير مصرح لك",
-                                        caption: "",
+                                        caption: string.Empty,
                                         icon: MessageBoxIcon.Error,
                                         buttons: MessageBoxButtons.OK
                                         );
@@ -183,8 +184,8 @@ namespace SalesLinq.Forms
             {
                 AccordionControlElement elm = new AccordionControlElement();
                 elm.Text = s.ScreenCaption;
-                elm.Tag = s.ScreenName;
                 elm.Name = s.ScreenName;
+                elm.Tag = s.ScreenName;
                 elm.Style = ElementStyle.Group;
                 accordionControl1.Elements.Add(elm);
                 AddSubAccordionElement(elm, s.ScreenID);
@@ -196,15 +197,15 @@ namespace SalesLinq.Forms
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="parentID"></param>
-        public void AddSubAccordionElement(AccordionControlElement parent,int parentID)
+        public void AddSubAccordionElement(AccordionControlElement parent, int parentID)
         {
             var screens = Class.Session.ScreenAccesses.Where(x => x.CanShow == true || Session.User.UserType == (byte)Master.UserType.Admin);// اذا كان مدير أو مستخدم لديه صلاحية الوصول للزر
             screens.Where(s => s.ParentScreenID == parentID).ToList().ForEach(s =>
             {
                 AccordionControlElement elm = new AccordionControlElement();
                 elm.Text = s.ScreenCaption;
-                elm.Tag = s.ScreenName;
                 elm.Name = s.ScreenName;
+                elm.Tag = s.ScreenName;
                 elm.Style = ElementStyle.Item;
                 parent.Elements.Add(elm);
             });

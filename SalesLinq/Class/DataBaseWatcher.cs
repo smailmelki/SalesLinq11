@@ -100,6 +100,32 @@ namespace SalesLinq.Class
             }
         }
 
+        public class Drawers : DAL.Drawer { }// انشاء كلاس يرث من الكلاس الأساسي من أجل أن يكون اسمه يطابق الاسم في قاعدة البيانات واستخدامه بدل من الكلاس الأساسي
+        public static SqlTableDependency<Drawers> DrawersWatcher;// لمراقبة قاعدة البيانات
+        /// <summary>
+        /// دالة لاظهار التغيير الحاصل في جدول الخزنات مباشرة بدون عمل تحديث للفورم
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public static void Drawer_Changed(object sender, RecordChangedEventArgs<Drawers> e)
+        {
+            switch (e.ChangeType)
+            {
+                case ChangeType.None:
+                    break;
+                case ChangeType.Delete:
+                    Session.Drawer.Remove(Session.Drawer.SingleOrDefault(x => x.ID == e.Entity.ID));
+                    break;
+                case ChangeType.Insert:
+                    Session.Drawer.Add(e.Entity);
+                    break;
+                case ChangeType.Update:
+                    var index = Session.Drawer.IndexOf(Session.Drawer.SingleOrDefault(x => x.ID == e.Entity.ID));
+                    Session.Drawer[index] = e.Entity;
+                    break;
+            }
+        }
+
         public class ProductUnits : DAL.ProductUnit { }// انشاء كلاس يرث من الكلاس الأساسي من أجل أن يكون اسمه يطابق الاسم في قاعدة البيانات واستخدامه بدل من الكلاس الأساسي
         public static SqlTableDependency<ProductUnits> ProductUnitsWatcher;// لمراقبة قاعدة البيانات
         /// <summary>
@@ -109,8 +135,11 @@ namespace SalesLinq.Class
         /// <param name="e"></param>
         public static void ProductUnits_Changed(object sender, RecordChangedEventArgs<ProductUnits> e)
         {
-            var viewIndex = Session.ProductView.IndexOf(Session.ProductView.Single(x => x.ID == e.Entity.ProductID));
-            Session.ProductView[viewIndex] = Session.ProductViewClass.GetProduct(e.Entity.ProductID);
+            frm_Main.Instance.Invoke(new Action(() => // طريقة لفتح المسار الرئيسي المشغل للفورم الرئيسي واعطائه التفويض لتشغيل الدالة
+            {
+                var viewIndex = Session.ProductView.IndexOf(Session.ProductView.Single(x => x.ID == e.Entity.ProductID));
+                Session.ProductView[viewIndex] = Session.ProductViewClass.GetProduct(e.Entity.ProductID);
+            }));
         }
 
 
@@ -138,14 +167,13 @@ namespace SalesLinq.Class
                     case ChangeType.Update:
                         int index = Session.Accounts.IndexOf(Session.Accounts.Single(x => x.ID == e.Entity.ID));
                         Session.Accounts.Remove(Session.Accounts.Single(x => x.ID == e.Entity.ID));
-                        Session.Accounts.Insert(index,e.Entity);
+                        Session.Accounts.Insert(index, e.Entity);
                         break;
                     default:
                         break;
                 }
             }));
         }
-
 
 
         public class CustomersAndVendores : DAL.CustomersAndVendore { }// انشاء كلاس يرث من الكلاس الأساسي من أجل أن يكون اسمه يطابق الاسم في قاعدة البيانات واستخدامه بدل من الكلاس الأساسي 
