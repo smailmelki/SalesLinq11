@@ -1,0 +1,857 @@
+USE [SalesDB]
+GO
+/****** Object:  Table [dbo].[Accounts]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Accounts](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NULL,
+ CONSTRAINT [PK_Accounts] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[CashNotes]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CashNotes](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[IsCashIn] [bit] NOT NULL,
+	[Code] [nvarchar](25) NOT NULL,
+	[StoreID] [int] NOT NULL,
+	[PartType] [tinyint] NOT NULL,
+	[PartID] [int] NOT NULL,
+	[Drawer] [int] NOT NULL,
+	[Amount] [float] NOT NULL,
+	[DiscountValue] [float] NOT NULL,
+	[Date] [datetime] NOT NULL,
+	[Notes] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_CashNotes] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[CashNotesLinks]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CashNotesLinks](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[CashNoteID] [int] NOT NULL,
+	[invoiceType] [tinyint] NOT NULL,
+	[invoiceID] [int] NOT NULL,
+ CONSTRAINT [PK_CashNotesLinks] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[CompanyInfo]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CompanyInfo](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[CompanyName] [nvarchar](max) NOT NULL,
+	[Phone] [nvarchar](max) NULL,
+	[Mobile] [nvarchar](max) NULL,
+	[Address] [nvarchar](max) NULL,
+	[Logo] [image] NULL,
+ CONSTRAINT [PK_CompanyInfo] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[CustomersAndVendores]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CustomersAndVendores](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[Phone] [nvarchar](max) NULL,
+	[Mobile] [nvarchar](max) NULL,
+	[Address] [nvarchar](max) NULL,
+	[AccountID] [int] NOT NULL,
+	[IsCustomer] [bit] NOT NULL,
+	[MaxCredit] [float] NOT NULL,
+ CONSTRAINT [PK_CustomersAndVendores] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Drawers]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Drawers](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[AccountID] [int] NOT NULL,
+ CONSTRAINT [PK_Drawers] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[InvoiceDetails]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[InvoiceDetails](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[InvoiceID] [int] NOT NULL,
+	[ItemID] [int] NOT NULL,
+	[ItemUnitID] [int] NOT NULL,
+	[ItemQty] [float] NOT NULL,
+	[Price] [float] NOT NULL,
+	[TotalPrice] [float] NOT NULL,
+	[CostValue] [float] NOT NULL,
+	[TotalCostValue] [float] NOT NULL,
+	[Discount] [float] NOT NULL,
+	[DiscountValue] [float] NOT NULL,
+	[StoreID] [int] NOT NULL,
+	[sourceRowID] [int] NULL,
+ CONSTRAINT [PK_InvoiceDetails] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[InvoiceHeader]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[InvoiceHeader](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[InvoiceType] [tinyint] NOT NULL,
+	[Code] [nvarchar](max) NOT NULL,
+	[PartType] [tinyint] NOT NULL,
+	[PartID] [int] NOT NULL,
+	[Date] [datetime] NOT NULL,
+	[DelivaryDate] [datetime] NULL,
+	[Branch] [int] NOT NULL,
+	[Notes] [nvarchar](max) NULL,
+	[PostDate] [datetime] NULL,
+	[PostedToStore] [bit] NOT NULL,
+	[Total] [float] NOT NULL,
+	[DiscountValue] [float] NOT NULL,
+	[DiscountRation] [float] NOT NULL,
+	[Tax] [float] NOT NULL,
+	[TaxValue] [float] NOT NULL,
+	[Expences] [float] NOT NULL,
+	[Net] [float] NOT NULL,
+	[Paid] [float] NOT NULL,
+	[Drawer] [int] NOT NULL,
+	[Remaing] [float] NOT NULL,
+	[ShippingAddress] [nvarchar](max) NULL,
+	[SourceType] [tinyint] NULL,
+	[SourceID] [int] NULL,
+ CONSTRAINT [PK_InvoiceHeader] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Journals]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Journals](
+	[ID] [bigint] IDENTITY(1,1) NOT NULL,
+	[Code] [bigint] NOT NULL,
+	[AccountID] [int] NOT NULL,
+	[Debit] [float] NOT NULL,
+	[Credit] [float] NOT NULL,
+	[InsertDate] [datetime] NOT NULL,
+	[SourceType] [tinyint] NOT NULL,
+	[SourceID] [int] NOT NULL,
+	[Notes] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_Journals] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Product]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Product](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Code] [nvarchar](max) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[Type] [tinyint] NOT NULL,
+	[Descreption] [nvarchar](max) NULL,
+	[IsActive] [bit] NOT NULL,
+	[Image] [varbinary](max) NULL,
+	[CategoryID] [int] NOT NULL,
+	[CostCalculationMethod] [tinyint] NOT NULL,
+ CONSTRAINT [PK_Product] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ProductCategory]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ProductCategory](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ParentID] [int] NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[Number] [nchar](50) NOT NULL,
+ CONSTRAINT [PK_ProductCategory] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ProductUnits]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ProductUnits](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ProductID] [int] NOT NULL,
+	[UnitID] [int] NOT NULL,
+	[Factor] [float] NOT NULL,
+	[BuyPrice] [float] NOT NULL,
+	[SellPrice] [float] NOT NULL,
+	[SellDiscount] [float] NOT NULL,
+	[Barcode] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_ProductUnits] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[StoreLog]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[StoreLog](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[SourceType] [tinyint] NOT NULL,
+	[SourceID] [int] NOT NULL,
+	[ProductID] [int] NOT NULL,
+	[StoreID] [int] NOT NULL,
+	[Qty] [float] NOT NULL,
+	[IsInTransaction] [bit] NOT NULL,
+	[CostValue] [float] NOT NULL,
+	[InsertTime] [datetime] NOT NULL,
+	[Notes] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_StoreLog] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Stores]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Stores](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[SalesAccountID] [int] NOT NULL,
+	[SalesReturnAccountID] [int] NOT NULL,
+	[InventoryAccountID] [int] NOT NULL,
+	[CostOfSoldGoodsAccountID] [int] NOT NULL,
+	[DiscountReceivedAccountID] [int] NOT NULL,
+	[DiscountAllowedAccountID] [int] NOT NULL,
+ CONSTRAINT [PK_Stores] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UnitName]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UnitName](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_UnitName] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserAccessProfileDetails]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserAccessProfileDetails](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ProfileID] [int] NOT NULL,
+	[ScreenID] [int] NOT NULL,
+	[CanShow] [bit] NOT NULL,
+	[CanOpen] [bit] NOT NULL,
+	[CanAdd] [bit] NOT NULL,
+	[CanEdit] [bit] NOT NULL,
+	[CanDelete] [bit] NOT NULL,
+	[CanPrint] [bit] NOT NULL,
+ CONSTRAINT [PK_UserAccessProfileDetails] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserAccessProfileName]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserAccessProfileName](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_UserAccessProfileName] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserLog]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserLog](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[UserID] [int] NOT NULL,
+	[ActionDate] [datetime] NOT NULL,
+	[ScreenID] [int] NOT NULL,
+	[ActionType] [tinyint] NOT NULL,
+	[PartID] [int] NOT NULL,
+	[PartName] [nvarchar](500) NOT NULL,
+ CONSTRAINT [PK_UserLog] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Users](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[UserName] [nvarchar](max) NOT NULL,
+	[Password] [nvarchar](max) NOT NULL,
+	[UserType] [tinyint] NOT NULL,
+	[SettingsProfileID] [int] NULL,
+	[ScreenProfileID] [int] NULL,
+	[IsActive] [bit] NOT NULL,
+ CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserSettingsProfile]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserSettingsProfile](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_UserSettingsProfile] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserSettingsProfileProperties]    Script Date: 01-04-2022 19:41:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserSettingsProfileProperties](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ProfileID] [int] NOT NULL,
+	[PropertyName] [nvarchar](max) NOT NULL,
+	[PropertyValue] [varbinary](max) NOT NULL,
+ CONSTRAINT [PK_UserSettingsProfileProperties] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET IDENTITY_INSERT [dbo].[Accounts] ON 
+GO
+INSERT [dbo].[Accounts] ([ID], [Name]) VALUES (1, N'عميل افتراضي')
+GO
+INSERT [dbo].[Accounts] ([ID], [Name]) VALUES (2, N'مورد افتراضي')
+GO
+INSERT [dbo].[Accounts] ([ID], [Name]) VALUES (3, N'مخزن افتراضي- مبيعات')
+GO
+INSERT [dbo].[Accounts] ([ID], [Name]) VALUES (4, N'مخزن افتراضي- مردود مبيعات')
+GO
+INSERT [dbo].[Accounts] ([ID], [Name]) VALUES (5, N'مخزن افتراضي- المخزون')
+GO
+INSERT [dbo].[Accounts] ([ID], [Name]) VALUES (6, N'مخزن افتراضي- تكلفة البضاعة المباعة')
+GO
+INSERT [dbo].[Accounts] ([ID], [Name]) VALUES (7, N'خزنة افتراضية')
+GO
+INSERT [dbo].[Accounts] ([ID], [Name]) VALUES (8, N'خصم نقدي مسموح به')
+GO
+INSERT [dbo].[Accounts] ([ID], [Name]) VALUES (9, N'خصم نقدي مكتسب')
+GO
+SET IDENTITY_INSERT [dbo].[Accounts] OFF
+GO
+SET IDENTITY_INSERT [dbo].[CompanyInfo] ON 
+GO
+INSERT [dbo].[CompanyInfo] ([ID], [CompanyName], [Phone], [Mobile], [Address], [Logo]) VALUES (1, N'Melki Company', N'0657233083', N'0792219206', N'سيدي امحمد', NULL)
+GO
+SET IDENTITY_INSERT [dbo].[CompanyInfo] OFF
+GO
+SET IDENTITY_INSERT [dbo].[CustomersAndVendores] ON 
+GO
+INSERT [dbo].[CustomersAndVendores] ([ID], [Name], [Phone], [Mobile], [Address], [AccountID], [IsCustomer], [MaxCredit]) VALUES (1, N'عميل افتراضي', N'0792365472', N'0795325685', N'عين الملح', 1, 1, 10000)
+GO
+INSERT [dbo].[CustomersAndVendores] ([ID], [Name], [Phone], [Mobile], [Address], [AccountID], [IsCustomer], [MaxCredit]) VALUES (2, N'مورد افتراضي', N'0562365896', N'0795632145', N'بوسعادة', 2, 0, 10000)
+GO
+SET IDENTITY_INSERT [dbo].[CustomersAndVendores] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Drawers] ON 
+GO
+INSERT [dbo].[Drawers] ([ID], [Name], [AccountID]) VALUES (1, N'خزنة افتراضية', 7)
+GO
+SET IDENTITY_INSERT [dbo].[Drawers] OFF
+GO
+SET IDENTITY_INSERT [dbo].[InvoiceDetails] ON 
+GO
+INSERT [dbo].[InvoiceDetails] ([ID], [InvoiceID], [ItemID], [ItemUnitID], [ItemQty], [Price], [TotalPrice], [CostValue], [TotalCostValue], [Discount], [DiscountValue], [StoreID], [sourceRowID]) VALUES (1, 2, 1, 1, 25, 50, 1250, 58.303571428571431, 1457.5892857142858, 0, 0, 1, NULL)
+GO
+INSERT [dbo].[InvoiceDetails] ([ID], [InvoiceID], [ItemID], [ItemUnitID], [ItemQty], [Price], [TotalPrice], [CostValue], [TotalCostValue], [Discount], [DiscountValue], [StoreID], [sourceRowID]) VALUES (2, 2, 2, 2, 2, 1500, 3000, 1508.3035714285713, 3016.6071428571427, 0, 0, 1, NULL)
+GO
+INSERT [dbo].[InvoiceDetails] ([ID], [InvoiceID], [ItemID], [ItemUnitID], [ItemQty], [Price], [TotalPrice], [CostValue], [TotalCostValue], [Discount], [DiscountValue], [StoreID], [sourceRowID]) VALUES (3, 2, 3, 2, 1, 1500, 1500, 1508.3035714285713, 1508.3035714285713, 0, 0, 1, NULL)
+GO
+INSERT [dbo].[InvoiceDetails] ([ID], [InvoiceID], [ItemID], [ItemUnitID], [ItemQty], [Price], [TotalPrice], [CostValue], [TotalCostValue], [Discount], [DiscountValue], [StoreID], [sourceRowID]) VALUES (5, 7, 1, 1, 5, 60, 300, 58.303571428571431, 291.51785714285717, 0, 0, 1, NULL)
+GO
+INSERT [dbo].[InvoiceDetails] ([ID], [InvoiceID], [ItemID], [ItemUnitID], [ItemQty], [Price], [TotalPrice], [CostValue], [TotalCostValue], [Discount], [DiscountValue], [StoreID], [sourceRowID]) VALUES (6, 7, 2, 1, 7, 100, 700, 75.415178571428569, 527.90625, 0, 0, 1, NULL)
+GO
+INSERT [dbo].[InvoiceDetails] ([ID], [InvoiceID], [ItemID], [ItemUnitID], [ItemQty], [Price], [TotalPrice], [CostValue], [TotalCostValue], [Discount], [DiscountValue], [StoreID], [sourceRowID]) VALUES (7, 7, 3, 1, 3, 200, 600, 150.83035714285714, 452.49107142857144, 0, 0, 1, NULL)
+GO
+INSERT [dbo].[InvoiceDetails] ([ID], [InvoiceID], [ItemID], [ItemUnitID], [ItemQty], [Price], [TotalPrice], [CostValue], [TotalCostValue], [Discount], [DiscountValue], [StoreID], [sourceRowID]) VALUES (8, 8, 2, 1, 5, 100, 500, 75.415178571428569, 377.07589285714283, 0, 0, 1, 6)
+GO
+INSERT [dbo].[InvoiceDetails] ([ID], [InvoiceID], [ItemID], [ItemUnitID], [ItemQty], [Price], [TotalPrice], [CostValue], [TotalCostValue], [Discount], [DiscountValue], [StoreID], [sourceRowID]) VALUES (9, 9, 2, 1, 2, 100, 200, 75.415178571428569, 150.83035714285714, 0, 0, 1, 6)
+GO
+SET IDENTITY_INSERT [dbo].[InvoiceDetails] OFF
+GO
+SET IDENTITY_INSERT [dbo].[InvoiceHeader] ON 
+GO
+INSERT [dbo].[InvoiceHeader] ([ID], [InvoiceType], [Code], [PartType], [PartID], [Date], [DelivaryDate], [Branch], [Notes], [PostDate], [PostedToStore], [Total], [DiscountValue], [DiscountRation], [Tax], [TaxValue], [Expences], [Net], [Paid], [Drawer], [Remaing], [ShippingAddress], [SourceType], [SourceID]) VALUES (2, 0, N'1', 0, 2, CAST(N'2022-04-01T09:01:34.640' AS DateTime), NULL, 1, N'', CAST(N'2022-04-01T09:01:34.643' AS DateTime), 1, 5750, 575, 0.1, 0.19, 1092.5, 232.5, 6500, 0, 1, 6500, N'', NULL, 0)
+GO
+INSERT [dbo].[InvoiceHeader] ([ID], [InvoiceType], [Code], [PartType], [PartID], [Date], [DelivaryDate], [Branch], [Notes], [PostDate], [PostedToStore], [Total], [DiscountValue], [DiscountRation], [Tax], [TaxValue], [Expences], [Net], [Paid], [Drawer], [Remaing], [ShippingAddress], [SourceType], [SourceID]) VALUES (7, 1, N'1', 1, 1, CAST(N'2022-04-01T16:18:50.377' AS DateTime), NULL, 1, N'', CAST(N'2022-04-01T16:18:50.377' AS DateTime), 1, 1600, 0, 0, 0, 0, 0, 1600, 1600, 1, 0, N'', NULL, 0)
+GO
+INSERT [dbo].[InvoiceHeader] ([ID], [InvoiceType], [Code], [PartType], [PartID], [Date], [DelivaryDate], [Branch], [Notes], [PostDate], [PostedToStore], [Total], [DiscountValue], [DiscountRation], [Tax], [TaxValue], [Expences], [Net], [Paid], [Drawer], [Remaing], [ShippingAddress], [SourceType], [SourceID]) VALUES (8, 3, N'1', 1, 1, CAST(N'2022-04-01T16:19:42.733' AS DateTime), NULL, 1, N'', CAST(N'2022-04-01T16:19:42.733' AS DateTime), 1, 500, 0, 0, 0, 0, 0, 500, 500, 1, 0, N'', NULL, 7)
+GO
+INSERT [dbo].[InvoiceHeader] ([ID], [InvoiceType], [Code], [PartType], [PartID], [Date], [DelivaryDate], [Branch], [Notes], [PostDate], [PostedToStore], [Total], [DiscountValue], [DiscountRation], [Tax], [TaxValue], [Expences], [Net], [Paid], [Drawer], [Remaing], [ShippingAddress], [SourceType], [SourceID]) VALUES (9, 3, N'2', 1, 1, CAST(N'2022-04-01T16:22:31.123' AS DateTime), NULL, 1, N'', CAST(N'2022-04-01T16:22:31.123' AS DateTime), 1, 200, 0, 0, 0, 0, 0, 200, 0, 1, 200, N'', NULL, 7)
+GO
+SET IDENTITY_INSERT [dbo].[InvoiceHeader] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Journals] ON 
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (6, 54545, 2, 0, 90, CAST(N'2022-04-01T09:39:25.193' AS DateTime), 0, 6, N'  فاتورة شراء رقم 6 للعميل مورد افتراضي')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (7, 54545, 5, 90, 0, CAST(N'2022-04-01T09:39:25.193' AS DateTime), 0, 6, N'  فاتورة شراء رقم 6 للعميل مورد افتراضي')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (8, 54545, 1, 1600, 0, CAST(N'2022-04-01T16:18:50.377' AS DateTime), 1, 7, N'  فاتورة مبيعات رقم 7 للعميل عميل افتراضي')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (9, 54545, 3, 0, 1600, CAST(N'2022-04-01T16:18:50.377' AS DateTime), 1, 7, N'  فاتورة مبيعات رقم 7 للعميل عميل افتراضي')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (10, 54545, 5, 0, 1271.9151785714284, CAST(N'2022-04-01T16:18:50.377' AS DateTime), 1, 7, N'  فاتورة مبيعات رقم 7 للعميل عميل افتراضي- تكلفة البضاعة المباعة')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (11, 54545, 6, 1271.9151785714284, 0, CAST(N'2022-04-01T16:18:50.377' AS DateTime), 1, 7, N'  فاتورة مبيعات رقم 7 للعميل عميل افتراضي- تكلفة البضاعة المباعة')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (12, 54545, 7, 1600, 0, CAST(N'2022-04-01T16:18:50.377' AS DateTime), 1, 7, N'  فاتورة مبيعات رقم 7 للعميل عميل افتراضي- سداد')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (13, 54545, 1, 0, 1600, CAST(N'2022-04-01T16:18:50.377' AS DateTime), 1, 7, N'  فاتورة مبيعات رقم 7 للعميل عميل افتراضي- سداد')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (14, 54545, 1, 0, 500, CAST(N'2022-04-01T16:19:42.733' AS DateTime), 3, 8, N'  فاتورة مردود مبيعات رقم 8 للعميل عميل افتراضي')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (15, 54545, 4, 500, 0, CAST(N'2022-04-01T16:19:42.733' AS DateTime), 3, 8, N'  فاتورة مردود مبيعات رقم 8 للعميل عميل افتراضي')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (16, 54545, 5, 377.07589285714283, 0, CAST(N'2022-04-01T16:19:42.733' AS DateTime), 3, 8, N'  فاتورة مردود مبيعات رقم 8 للعميل عميل افتراضي- تكلفة البضاعة المباعة')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (17, 54545, 6, 0, 377.07589285714283, CAST(N'2022-04-01T16:19:42.733' AS DateTime), 3, 8, N'  فاتورة مردود مبيعات رقم 8 للعميل عميل افتراضي- تكلفة البضاعة المباعة')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (18, 54545, 7, 0, 500, CAST(N'2022-04-01T16:19:42.733' AS DateTime), 3, 8, N'  فاتورة مردود مبيعات رقم 8 للعميل عميل افتراضي- سداد')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (19, 54545, 1, 500, 0, CAST(N'2022-04-01T16:19:42.733' AS DateTime), 3, 8, N'  فاتورة مردود مبيعات رقم 8 للعميل عميل افتراضي- سداد')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (20, 54545, 1, 0, 200, CAST(N'2022-04-01T16:22:31.123' AS DateTime), 3, 9, N'  فاتورة مردود مبيعات رقم 9 للعميل عميل افتراضي')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (21, 54545, 4, 200, 0, CAST(N'2022-04-01T16:22:31.123' AS DateTime), 3, 9, N'  فاتورة مردود مبيعات رقم 9 للعميل عميل افتراضي')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (22, 54545, 5, 150.83035714285714, 0, CAST(N'2022-04-01T16:22:31.123' AS DateTime), 3, 9, N'  فاتورة مردود مبيعات رقم 9 للعميل عميل افتراضي- تكلفة البضاعة المباعة')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (23, 54545, 6, 0, 150.83035714285714, CAST(N'2022-04-01T16:22:31.123' AS DateTime), 3, 9, N'  فاتورة مردود مبيعات رقم 9 للعميل عميل افتراضي- تكلفة البضاعة المباعة')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (24, 54545, 2, 0, 7075, CAST(N'2022-04-01T09:01:34.640' AS DateTime), 0, 2, N'  فاتورة شراء رقم 2 للعميل مورد افتراضي')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (25, 54545, 5, 5982.5, 0, CAST(N'2022-04-01T09:01:34.640' AS DateTime), 0, 2, N'  فاتورة شراء رقم 2 للعميل مورد افتراضي')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (26, 54545, 18, 1092.5, 0, CAST(N'2022-04-01T09:01:34.640' AS DateTime), 0, 2, N'  فاتورة شراء رقم 2 للعميل مورد افتراضي- ضريبة مضافة')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (27, 54545, 9, 0, 575, CAST(N'2022-04-01T09:01:34.640' AS DateTime), 0, 2, N'  فاتورة شراء رقم 2 للعميل مورد افتراضي- خصم ')
+GO
+INSERT [dbo].[Journals] ([ID], [Code], [AccountID], [Debit], [Credit], [InsertDate], [SourceType], [SourceID], [Notes]) VALUES (28, 54545, 2, 575, 0, CAST(N'2022-04-01T09:01:34.640' AS DateTime), 0, 2, N'  فاتورة شراء رقم 2 للعميل مورد افتراضي- خصم ')
+GO
+SET IDENTITY_INSERT [dbo].[Journals] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Product] ON 
+GO
+INSERT [dbo].[Product] ([ID], [Code], [Name], [Type], [Descreption], [IsActive], [Image], [CategoryID], [CostCalculationMethod]) VALUES (1, N'1', N'جبنة', 0, N'', 1, 0x, 2, 1)
+GO
+INSERT [dbo].[Product] ([ID], [Code], [Name], [Type], [Descreption], [IsActive], [Image], [CategoryID], [CostCalculationMethod]) VALUES (2, N'2', N'مربى', 0, N'', 1, 0x, 2, 1)
+GO
+INSERT [dbo].[Product] ([ID], [Code], [Name], [Type], [Descreption], [IsActive], [Image], [CategoryID], [CostCalculationMethod]) VALUES (3, N'3', N'عسل', 0, N'', 1, 0x, 2, 1)
+GO
+SET IDENTITY_INSERT [dbo].[Product] OFF
+GO
+SET IDENTITY_INSERT [dbo].[ProductCategory] ON 
+GO
+INSERT [dbo].[ProductCategory] ([ID], [ParentID], [Name], [Number]) VALUES (1, 1, N'الكل', N'0                                                 ')
+GO
+INSERT [dbo].[ProductCategory] ([ID], [ParentID], [Name], [Number]) VALUES (2, 1, N'مواد غذائية', N'0                                                 ')
+GO
+SET IDENTITY_INSERT [dbo].[ProductCategory] OFF
+GO
+SET IDENTITY_INSERT [dbo].[ProductUnits] ON 
+GO
+INSERT [dbo].[ProductUnits] ([ID], [ProductID], [UnitID], [Factor], [BuyPrice], [SellPrice], [SellDiscount], [Barcode]) VALUES (1, 1, 1, 1, 50, 60, 0, N'2022001')
+GO
+INSERT [dbo].[ProductUnits] ([ID], [ProductID], [UnitID], [Factor], [BuyPrice], [SellPrice], [SellDiscount], [Barcode]) VALUES (2, 2, 1, 1, 90, 100, 0, N'2022002')
+GO
+INSERT [dbo].[ProductUnits] ([ID], [ProductID], [UnitID], [Factor], [BuyPrice], [SellPrice], [SellDiscount], [Barcode]) VALUES (3, 2, 2, 20, 1500, 1700, 0, N'2022003')
+GO
+INSERT [dbo].[ProductUnits] ([ID], [ProductID], [UnitID], [Factor], [BuyPrice], [SellPrice], [SellDiscount], [Barcode]) VALUES (4, 3, 1, 1, 180, 200, 0, N'2022004')
+GO
+INSERT [dbo].[ProductUnits] ([ID], [ProductID], [UnitID], [Factor], [BuyPrice], [SellPrice], [SellDiscount], [Barcode]) VALUES (5, 3, 2, 10, 1500, 1800, 0, N'2022005')
+GO
+SET IDENTITY_INSERT [dbo].[ProductUnits] OFF
+GO
+SET IDENTITY_INSERT [dbo].[StoreLog] ON 
+GO
+INSERT [dbo].[StoreLog] ([ID], [SourceType], [SourceID], [ProductID], [StoreID], [Qty], [IsInTransaction], [CostValue], [InsertTime], [Notes]) VALUES (5, 1, 5, 1, 1, 5, 0, 58.303571428571431, CAST(N'2022-04-01T16:18:50.377' AS DateTime), N'  فاتورة مبيعات رقم 7 للعميل عميل افتراضي')
+GO
+INSERT [dbo].[StoreLog] ([ID], [SourceType], [SourceID], [ProductID], [StoreID], [Qty], [IsInTransaction], [CostValue], [InsertTime], [Notes]) VALUES (6, 1, 6, 2, 1, 7, 0, 75.415178571428569, CAST(N'2022-04-01T16:18:50.377' AS DateTime), N'  فاتورة مبيعات رقم 7 للعميل عميل افتراضي')
+GO
+INSERT [dbo].[StoreLog] ([ID], [SourceType], [SourceID], [ProductID], [StoreID], [Qty], [IsInTransaction], [CostValue], [InsertTime], [Notes]) VALUES (7, 1, 7, 3, 1, 3, 0, 150.83035714285714, CAST(N'2022-04-01T16:18:50.377' AS DateTime), N'  فاتورة مبيعات رقم 7 للعميل عميل افتراضي')
+GO
+INSERT [dbo].[StoreLog] ([ID], [SourceType], [SourceID], [ProductID], [StoreID], [Qty], [IsInTransaction], [CostValue], [InsertTime], [Notes]) VALUES (8, 3, 8, 2, 1, 5, 1, 75.415178571428569, CAST(N'2022-04-01T16:19:42.733' AS DateTime), N'  فاتورة مردود مبيعات رقم 8 للعميل عميل افتراضي')
+GO
+INSERT [dbo].[StoreLog] ([ID], [SourceType], [SourceID], [ProductID], [StoreID], [Qty], [IsInTransaction], [CostValue], [InsertTime], [Notes]) VALUES (9, 3, 9, 2, 1, 2, 1, 75.415178571428569, CAST(N'2022-04-01T16:22:31.123' AS DateTime), N'  فاتورة مردود مبيعات رقم 9 للعميل عميل افتراضي')
+GO
+INSERT [dbo].[StoreLog] ([ID], [SourceType], [SourceID], [ProductID], [StoreID], [Qty], [IsInTransaction], [CostValue], [InsertTime], [Notes]) VALUES (10, 0, 1, 1, 1, 25, 1, 58.303571428571431, CAST(N'2022-04-01T09:01:34.643' AS DateTime), N'  فاتورة شراء رقم 2 للعميل مورد افتراضي')
+GO
+INSERT [dbo].[StoreLog] ([ID], [SourceType], [SourceID], [ProductID], [StoreID], [Qty], [IsInTransaction], [CostValue], [InsertTime], [Notes]) VALUES (11, 0, 2, 2, 1, 40, 1, 75.415178571428569, CAST(N'2022-04-01T09:01:34.643' AS DateTime), N'  فاتورة شراء رقم 2 للعميل مورد افتراضي')
+GO
+INSERT [dbo].[StoreLog] ([ID], [SourceType], [SourceID], [ProductID], [StoreID], [Qty], [IsInTransaction], [CostValue], [InsertTime], [Notes]) VALUES (12, 0, 3, 3, 1, 10, 1, 150.83035714285714, CAST(N'2022-04-01T09:01:34.643' AS DateTime), N'  فاتورة شراء رقم 2 للعميل مورد افتراضي')
+GO
+SET IDENTITY_INSERT [dbo].[StoreLog] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Stores] ON 
+GO
+INSERT [dbo].[Stores] ([ID], [Name], [SalesAccountID], [SalesReturnAccountID], [InventoryAccountID], [CostOfSoldGoodsAccountID], [DiscountReceivedAccountID], [DiscountAllowedAccountID]) VALUES (1, N'مخزن افتراضي', 3, 4, 5, 6, 77, 78)
+GO
+SET IDENTITY_INSERT [dbo].[Stores] OFF
+GO
+SET IDENTITY_INSERT [dbo].[UnitName] ON 
+GO
+INSERT [dbo].[UnitName] ([ID], [Name]) VALUES (1, N'قطعة')
+GO
+INSERT [dbo].[UnitName] ([ID], [Name]) VALUES (2, N'كرتونة')
+GO
+SET IDENTITY_INSERT [dbo].[UnitName] OFF
+GO
+SET IDENTITY_INSERT [dbo].[UserAccessProfileDetails] ON 
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (153, 1, 1, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (154, 1, 2, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (155, 1, 3, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (156, 1, 4, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (157, 1, 5, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (158, 1, 6, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (159, 1, 7, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (160, 1, 8, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (161, 1, 9, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (162, 1, 10, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (163, 1, 11, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (164, 1, 12, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (165, 1, 13, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (166, 1, 14, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (167, 1, 15, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (168, 1, 16, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (169, 1, 17, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (170, 1, 18, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (171, 1, 19, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (172, 1, 20, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (173, 1, 21, 0, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (174, 1, 22, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (175, 1, 23, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (176, 1, 24, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (177, 1, 25, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (178, 1, 26, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (179, 1, 27, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (180, 1, 28, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (181, 1, 29, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (182, 1, 30, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (183, 1, 31, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (184, 1, 32, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (185, 1, 33, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (186, 1, 34, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (187, 1, 35, 0, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (188, 1, 36, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (189, 1, 37, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[UserAccessProfileDetails] ([ID], [ProfileID], [ScreenID], [CanShow], [CanOpen], [CanAdd], [CanEdit], [CanDelete], [CanPrint]) VALUES (190, 1, 38, 0, 1, 1, 1, 1, 1)
+GO
+SET IDENTITY_INSERT [dbo].[UserAccessProfileDetails] OFF
+GO
+SET IDENTITY_INSERT [dbo].[UserAccessProfileName] ON 
+GO
+INSERT [dbo].[UserAccessProfileName] ([ID], [Name]) VALUES (1, N'FullAccess')
+GO
+SET IDENTITY_INSERT [dbo].[UserAccessProfileName] OFF
+GO
+SET IDENTITY_INSERT [dbo].[UserLog] ON 
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (1, 8, CAST(N'2022-04-01T08:37:46.800' AS DateTime), 26, 1, 8, N'admin')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (2, 8, CAST(N'2022-04-01T08:37:54.900' AS DateTime), 26, 1, 8, N'admin')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (3, 8, CAST(N'2022-04-01T08:38:50.253' AS DateTime), 26, 0, 9, N'a')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (4, 9, CAST(N'2022-04-01T08:39:33.277' AS DateTime), 26, 2, 9, N'a')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (5, 8, CAST(N'2022-04-01T08:45:16.547' AS DateTime), 26, 2, 9, N'a')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (6, 8, CAST(N'2022-04-01T08:47:44.783' AS DateTime), 4, 0, 1, N'علي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (7, 8, CAST(N'2022-04-01T08:48:09.163' AS DateTime), 4, 1, 1, N'عميل افتراضي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (8, 8, CAST(N'2022-04-01T08:48:38.263' AS DateTime), 7, 0, 2, N'مورد افتراضي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (9, 8, CAST(N'2022-04-01T08:49:03.193' AS DateTime), 10, 0, 1, N'مخزن افتراضي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (10, 8, CAST(N'2022-04-01T08:49:23.783' AS DateTime), 13, 0, 1, N'خزنة افتراضية')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (11, 8, CAST(N'2022-04-01T08:50:00.327' AS DateTime), 38, 0, 1, N'الكل')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (12, 8, CAST(N'2022-04-01T08:50:22.117' AS DateTime), 38, 1, 1, N'مواد غذائية')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (13, 8, CAST(N'2022-04-01T08:50:38.670' AS DateTime), 38, 1, 1, N'الكل')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (14, 8, CAST(N'2022-04-01T08:50:57.830' AS DateTime), 38, 0, 1, N'الكل')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (15, 8, CAST(N'2022-04-01T08:51:39.313' AS DateTime), 16, 0, 1, N'جبنة')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (16, 8, CAST(N'2022-04-01T08:51:59.687' AS DateTime), 16, 1, 1, N'جبنة')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (17, 8, CAST(N'2022-04-01T08:52:35.217' AS DateTime), 16, 0, 2, N'مربى')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (18, 8, CAST(N'2022-04-01T08:53:41.007' AS DateTime), 16, 1, 2, N'مربى')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (19, 8, CAST(N'2022-04-01T08:56:12.647' AS DateTime), 16, 0, 3, N'عسل')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (20, 8, CAST(N'2022-04-01T08:58:07.450' AS DateTime), 16, 1, 3, N'عسل')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (21, 8, CAST(N'2022-04-01T09:02:24.310' AS DateTime), 19, 0, 2, N'1 - مورد افتراضي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (22, 8, CAST(N'2022-04-01T09:40:23.600' AS DateTime), 19, 0, 6, N'5 - مورد افتراضي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (23, 8, CAST(N'2022-04-01T09:58:25.967' AS DateTime), 22, 1, 1, N'AdminSetting')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (24, 8, CAST(N'2022-04-01T09:59:06.280' AS DateTime), 24, 1, 1, N'FullAccess')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (25, 8, CAST(N'2022-04-01T09:59:38.713' AS DateTime), 26, 0, 10, N'User')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (26, 8, CAST(N'2022-04-01T15:52:29.623' AS DateTime), 24, 1, 1, N'FullAccess')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (27, 8, CAST(N'2022-04-01T15:53:46.013' AS DateTime), 24, 1, 1, N'FullAccess')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (28, 8, CAST(N'2022-04-01T15:54:41.953' AS DateTime), 24, 1, 1, N'FullAccess')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (29, 8, CAST(N'2022-04-01T15:54:45.517' AS DateTime), 24, 1, 1, N'FullAccess')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (30, 8, CAST(N'2022-04-01T16:05:00.520' AS DateTime), 26, 1, 8, N'admin')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (31, 8, CAST(N'2022-04-01T16:19:29.543' AS DateTime), 29, 0, 7, N'1 - عميل افتراضي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (32, 8, CAST(N'2022-04-01T16:20:34.053' AS DateTime), 31, 0, 8, N'1 - عميل افتراضي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (33, 8, CAST(N'2022-04-01T16:23:26.477' AS DateTime), 31, 0, 9, N'2 - عميل افتراضي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (34, 8, CAST(N'2022-04-01T16:24:44.780' AS DateTime), 19, 2, 5, N'4 - مورد افتراضي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (35, 8, CAST(N'2022-04-01T16:24:52.460' AS DateTime), 19, 2, 4, N'3 - مورد افتراضي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (36, 8, CAST(N'2022-04-01T16:24:59.473' AS DateTime), 19, 2, 3, N'2 - مورد افتراضي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (37, 8, CAST(N'2022-04-01T16:25:15.107' AS DateTime), 19, 2, 6, N'5 - مورد افتراضي')
+GO
+INSERT [dbo].[UserLog] ([ID], [UserID], [ActionDate], [ScreenID], [ActionType], [PartID], [PartName]) VALUES (38, 8, CAST(N'2022-04-01T19:37:19.843' AS DateTime), 19, 1, 2, N'1 - مورد افتراضي')
+GO
+SET IDENTITY_INSERT [dbo].[UserLog] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Users] ON 
+GO
+INSERT [dbo].[Users] ([ID], [Name], [UserName], [Password], [UserType], [SettingsProfileID], [ScreenProfileID], [IsActive]) VALUES (8, N'admin', N'admin', N'$argon2i$v=19$m=8192,t=3,p=1$mPvV/gBmKaLHDqUkeSdY+w$Db+IKaFYM+HHuzAzfoOt3JTKa+abcdgfJ0aZTShX94s', 1, 1, NULL, 1)
+GO
+INSERT [dbo].[Users] ([ID], [Name], [UserName], [Password], [UserType], [SettingsProfileID], [ScreenProfileID], [IsActive]) VALUES (10, N'User', N'user', N'$argon2i$v=19$m=8192,t=3,p=1$HjfqW7EQun4AlWz0dMWLBQ$roy0D4mcb1QQ8YrQ9iFQJHYHH0sIFuZUDu/peEGk3CM', 2, 1, 1, 1)
+GO
+SET IDENTITY_INSERT [dbo].[Users] OFF
+GO
+SET IDENTITY_INSERT [dbo].[UserSettingsProfile] ON 
+GO
+INSERT [dbo].[UserSettingsProfile] ([ID], [Name]) VALUES (1, N'AdminSetting')
+GO
+SET IDENTITY_INSERT [dbo].[UserSettingsProfile] OFF
+GO
+SET IDENTITY_INSERT [dbo].[UserSettingsProfileProperties] ON 
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (1, 1, N'DefaultRowStore', 0x0001000000FFFFFFFF010000000000000004010000000C53797374656D2E496E74333201000000076D5F76616C75650008010000000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (2, 1, N'DefaultStore', 0x0001000000FFFFFFFF010000000000000004010000000C53797374656D2E496E74333201000000076D5F76616C75650008010000000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (3, 1, N'DefaultDrawer', 0x0001000000FFFFFFFF010000000000000004010000000C53797374656D2E496E74333201000000076D5F76616C75650008010000000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (4, 1, N'DefaultCustomer', 0x0001000000FFFFFFFF010000000000000004010000000C53797374656D2E496E74333201000000076D5F76616C75650008010000000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (5, 1, N'DefaultVendor', 0x0001000000FFFFFFFF010000000000000004010000000C53797374656D2E496E74333201000000076D5F76616C75650008020000000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (6, 1, N'CanChangeStore', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (7, 1, N'CanChangeDrawer', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (8, 1, N'CanChangeCustomer', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (9, 1, N'CanChangeVendor', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (10, 1, N'CanViewDocumentHistory', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (11, 1, N'CanChangeTax', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (12, 1, N'CanDeleteItemsInInvoices', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (13, 1, N'WhenSellingItemReachedReOrderLevel', 0x0001000000FFFFFFFF010000000000000004010000000C53797374656D2E496E74333201000000076D5F76616C75650008020000000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (14, 1, N'WhenSellingItemWithQtyMoreThanAvailableQty', 0x0001000000FFFFFFFF010000000000000004010000000C53797374656D2E496E74333201000000076D5F76616C75650008020000000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (15, 1, N'CanChangePaidInSales', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (16, 1, N'CanNotPostToStoreInSales', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (17, 1, N'DefaultPayMethodInSales', 0x0001000000FFFFFFFF010000000000000004010000000C53797374656D2E496E74333201000000076D5F76616C75650008010000000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (18, 1, N'WhenSellingToCustomerExeededMaxCredit', 0x0001000000FFFFFFFF010000000000000004010000000C53797374656D2E496E74333201000000076D5F76616C75650008020000000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (19, 1, N'CanChangeItemPriceInSales', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (20, 1, N'WhenSellingItemWithPriceLowerThanCostPrice', 0x0001000000FFFFFFFF010000000000000004010000000C53797374656D2E496E74333201000000076D5F76616C75650008020000000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (21, 1, N'MaxDiscountInInvoice', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E446563696D616C0400000005666C616773026869026C6F036D69640000000008080808000001000000000001000000000000000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (22, 1, N'MaxDiscountPerItem', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E446563696D616C0400000005666C616773026869026C6F036D69640000000008080808000001000000000001000000000000000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (23, 1, N'CanSellToVendor', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (24, 1, N'CanChangeSalesInvoiceDate', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (25, 1, N'CanChangeQtyInSales', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (26, 1, N'HideCostInSales', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001000B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (27, 1, N'CanChangeItemPriceInPurchase', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (28, 1, N'CanBuyFromCustomer', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+INSERT [dbo].[UserSettingsProfileProperties] ([ID], [ProfileID], [PropertyName], [PropertyValue]) VALUES (29, 1, N'CanChangePurchaseInvoiceDate', 0x0001000000FFFFFFFF010000000000000004010000000E53797374656D2E426F6F6C65616E01000000076D5F76616C75650001010B)
+GO
+SET IDENTITY_INSERT [dbo].[UserSettingsProfileProperties] OFF
+GO
+ALTER TABLE [dbo].[CustomersAndVendores] ADD  CONSTRAINT [DF_CustomersAndVendores_MaxCredit]  DEFAULT ((10000)) FOR [MaxCredit]
+GO
+ALTER TABLE [dbo].[Product] ADD  CONSTRAINT [DF_Product_CostCalculationMethod]  DEFAULT ((1)) FOR [CostCalculationMethod]
+GO
+ALTER TABLE [dbo].[Stores] ADD  CONSTRAINT [DF_Stores_SalesAccountID]  DEFAULT ((0)) FOR [SalesAccountID]
+GO
+ALTER TABLE [dbo].[Stores] ADD  CONSTRAINT [DF_Stores_SalesReturnAccountID]  DEFAULT ((0)) FOR [SalesReturnAccountID]
+GO
+ALTER TABLE [dbo].[Stores] ADD  CONSTRAINT [DF_Stores_InventoryAccountID]  DEFAULT ((0)) FOR [InventoryAccountID]
+GO
+ALTER TABLE [dbo].[Stores] ADD  CONSTRAINT [DF_Stores_CostOfSoldGoodsAccountID]  DEFAULT ((0)) FOR [CostOfSoldGoodsAccountID]
+GO
+ALTER TABLE [dbo].[Stores] ADD  CONSTRAINT [DF_Stores_DiscountReceivedAccountID]  DEFAULT ((0)) FOR [DiscountReceivedAccountID]
+GO
+ALTER TABLE [dbo].[Stores] ADD  CONSTRAINT [DF_Stores_DiscountAllowedAccountID]  DEFAULT ((0)) FOR [DiscountAllowedAccountID]
+GO
+alter database [SalesDB] set enable_broker with rollback immediate;
+GO

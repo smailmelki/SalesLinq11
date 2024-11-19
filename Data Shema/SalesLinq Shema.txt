@@ -1,0 +1,425 @@
+USE [SalesDB]
+GO
+/****** Object:  Table [dbo].[Accounts]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Accounts](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NULL,
+ CONSTRAINT [PK_Accounts] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[CashNotes]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CashNotes](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[IsCashIn] [bit] NOT NULL,
+	[Code] [nvarchar](25) NOT NULL,
+	[StoreID] [int] NOT NULL,
+	[PartType] [tinyint] NOT NULL,
+	[PartID] [int] NOT NULL,
+	[Drawer] [int] NOT NULL,
+	[Amount] [float] NOT NULL,
+	[DiscountValue] [float] NOT NULL,
+	[Date] [datetime] NOT NULL,
+	[Notes] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_CashNotes] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[CashNotesLinks]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CashNotesLinks](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[CashNoteID] [int] NOT NULL,
+	[invoiceType] [tinyint] NOT NULL,
+	[invoiceID] [int] NOT NULL,
+ CONSTRAINT [PK_CashNotesLinks] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[CompanyInfo]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CompanyInfo](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[CompanyName] [nvarchar](max) NOT NULL,
+	[Phone] [nvarchar](max) NULL,
+	[Mobile] [nvarchar](max) NULL,
+	[Address] [nvarchar](max) NULL,
+	[Logo] [image] NULL,
+ CONSTRAINT [PK_CompanyInfo] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[CustomersAndVendores]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CustomersAndVendores](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[Phone] [nvarchar](max) NULL,
+	[Mobile] [nvarchar](max) NULL,
+	[Address] [nvarchar](max) NULL,
+	[AccountID] [int] NOT NULL,
+	[IsCustomer] [bit] NOT NULL,
+	[MaxCredit] [float] NOT NULL,
+ CONSTRAINT [PK_CustomersAndVendores] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Drawers]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Drawers](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[AccountID] [int] NOT NULL,
+ CONSTRAINT [PK_Drawers] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[InvoiceDetails]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[InvoiceDetails](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[InvoiceID] [int] NOT NULL,
+	[ItemID] [int] NOT NULL,
+	[ItemUnitID] [int] NOT NULL,
+	[ItemQty] [float] NOT NULL,
+	[Price] [float] NOT NULL,
+	[TotalPrice] [float] NOT NULL,
+	[CostValue] [float] NOT NULL,
+	[TotalCostValue] [float] NOT NULL,
+	[Discount] [float] NOT NULL,
+	[DiscountValue] [float] NOT NULL,
+	[StoreID] [int] NOT NULL,
+	[sourceRowID] [int] NULL,
+ CONSTRAINT [PK_InvoiceDetails] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[InvoiceHeader]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[InvoiceHeader](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[InvoiceType] [tinyint] NOT NULL,
+	[Code] [nvarchar](max) NOT NULL,
+	[PartType] [tinyint] NOT NULL,
+	[PartID] [int] NOT NULL,
+	[Date] [datetime] NOT NULL,
+	[DelivaryDate] [datetime] NULL,
+	[Branch] [int] NOT NULL,
+	[Notes] [nvarchar](max) NULL,
+	[PostDate] [datetime] NULL,
+	[PostedToStore] [bit] NOT NULL,
+	[Total] [float] NOT NULL,
+	[DiscountValue] [float] NOT NULL,
+	[DiscountRation] [float] NOT NULL,
+	[Tax] [float] NOT NULL,
+	[TaxValue] [float] NOT NULL,
+	[Expences] [float] NOT NULL,
+	[Net] [float] NOT NULL,
+	[Paid] [float] NOT NULL,
+	[Drawer] [int] NOT NULL,
+	[Remaing] [float] NOT NULL,
+	[ShippingAddress] [nvarchar](max) NULL,
+	[SourceType] [tinyint] NULL,
+	[SourceID] [int] NULL,
+ CONSTRAINT [PK_InvoiceHeader] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Journals]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Journals](
+	[ID] [bigint] IDENTITY(1,1) NOT NULL,
+	[Code] [bigint] NOT NULL,
+	[AccountID] [int] NOT NULL,
+	[Debit] [float] NOT NULL,
+	[Credit] [float] NOT NULL,
+	[InsertDate] [datetime] NOT NULL,
+	[SourceType] [tinyint] NOT NULL,
+	[SourceID] [int] NOT NULL,
+	[Notes] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_Journals] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Product]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Product](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Code] [nvarchar](max) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[Type] [tinyint] NOT NULL,
+	[Descreption] [nvarchar](max) NULL,
+	[IsActive] [bit] NOT NULL,
+	[Image] [varbinary](max) NULL,
+	[CategoryID] [int] NOT NULL,
+	[CostCalculationMethod] [tinyint] NOT NULL,
+ CONSTRAINT [PK_Product] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ProductCategory]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ProductCategory](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ParentID] [int] NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[Number] [nchar](50) NOT NULL,
+ CONSTRAINT [PK_ProductCategory] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ProductUnits]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ProductUnits](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ProductID] [int] NOT NULL,
+	[UnitID] [int] NOT NULL,
+	[Factor] [float] NOT NULL,
+	[BuyPrice] [float] NOT NULL,
+	[SellPrice] [float] NOT NULL,
+	[SellDiscount] [float] NOT NULL,
+	[Barcode] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_ProductUnits] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[StoreLog]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[StoreLog](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[SourceType] [tinyint] NOT NULL,
+	[SourceID] [int] NOT NULL,
+	[ProductID] [int] NOT NULL,
+	[StoreID] [int] NOT NULL,
+	[Qty] [float] NOT NULL,
+	[IsInTransaction] [bit] NOT NULL,
+	[CostValue] [float] NOT NULL,
+	[InsertTime] [datetime] NOT NULL,
+	[Notes] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_StoreLog] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Stores]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Stores](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[SalesAccountID] [int] NOT NULL,
+	[SalesReturnAccountID] [int] NOT NULL,
+	[InventoryAccountID] [int] NOT NULL,
+	[CostOfSoldGoodsAccountID] [int] NOT NULL,
+	[DiscountReceivedAccountID] [int] NOT NULL,
+	[DiscountAllowedAccountID] [int] NOT NULL,
+ CONSTRAINT [PK_Stores] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UnitName]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UnitName](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_UnitName] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserAccessProfileDetails]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserAccessProfileDetails](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ProfileID] [int] NOT NULL,
+	[ScreenID] [int] NOT NULL,
+	[CanShow] [bit] NOT NULL,
+	[CanOpen] [bit] NOT NULL,
+	[CanAdd] [bit] NOT NULL,
+	[CanEdit] [bit] NOT NULL,
+	[CanDelete] [bit] NOT NULL,
+	[CanPrint] [bit] NOT NULL,
+ CONSTRAINT [PK_UserAccessProfileDetails] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserAccessProfileName]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserAccessProfileName](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_UserAccessProfileName] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserLog]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserLog](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[UserID] [int] NOT NULL,
+	[ActionDate] [datetime] NOT NULL,
+	[ScreenID] [int] NOT NULL,
+	[ActionType] [tinyint] NOT NULL,
+	[PartID] [int] NOT NULL,
+	[PartName] [nvarchar](500) NOT NULL,
+ CONSTRAINT [PK_UserLog] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Users](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[UserName] [nvarchar](max) NOT NULL,
+	[Password] [nvarchar](max) NOT NULL,
+	[UserType] [tinyint] NOT NULL,
+	[SettingsProfileID] [int] NULL,
+	[ScreenProfileID] [int] NULL,
+	[IsActive] [bit] NOT NULL,
+ CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserSettingsProfile]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserSettingsProfile](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_UserSettingsProfile] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserSettingsProfileProperties]    Script Date: 01-04-2022 19:40:49 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserSettingsProfileProperties](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ProfileID] [int] NOT NULL,
+	[PropertyName] [nvarchar](max) NOT NULL,
+	[PropertyValue] [varbinary](max) NOT NULL,
+ CONSTRAINT [PK_UserSettingsProfileProperties] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[CustomersAndVendores] ADD  CONSTRAINT [DF_CustomersAndVendores_MaxCredit]  DEFAULT ((10000)) FOR [MaxCredit]
+GO
+ALTER TABLE [dbo].[Product] ADD  CONSTRAINT [DF_Product_CostCalculationMethod]  DEFAULT ((1)) FOR [CostCalculationMethod]
+GO
+ALTER TABLE [dbo].[Stores] ADD  CONSTRAINT [DF_Stores_SalesAccountID]  DEFAULT ((0)) FOR [SalesAccountID]
+GO
+ALTER TABLE [dbo].[Stores] ADD  CONSTRAINT [DF_Stores_SalesReturnAccountID]  DEFAULT ((0)) FOR [SalesReturnAccountID]
+GO
+ALTER TABLE [dbo].[Stores] ADD  CONSTRAINT [DF_Stores_InventoryAccountID]  DEFAULT ((0)) FOR [InventoryAccountID]
+GO
+ALTER TABLE [dbo].[Stores] ADD  CONSTRAINT [DF_Stores_CostOfSoldGoodsAccountID]  DEFAULT ((0)) FOR [CostOfSoldGoodsAccountID]
+GO
+ALTER TABLE [dbo].[Stores] ADD  CONSTRAINT [DF_Stores_DiscountReceivedAccountID]  DEFAULT ((0)) FOR [DiscountReceivedAccountID]
+GO
+ALTER TABLE [dbo].[Stores] ADD  CONSTRAINT [DF_Stores_DiscountAllowedAccountID]  DEFAULT ((0)) FOR [DiscountAllowedAccountID]
+GO
+alter database [SalesDB] set enable_broker with rollback immediate;
+GO
