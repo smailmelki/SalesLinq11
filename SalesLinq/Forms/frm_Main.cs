@@ -154,11 +154,33 @@ namespace SalesLinq.Forms
         /// <param name="e"></param>
         private void Frm_Main_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Settings.Default.SkinName = UserLookAndFeel.Default.SkinName;
-            Settings.Default.PaletteName = UserLookAndFeel.Default.ActiveSvgPaletteName;
-            Settings.Default.Save();
-            Application.Exit();
+            // التحقق إذا كان الإغلاق قد تم إلغاؤه بالفعل
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                // عرض رسالة تأكيد للمستخدم قبل الإغلاق
+                DialogResult result = XtraMessageBox.Show(
+                    "هل أنت متأكد أنك تريد إغلاق التطبيق؟",  // نص الرسالة
+                    "تنبيه",  // عنوان الرسالة
+                    MessageBoxButtons.YesNo,  // الأزرار التي ستظهر للمستخدم
+                    MessageBoxIcon.Question,  // نوع الأيقونة التي ستظهر
+                    MessageBoxDefaultButton.Button2
+                );
+
+                // إذا اختار المستخدم نعم، يتم حفظ الإعدادات وإغلاق التطبيق
+                if (result == DialogResult.Yes)
+                {
+                    Settings.Default.SkinName = UserLookAndFeel.Default.SkinName;  // حفظ اسم السمة
+                    Settings.Default.PaletteName = UserLookAndFeel.Default.ActiveSvgPaletteName;  // حفظ لوحة الألوان
+                    Settings.Default.Save();  // حفظ الإعدادات
+                    Application.Exit();  // إغلاق التطبيق
+                }
+                else
+                {
+                    e.Cancel = true;  // إلغاء عملية الإغلاق إذا اختار المستخدم لا
+                }
+            }
         }
+
 
         private void Frm_Main_Load(object sender, EventArgs e)
         {

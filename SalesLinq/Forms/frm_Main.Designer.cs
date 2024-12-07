@@ -40,10 +40,10 @@
             this.skinDropDownButtonItem2 = new DevExpress.XtraBars.SkinDropDownButtonItem();
             this.skinPaletteDropDownButtonItem2 = new DevExpress.XtraBars.SkinPaletteDropDownButtonItem();
             this.btn_SignOut = new DevExpress.XtraBars.BarButtonItem();
+            this.Lbl_UserName = new DevExpress.XtraBars.BarStaticItem();
             this.fluentFormDefaultManager1 = new DevExpress.XtraBars.FluentDesignSystem.FluentFormDefaultManager(this.components);
             this.accordionControlElement12 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.accordionControlElement13 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            this.Lbl_UserName = new DevExpress.XtraBars.BarStaticItem();
             ((System.ComponentModel.ISupportInitialize)(this.accordionControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fluentDesignFormControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fluentFormDefaultManager1)).BeginInit();
@@ -52,20 +52,20 @@
             // fluentDesignFormContainer1
             // 
             this.fluentDesignFormContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fluentDesignFormContainer1.Location = new System.Drawing.Point(321, 31);
-            this.fluentDesignFormContainer1.Margin = new System.Windows.Forms.Padding(4);
+            this.fluentDesignFormContainer1.Location = new System.Drawing.Point(464, 46);
+            this.fluentDesignFormContainer1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.fluentDesignFormContainer1.Name = "fluentDesignFormContainer1";
-            this.fluentDesignFormContainer1.Size = new System.Drawing.Size(928, 683);
+            this.fluentDesignFormContainer1.Size = new System.Drawing.Size(1340, 969);
             this.fluentDesignFormContainer1.TabIndex = 0;
             // 
             // accordionControl1
             // 
             this.accordionControl1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.accordionControl1.Location = new System.Drawing.Point(0, 31);
-            this.accordionControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.accordionControl1.Location = new System.Drawing.Point(0, 46);
+            this.accordionControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.accordionControl1.Name = "accordionControl1";
             this.accordionControl1.ScrollBarMode = DevExpress.XtraBars.Navigation.ScrollBarMode.Touch;
-            this.accordionControl1.Size = new System.Drawing.Size(321, 683);
+            this.accordionControl1.Size = new System.Drawing.Size(464, 969);
             this.accordionControl1.TabIndex = 1;
             this.accordionControl1.ViewType = DevExpress.XtraBars.Navigation.AccordionControlViewType.HamburgerMenu;
             // 
@@ -90,9 +90,9 @@
             this.Lbl_UserName});
             this.fluentDesignFormControl1.Location = new System.Drawing.Point(0, 0);
             this.fluentDesignFormControl1.Manager = this.fluentFormDefaultManager1;
-            this.fluentDesignFormControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.fluentDesignFormControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.fluentDesignFormControl1.Name = "fluentDesignFormControl1";
-            this.fluentDesignFormControl1.Size = new System.Drawing.Size(1249, 31);
+            this.fluentDesignFormControl1.Size = new System.Drawing.Size(1804, 46);
             this.fluentDesignFormControl1.TabIndex = 2;
             this.fluentDesignFormControl1.TabStop = false;
             this.fluentDesignFormControl1.TitleItemLinks.Add(this.skinBarSubItem1);
@@ -141,6 +141,13 @@
             this.btn_SignOut.Name = "btn_SignOut";
             this.btn_SignOut.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.Btn_SignOut_ItemClick);
             // 
+            // Lbl_UserName
+            // 
+            this.Lbl_UserName.Alignment = DevExpress.XtraBars.BarItemLinkAlignment.Right;
+            this.Lbl_UserName.Caption = "...................";
+            this.Lbl_UserName.Id = 7;
+            this.Lbl_UserName.Name = "Lbl_UserName";
+            // 
             // fluentFormDefaultManager1
             // 
             this.fluentFormDefaultManager1.Form = this;
@@ -170,30 +177,23 @@
             this.accordionControlElement13.Tag = "frm_DrawerList";
             this.accordionControlElement13.Text = "قائمة الخزن";
             // 
-            // Lbl_UserName
-            // 
-            this.Lbl_UserName.Alignment = DevExpress.XtraBars.BarItemLinkAlignment.Right;
-            this.Lbl_UserName.Caption = "...................";
-            this.Lbl_UserName.Id = 7;
-            this.Lbl_UserName.Name = "Lbl_UserName";
-            // 
             // frm_Main
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 27F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1249, 714);
+            this.ClientSize = new System.Drawing.Size(1804, 1015);
             this.ControlContainer = this.fluentDesignFormContainer1;
             this.Controls.Add(this.fluentDesignFormContainer1);
             this.Controls.Add(this.accordionControl1);
             this.Controls.Add(this.fluentDesignFormControl1);
             this.FluentDesignFormControl = this.fluentDesignFormControl1;
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "frm_Main";
             this.NavigationControl = this.accordionControl1;
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.RightToLeftLayout = true;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "frm_Main";
+            this.Text = "الصفحة الرئيسية";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Frm_Main_FormClosing);
             this.Load += new System.EventHandler(this.Frm_Main_Load);
