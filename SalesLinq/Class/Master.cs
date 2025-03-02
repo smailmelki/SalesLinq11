@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.RegularExpressions;
 
 namespace SalesLinq.Class
 {
@@ -366,6 +367,36 @@ namespace SalesLinq.Class
             // استبدال الجزء الرقمي القديم بالجديد مع الحفاظ على طول النص
             return OldCode.Replace(NumericPart, NewNumber.ToString().PadLeft(NumericPart.Length, '0'));
         }
+       
+
+        /// <summary>
+        /// دالة لتوليد كود جديد بناءً على الكود السابق بنفس التنسيق
+        /// </summary>
+        /// <param name="OldCode">الكود السابق</param>
+        /// <returns>كود جديد بنفس التنسيق</returns>
+        public static string GetNextNumberInString2(string OldCode)
+        {
+            // إذا كان النص فارغًا أو null، نرجع "1"
+            if (string.IsNullOrEmpty(OldCode))
+                return "1";
+
+            // استخدام Regex لاستخراج الجزء الرقمي في نهاية النص
+            Match match = Regex.Match(OldCode, @"(\d+)$");
+
+            if (!match.Success)
+                return OldCode + "1"; // إذا لم يكن هناك أرقام، نضيف "1" إلى النص
+
+            string numericPart = match.Value; // الجزء الرقمي من النص
+            if (!long.TryParse(numericPart, out long number))
+                return OldCode + "1"; // في حالة حدوث خطأ في التحويل
+
+            number++; // زيادة الرقم بمقدار 1
+
+            // استبدال الجزء الرقمي القديم بالجديد مع الحفاظ على نفس عدد الأصفار البادئة
+            return Regex.Replace(OldCode, @"\d+$", number.ToString().PadLeft(numericPart.Length, '0'));
+        }
+
+
 
         /// <summary>
         /// دالة تحول أي يبانات بنظام ثنائي الى النظام العادي
