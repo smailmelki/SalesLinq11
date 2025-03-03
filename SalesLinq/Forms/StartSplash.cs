@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using DevExpress.XtraSplashScreen;
 
 namespace SalesLinq.Forms
@@ -14,7 +8,7 @@ namespace SalesLinq.Forms
         public StartSplash()
         {
             InitializeComponent();
-            this.labelCopyright.Text = "Copyright © 1998-" + DateTime.Now.Year.ToString();
+            this.labelCopyright.Text = "Copyright © 2011-" + DateTime.Now.Year.ToString();
         }
 
         #region Overrides

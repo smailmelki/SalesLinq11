@@ -102,12 +102,18 @@ namespace SalesLinq.Class
         /// زر اضافة مورد تابع لمجموعة الموردون
         /// </summary>
         public static ScreensAccessProfile AddVendor = new ScreensAccessProfile("frm_Vendor", Vendors)
-        { ScreenCaption = "اضافة مورد" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "اضافة مورد"
+        };
         /// <summary>
         /// زر عرض الموردين تابع لمجموعة الموردون
         /// </summary>
         public static ScreensAccessProfile ViewVendors = new ScreensAccessProfile("frm_VendorList", Vendors)
-        { ScreenCaption = "عرض الموردين" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "عرض الموردين" 
+        };
         /// <summary>
         /// زر مجموعة الأفرع أو المخازن 
         /// </summary>
@@ -120,12 +126,18 @@ namespace SalesLinq.Class
         /// زر اضافة مخزن تابع لمجموعة المخازن
         /// </summary>
         public static ScreensAccessProfile AddStore = new ScreensAccessProfile(nameof(frm_Stores), Stores)
-        { ScreenCaption = "اضافة مخزن" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "اضافة مخزن" 
+        };
         /// <summary>
         /// زر عرض المخازن تابع لمجموعة المخازن
         /// </summary>
         public static ScreensAccessProfile ViewStores = new ScreensAccessProfile(nameof(frm_StoresList), Stores)
-        { ScreenCaption = "عرض المخازن" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "عرض المخازن" 
+        };
         /// <summary>
         /// زر مجموعة الخزن 
         /// </summary>
@@ -138,12 +150,18 @@ namespace SalesLinq.Class
         /// زر اضافة خزنة تابع لمجموعة الخزن
         /// </summary>
         public static ScreensAccessProfile AddDrawer = new ScreensAccessProfile(nameof(frm_Drawer), Drawers)
-        { ScreenCaption = "اضافة خزنة" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "اضافة خزنة" 
+        };
         /// <summary>
         /// زر عرض الخزن تابع لمجموعة الخزن
         /// </summary>
         public static ScreensAccessProfile ViewDrawers = new ScreensAccessProfile(nameof(frm_DrawerList), Drawers)
-        { ScreenCaption = "عرض الخزن" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "عرض الخزن" 
+        };
         /// <summary>
         /// زر مجموعة الأصناف 
         /// </summary>
@@ -156,17 +174,26 @@ namespace SalesLinq.Class
         /// زر عرض الأصناف تابع لمجموعة الأصناف
         /// </summary>
         public static ScreensAccessProfile ProductCategory = new ScreensAccessProfile(nameof(frm_ProductCategory), Products)
-        { ScreenCaption = "مجموعات الأصناف" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "مجموعات الأصناف" 
+        };
         /// <summary>
         /// زر اضافة صنف تابع لمجموعة الأصناف
         /// </summary>
         public static ScreensAccessProfile AddProduct = new ScreensAccessProfile(nameof(frm_Product), Products)
-        { ScreenCaption = "اضافة صنف" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "اضافة صنف" 
+        };
         /// <summary>
         /// زر عرض الأصناف تابع لمجموعة الأصناف
         /// </summary>
         public static ScreensAccessProfile ViewProducts = new ScreensAccessProfile(nameof(frm_ProductList), Products)
-        { ScreenCaption = "عرض الأصناف" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "عرض الأصناف" 
+        };
         /// <summary>
         /// زر مجموعة المشتريات
         /// </summary>
@@ -179,12 +206,34 @@ namespace SalesLinq.Class
         ///  زر اضافة فاتورة مشتريات تابع لمجموعة المشتريات
         /// </summary>
         public static ScreensAccessProfile AddPurchaseInvoice = new ScreensAccessProfile("frm_PurchaseInvoice", Purchases)
-        { ScreenCaption = "اضافة فاتورة مشتريات" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete, Master.Actions.Print },
+            ScreenCaption = "اضافة فاتورة مشتريات" 
+        };
         /// <summary>
         ///  زر عرض فواتير المشتريات تابع لمجموعة المشتريات
         /// </summary>
         public static ScreensAccessProfile ViewPurchaseInvoice = new ScreensAccessProfile("frm_PurchaseInvoiceList", Purchases)
-        { ScreenCaption = "عرض فواتير المشتريات" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Print },
+            ScreenCaption = "عرض فواتير المشتريات" 
+        };
+        /// <summary>
+        ///  زر اضافة فاتورة مردود مشتريات تابع لمجموعة المشتريات
+        /// </summary>
+        public static ScreensAccessProfile AddPurchaseReturnInvoice = new ScreensAccessProfile("frm_PurchaseReturnInvoice", Purchases)
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete, Master.Actions.Print },
+            ScreenCaption = "اضافة فاتورة مردود مشتريات" 
+        };
+        /// <summary>
+        ///  زر عرض فواتير مردود المشتريات تابع لمجموعة المشتريات
+        /// </summary>
+        public static ScreensAccessProfile ViewPurchaseReturnInvoice = new ScreensAccessProfile("frm_PurchaseReturnInvoiceList", Purchases)
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Print },
+            ScreenCaption = "عرض فواتير مردود المشتريات" 
+        };
         /// <summary>
         /// زر مجموعة الاعدادات 
         /// </summary>
@@ -197,32 +246,58 @@ namespace SalesLinq.Class
         /// زر اضافة نموذج اعدادات تابع لمجموعة الاعدادات
         /// </summary>
         public static ScreensAccessProfile AddUserSettingsProfile = new ScreensAccessProfile(nameof(frm_UserSettingsProfile), Settings)
-        { ScreenCaption = "اضافة نموذج اعدادات" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "اضافة نموذج اعدادات" 
+        };
         /// <summary>
         /// زر عرض نماذج الاعدادات تابع لمجموعة الاعدادات
         /// </summary>
         public static ScreensAccessProfile ViewUserSettingsProfile = new ScreensAccessProfile(nameof(frm_UserSettingsProfileList), Settings)
-        { ScreenCaption = "عرض نماذج الاعدادات" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "عرض نماذج الاعدادات" 
+        };
         /// <summary>
         /// زر اضافة نموذج صلاحيات الوصول تابع لمجموعة الاعدادات
         /// </summary>
         public static ScreensAccessProfile AddAccessProfile = new ScreensAccessProfile(nameof(frm_AccessProfile), Settings)
-        { ScreenCaption = "اضافة نموذج صلاحيات الوصول" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "اضافة نموذج صلاحيات الوصول" 
+        };
         /// <summary>
         /// زر عرض نماذج صلاحيات الوصول تابع لمجموعة الاعدادات
         /// </summary>
         public static ScreensAccessProfile ViewAccessProfile = new ScreensAccessProfile(nameof(frm_AccessProfileList), Settings)
-        { ScreenCaption = "عرض نماذج صلاحيات الوصول" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "عرض نماذج صلاحيات الوصول" 
+        };
         /// <summary>
         /// زر اضافة مستخدم تابع لمجموعة الاعدادات
         /// </summary>
         public static ScreensAccessProfile AddUser = new ScreensAccessProfile(nameof(frm_User), Settings)
-        { ScreenCaption = "اضافة مستخدم" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "اضافة مستخدم"
+        };
         /// <summary>
         /// زر عرض المستخدمين تابع لمجموعة الاعدادات
         /// </summary>
         public static ScreensAccessProfile ViewUser = new ScreensAccessProfile(nameof(frm_UserList), Settings)
-        { ScreenCaption = "عرض المستخدمين" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add },//الاكشن الموجودة في هذه الشاشة
+            ScreenCaption = "عرض المستخدمين" 
+        };
+        /// <summary>
+        /// زر عرض المستخدمين تابع لمجموعة الاعدادات
+        /// </summary>
+        public static ScreensAccessProfile ViewSetting = new ScreensAccessProfile(nameof(ConnectionSettingsForm), Settings)
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open },
+            ScreenCaption = "اعدادات الاتصال" 
+        };
         /// <summary>
         /// زر مجموعة المبيعات
         /// </summary>
@@ -235,32 +310,34 @@ namespace SalesLinq.Class
         ///  زر اضافة فاتورة مبيعات تابع لمجموعة المبيعات
         /// </summary>
         public static ScreensAccessProfile AddSalesInvoice = new ScreensAccessProfile("frm_SalesInvoice", Sales)
-        { ScreenCaption = "اضافة فاتورة مبيعات" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete, Master.Actions.Print },
+            ScreenCaption = "اضافة فاتورة مبيعات"
+        };
         /// <summary>
         ///  زر عرض فواتير المبيعات تابع لمجموعة المبيعات
         /// </summary>
         public static ScreensAccessProfile ViewSalesInvoice = new ScreensAccessProfile("frm_SalesInvoiceList", Sales)
-        { ScreenCaption = "عرض فواتير المبيعات" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Print },
+            ScreenCaption = "عرض فواتير المبيعات" 
+        };
         /// <summary>
         ///  زر اضافة فاتورة مردود مبيعات تابع لمجموعة المبيعات
         /// </summary>
         public static ScreensAccessProfile AddSalesReturnInvoice = new ScreensAccessProfile("frm_SalesReturnInvoice", Sales)
-        { ScreenCaption = "اضافة فاتورة مردود مبيعات" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Edit, Master.Actions.Delete, Master.Actions.Print },
+            ScreenCaption = "اضافة فاتورة مردود مبيعات" 
+        };
         /// <summary>
         ///  زر عرض فواتير مردود المبيعات تابع لمجموعة المبيعات
         /// </summary>
         public static ScreensAccessProfile ViewSalesReturnInvoice = new ScreensAccessProfile("frm_SalesReturnInvoiceList", Sales)
-        { ScreenCaption = "عرض فواتير مردود المبيعات" };
-        /// <summary>
-        ///  زر اضافة فاتورة مردود مشتريات تابع لمجموعة المشتريات
-        /// </summary>
-        public static ScreensAccessProfile AddPurchaseReturnInvoice = new ScreensAccessProfile("frm_PurchaseReturnInvoice", Purchases)
-        { ScreenCaption = "اضافة فاتورة مردود مشتريات" };
-        /// <summary>
-        ///  زر عرض فواتير مردود المشتريات تابع لمجموعة المشتريات
-        /// </summary>
-        public static ScreensAccessProfile ViewPurchaseReturnInvoice = new ScreensAccessProfile("frm_PurchaseReturnInvoiceList", Purchases)
-        { ScreenCaption = "عرض فواتير مردود المشتريات" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Print },
+            ScreenCaption = "عرض فواتير مردود المبيعات" 
+        };
         /// <summary>
         /// زر مجموعة المالية
         /// </summary>
@@ -273,15 +350,17 @@ namespace SalesLinq.Class
         /// زر اضافة سند قبض نقدي تابع لمجموعة المالية
         /// </summary>
         public static ScreensAccessProfile AddCashIn = new ScreensAccessProfile(nameof(frm_CashNoteIn), Finance)
-        { ScreenCaption = "اضافة سند قبض نقدي" };
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Delete },
+            ScreenCaption = "اضافة سند قبض نقدي" };
         /// <summary>
         /// زر اضافة سند دفع نقدي تابع لمجموعة المالية
         /// </summary>
         public static ScreensAccessProfile AddCashOut = new ScreensAccessProfile(nameof(frm_CashNoteOut), Finance)
-        { ScreenCaption = "اضافة سند دفع نقدي" };  
-
-
-
+        {
+            Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Delete },
+            ScreenCaption = "اضافة سند دفع نقدي" 
+        }; 
 
         /// <summary>
         /// دالة ترجع قائمة بكل الشاشات

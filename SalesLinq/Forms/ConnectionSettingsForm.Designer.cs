@@ -51,27 +51,27 @@
             // 
             this.btnSave.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSave.Appearance.Options.UseFont = true;
-            this.btnSave.Location = new System.Drawing.Point(47, 268);
+            this.btnSave.Location = new System.Drawing.Point(124, 234);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(179, 65);
+            this.btnSave.Size = new System.Drawing.Size(91, 39);
             this.btnSave.TabIndex = 0;
-            this.btnSave.Text = "save";
+            this.btnSave.Text = "حفظ";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnCancel
             // 
             this.btnCancel.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancel.Appearance.Options.UseFont = true;
-            this.btnCancel.Location = new System.Drawing.Point(264, 268);
+            this.btnCancel.Location = new System.Drawing.Point(280, 234);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(162, 65);
+            this.btnCancel.Size = new System.Drawing.Size(74, 39);
             this.btnCancel.TabIndex = 1;
-            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Text = "الغاء";
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // serverTextBox
             // 
-            this.serverTextBox.Location = new System.Drawing.Point(134, 34);
+            this.serverTextBox.Location = new System.Drawing.Point(264, 38);
             this.serverTextBox.Name = "serverTextBox";
             this.serverTextBox.Properties.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.serverTextBox.Properties.Appearance.Options.UseFont = true;
@@ -80,7 +80,7 @@
             // 
             // databaseTextBox
             // 
-            this.databaseTextBox.Location = new System.Drawing.Point(467, 34);
+            this.databaseTextBox.Location = new System.Drawing.Point(264, 87);
             this.databaseTextBox.Name = "databaseTextBox";
             this.databaseTextBox.Properties.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.databaseTextBox.Properties.Appearance.Options.UseFont = true;
@@ -92,7 +92,7 @@
             this.windowsAuthRadio.AutoSize = true;
             this.windowsAuthRadio.Checked = true;
             this.windowsAuthRadio.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.windowsAuthRadio.Location = new System.Drawing.Point(46, 98);
+            this.windowsAuthRadio.Location = new System.Drawing.Point(412, 144);
             this.windowsAuthRadio.Name = "windowsAuthRadio";
             this.windowsAuthRadio.Size = new System.Drawing.Size(151, 27);
             this.windowsAuthRadio.TabIndex = 4;
@@ -105,7 +105,7 @@
             // 
             this.SqlServerAuthRadio.AutoSize = true;
             this.SqlServerAuthRadio.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SqlServerAuthRadio.Location = new System.Drawing.Point(213, 98);
+            this.SqlServerAuthRadio.Location = new System.Drawing.Point(405, 182);
             this.SqlServerAuthRadio.Name = "SqlServerAuthRadio";
             this.SqlServerAuthRadio.Size = new System.Drawing.Size(158, 27);
             this.SqlServerAuthRadio.TabIndex = 5;
@@ -117,37 +117,37 @@
             // 
             this.btnCheked.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCheked.Appearance.Options.UseFont = true;
-            this.btnCheked.Location = new System.Drawing.Point(499, 93);
+            this.btnCheked.Location = new System.Drawing.Point(42, 73);
             this.btnCheked.Name = "btnCheked";
-            this.btnCheked.Size = new System.Drawing.Size(72, 34);
+            this.btnCheked.Size = new System.Drawing.Size(173, 34);
             this.btnCheked.TabIndex = 6;
-            this.btnCheked.Text = "Cheked";
+            this.btnCheked.Text = "تحقق من الاتصال";
             this.btnCheked.Click += new System.EventHandler(this.btnCheked_Click);
             // 
             // labelControl1
             // 
             this.labelControl1.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelControl1.Appearance.Options.UseFont = true;
-            this.labelControl1.Location = new System.Drawing.Point(46, 38);
+            this.labelControl1.Location = new System.Drawing.Point(502, 41);
             this.labelControl1.Name = "labelControl1";
             this.labelControl1.Size = new System.Drawing.Size(61, 23);
             this.labelControl1.TabIndex = 7;
-            this.labelControl1.Text = "server :";
+            this.labelControl1.Text = "السيرفر :";
             // 
             // labelControl2
             // 
             this.labelControl2.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelControl2.Appearance.Options.UseFont = true;
-            this.labelControl2.Location = new System.Drawing.Point(354, 38);
+            this.labelControl2.Location = new System.Drawing.Point(464, 90);
             this.labelControl2.Name = "labelControl2";
-            this.labelControl2.Size = new System.Drawing.Size(81, 23);
+            this.labelControl2.Size = new System.Drawing.Size(99, 23);
             this.labelControl2.TabIndex = 8;
-            this.labelControl2.Text = "database :";
+            this.labelControl2.Text = "قاعدة البيانات :";
             // 
             // usernameTextBox
             // 
             this.usernameTextBox.Enabled = false;
-            this.usernameTextBox.Location = new System.Drawing.Point(165, 151);
+            this.usernameTextBox.Location = new System.Drawing.Point(42, 144);
             this.usernameTextBox.Name = "usernameTextBox";
             this.usernameTextBox.Size = new System.Drawing.Size(173, 26);
             this.usernameTextBox.TabIndex = 9;
@@ -155,7 +155,7 @@
             // passwordTextBox
             // 
             this.passwordTextBox.Enabled = false;
-            this.passwordTextBox.Location = new System.Drawing.Point(165, 199);
+            this.passwordTextBox.Location = new System.Drawing.Point(42, 182);
             this.passwordTextBox.Name = "passwordTextBox";
             this.passwordTextBox.Size = new System.Drawing.Size(173, 26);
             this.passwordTextBox.TabIndex = 10;
@@ -165,28 +165,28 @@
             this.labelControl3.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelControl3.Appearance.Options.UseFont = true;
             this.labelControl3.Enabled = false;
-            this.labelControl3.Location = new System.Drawing.Point(46, 153);
+            this.labelControl3.Location = new System.Drawing.Point(248, 146);
             this.labelControl3.Name = "labelControl3";
-            this.labelControl3.Size = new System.Drawing.Size(104, 23);
+            this.labelControl3.Size = new System.Drawing.Size(95, 23);
             this.labelControl3.TabIndex = 7;
-            this.labelControl3.Text = "User Name :";
+            this.labelControl3.Text = "اسم المستخدم :";
             // 
             // labelControl4
             // 
             this.labelControl4.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelControl4.Appearance.Options.UseFont = true;
             this.labelControl4.Enabled = false;
-            this.labelControl4.Location = new System.Drawing.Point(46, 201);
+            this.labelControl4.Location = new System.Drawing.Point(254, 184);
             this.labelControl4.Name = "labelControl4";
-            this.labelControl4.Size = new System.Drawing.Size(91, 23);
+            this.labelControl4.Size = new System.Drawing.Size(89, 23);
             this.labelControl4.TabIndex = 7;
-            this.labelControl4.Text = "Password :";
+            this.labelControl4.Text = "الرقم السري :";
             // 
             // ConnectionSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(588, 290);
             this.Controls.Add(this.passwordTextBox);
             this.Controls.Add(this.usernameTextBox);
             this.Controls.Add(this.labelControl2);
@@ -201,6 +201,7 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Name = "ConnectionSettingsForm";
+            this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Text = "ConnectionSettingsForm";
             ((System.ComponentModel.ISupportInitialize)(this.serverTextBox.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.databaseTextBox.Properties)).EndInit();

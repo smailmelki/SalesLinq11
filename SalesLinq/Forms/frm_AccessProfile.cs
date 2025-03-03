@@ -25,10 +25,13 @@ namespace SalesLinq.Forms
             {
                 profile = db.UserAccessProfileNames.SingleOrDefault(x => x.ID == id);
             }
-            textEdit1.Text = profile.Name;
-            PartID = profile.ID;     // لتسجيل حركات المستخدم
-            PartName = profile.Name; // لتسجيل حركات المستخدم
-            GetData();
+            if (profile != null)
+            {
+                textEdit1.Text = profile.Name;
+                PartID = profile.ID;     // لتسجيل حركات المستخدم
+                PartName = profile.Name; // لتسجيل حركات المستخدم
+                GetData();
+            }
         }
 
         public override void New()
@@ -132,7 +135,7 @@ namespace SalesLinq.Forms
             {
                 using (var db =new DAL.DBDataContext())
                 {
-                    if (db.UserAccessProfileNames.Where(x => x.Name == textEdit1.Text.Trim() && x.ID != profile.ID ).Count() > 0)
+                    if (db.UserAccessProfileNames.Where(x => x.Name == textEdit1.Text.Trim() && x.ID != profile.ID).Any())
                     {
                         flag++;
                         textEdit1.ErrorText = "هذا الاسم مستخدم";
@@ -223,8 +226,7 @@ namespace SalesLinq.Forms
                 using (var db = new DAL.DBDataContext())
                 {
                     //التأكد من أنه غير مستخدم قبل حذفه
-                    var log = db.Users.Where(x => x.ScreenProfileID == profile.ID).Count();
-                    if (log > 0)
+                    if (db.Users.Where(x => x.ScreenProfileID == profile.ID).Any())
                     {
                         XtraMessageBox.Show(text: "عفوا لا يمكن حذف صلاحية الوصول حيث أنها مرتبطة بأحد المستخدمين"
                             , caption: "", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Error);

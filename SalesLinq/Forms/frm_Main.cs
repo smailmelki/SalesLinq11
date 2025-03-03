@@ -201,7 +201,7 @@ namespace SalesLinq.Forms
         {
             // اضافة ازرار المجموعات الرئيسية في الفورم الرئيسي بحسب نوع المستخدم
             accordionControl1.Elements.Clear();
-            var screens = Class.Session.ScreenAccesses.Where(x => x.CanShow == true || Session.User.UserType == (byte)Master.UserType.Admin);// اذا كان مدير أو مستخدم لديه صلاحية الوصول للزر
+            var screens = Session.ScreenAccesses.Where(x => x.CanShow == true || Session.User.UserType == (byte)Master.UserType.Admin);// اذا كان مدير أو مستخدم لديه صلاحية الوصول للزر
             screens.Where(s => s.ParentScreenID == 0).ToList().ForEach(s =>
             {
                 AccordionControlElement elm = new AccordionControlElement();
@@ -221,7 +221,7 @@ namespace SalesLinq.Forms
         /// <param name="parentID"></param>
         public void AddSubAccordionElement(AccordionControlElement parent, int parentID)
         {
-            var screens = Class.Session.ScreenAccesses.Where(x => x.CanShow == true || Session.User.UserType == (byte)Master.UserType.Admin);// اذا كان مدير أو مستخدم لديه صلاحية الوصول للزر
+            var screens = Session.ScreenAccesses.Where(x => x.CanShow == true || Session.User.UserType == (byte)Master.UserType.Admin);// اذا كان مدير أو مستخدم لديه صلاحية الوصول للزر
             screens.Where(s => s.ParentScreenID == parentID).ToList().ForEach(s =>
             {
                 AccordionControlElement elm = new AccordionControlElement();
