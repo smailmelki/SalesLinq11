@@ -1,4 +1,5 @@
 ﻿using DevExpress.LookAndFeel;
+using SalesLinq.Class;
 using SalesLinq.Properties;
 using System;
 using System.Diagnostics;
@@ -15,34 +16,44 @@ namespace SalesLinq
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            UserLookAndFeel.Default.SkinName = Settings.Default.SkinName.ToString();                                            // تحميل سمة البرنامج
-            UserLookAndFeel.Default.SetSkinStyle(Settings.Default.SkinName.ToString(), Settings.Default.PaletteName.ToString());// تحميل سمة البرنامج
-
-            using (var db = new DAL.DBDataContext())
+            if (DataBaseClass.TestDatabaseConnection("master", Settings.Default.ServerName))
             {
-                if (db.Users.Count() == 0)//في حالة كانت قاعدة البيانات لا تحتوي على أي مستخدم 
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+
+                UserLookAndFeel.Default.SkinName = Settings.Default.SkinName.ToString();                                            // تحميل سمة البرنامج
+                UserLookAndFeel.Default.SetSkinStyle(Settings.Default.SkinName.ToString(), Settings.Default.PaletteName.ToString());// تحميل سمة البرنامج
+
+                using (var db = new DAL.DBDataContext())
                 {
-                    var frm = new Forms.frm_NewLogin();// فتح فورم تسجيل أول مستخدم
-                    frm.Show();
-                }
-                else
-                {
-                    var frm = new Forms.frm_Login();
-                    frm.Show();
-                    if (Debugger.IsAttached)
+                    if (!db.DatabaseExists())
                     {
-                        frm.txt_UserName.Text = "admin";
-                        frm.txt_UserPassword.Text = "admin";
-                        frm.Btn_LogIn_Click(null, null);
+                        db.CreateDatabase();
+                    }
+                    if (db.Users.Any())//في حالة كانت قاعدة البيانات لا تحتوي على أي مستخدم 
+                    {
+                        var frm = new Forms.frm_Login();
+                        frm.Show();
+                        if (Debugger.IsAttached)
+                        {
+                            frm.txt_UserName.Text = "admin";
+                            frm.txt_UserPassword.Text = "admin";
+                            frm.Btn_LogIn_Click(null, null);
+                        }
+                    }
+                    else
+                    {
+                        var frm = new Forms.frm_NewLogin();// فتح فورم تسجيل أول مستخدم
+                        frm.Show();
                     }
                 }
+                Application.Run();
+                //Application.Run(Forms.frm_Main.Instance);
             }
-
-            Application.Run();
-            //Application.Run(Forms.frm_Main.Instance);
+            else
+            {
+                DataBaseClass.ShowConnectionSettingsForm();
+            }
         }
     }
 }
