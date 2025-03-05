@@ -1,6 +1,9 @@
 ﻿using DevExpress.XtraEditors;
 using SalesLinq.Class;
 using System;
+using System.Data.Sql;
+using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SalesLinq.Forms
@@ -26,54 +29,85 @@ namespace SalesLinq.Forms
         }
 
         // في نافذة ConnectionSettingsForm
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
-            // بناء جملة الاتصال من القيم المدخلة
-            string connectionString = $"Data Source={serverTextBox.Text};Initial Catalog={databaseTextBox.Text};";
-
-            if (windowsAuthRadio.Checked)
-                connectionString += "Integrated Security=True;";
-            else
-                connectionString += $"User ID={usernameTextBox.Text};Password={passwordTextBox.Text};";
-
-            // حفظ جملة الاتصال في ملف الإعدادات
-            Properties.Settings.Default.DataBase = databaseTextBox.Text;
-            Properties.Settings.Default.ServerName = serverTextBox.Text;
-            Properties.Settings.Default.UserName = usernameTextBox.Text;
-            Properties.Settings.Default.Password = passwordTextBox.Text;
-            Properties.Settings.Default.SalesDBConnectionString = connectionString;
-            if (checkConnection())
+            if (string.IsNullOrWhiteSpace(serverTextBox.Text.Trim()) || string.IsNullOrWhiteSpace(databaseTextBox.Text.Trim()))
             {
-                Properties.Settings.Default.Save();
-                Application.Restart();
+                XtraMessageBox.Show("الرجاء ادخال اسم السيرفر وقاعدة البيانات", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                serverTextBox.Focus();
+                return;
             }
-            else
+
+            btnSave.Enabled = false; // تعطيل الزر أثناء العملية لمنع التكرار
+            try
             {
-                XtraMessageBox.Show("فشل الاتصال", "فشل", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string connectionString = $"Data Source={serverTextBox.Text};Initial Catalog={databaseTextBox.Text};";
+                connectionString += windowsAuthRadio.Checked ? "Integrated Security=True;" : $"User ID={usernameTextBox.Text};Password={passwordTextBox.Text};";
+
+                if (await Task.Run(() => DataBaseClass.TestDatabaseConnection(serverTextBox.Text)))
+                {
+                    Properties.Settings.Default.DataBase = databaseTextBox.Text;
+                    Properties.Settings.Default.ServerName = serverTextBox.Text;
+                    Properties.Settings.Default.UserName = usernameTextBox.Text;
+                    Properties.Settings.Default.Password = passwordTextBox.Text;
+                    Properties.Settings.Default.SalesDBConnectionString = connectionString;
+                    Properties.Settings.Default.Save();
+
+                    await Task.Run(() =>
+                    {
+                        using (var db = new DAL.DBDataContext())
+                        {
+                            if (!db.DatabaseExists())
+                            {
+                                try
+                                {
+                                    db.CreateDatabase();
+                                    Invoke(new Action(() =>
+                                    {
+                                        XtraMessageBox.Show("تم انشاء قاعدة البيانات", "معلومات", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    }));
+                                }
+                                catch (Exception)
+                                {
+                                    Invoke(new Action(() =>
+                                    {
+                                        XtraMessageBox.Show("حدث خطأ أثناء انشاء قاعدة البيانات", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    }));
+                                }
+                            }
+                        }
+                    });
+
+                    Application.Restart();
+                }
+                else
+                {
+                    XtraMessageBox.Show("فشل الاتصال", "فشل", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            finally
+            {
+                btnSave.Enabled = true; // إعادة تمكين الزر بعد انتهاء العملية
             }
         }
+
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        private void btnCheked_Click(object sender, EventArgs e)
+        private async void btnCheked_Click(object sender, EventArgs e)
         {
-            if (checkConnection())
+            if (!string.IsNullOrWhiteSpace(serverTextBox.Text.Trim()))
             {
-                XtraMessageBox.Show("تم الاتصال بنجاح", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (await Task.Run(() => DataBaseClass.TestDatabaseConnection(serverTextBox.Text)))
+                {
+                    XtraMessageBox.Show("تم الاتصال بالسيرفر", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                    XtraMessageBox.Show("فشل الاتصال بالسيرفر", "فشل", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            else
-                XtraMessageBox.Show("فشل الاتصال", "فشل", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        bool checkConnection()
-        {
-            if (windowsAuthRadio.Checked)
-                return DataBaseClass.TestDatabaseConnection(databaseTextBox.Text, serverTextBox.Text);
-            else
-                return DataBaseClass.TestDatabaseConnection(databaseTextBox.Text, serverTextBox.Text, usernameTextBox.Text, passwordTextBox.Text);
         }
 
         private void windowsAuthRadio_CheckedChanged(object sender, EventArgs e)
@@ -88,20 +122,6 @@ namespace SalesLinq.Forms
                 usernameTextBox.Enabled = true;
                 passwordTextBox.Enabled = true;
             }
-        }
-
-        private void SqlServerAuthRadio_CheckedChanged(object sender, EventArgs e)
-        {
-            if (SqlServerAuthRadio.Checked)
-            {
-                usernameTextBox.Enabled = true;
-                passwordTextBox.Enabled = true;
-            }
-            else
-            {
-                usernameTextBox.Enabled = false;
-                passwordTextBox.Enabled = false;
-            }
-        }
+        }     
     }
 }

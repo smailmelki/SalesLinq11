@@ -16,7 +16,7 @@ namespace SalesLinq
         [STAThread]
         static void Main()
         {
-            if (DataBaseClass.TestDatabaseConnection("master", Settings.Default.ServerName))
+            if (DataBaseClass.TestDatabaseConnection(Settings.Default.ServerName,Settings.Default.DataBase))
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
@@ -26,10 +26,6 @@ namespace SalesLinq
 
                 using (var db = new DAL.DBDataContext())
                 {
-                    if (!db.DatabaseExists())
-                    {
-                        db.CreateDatabase();
-                    }
                     if (db.Users.Any())//في حالة كانت قاعدة البيانات لا تحتوي على أي مستخدم 
                     {
                         var frm = new Forms.frm_Login();
@@ -52,7 +48,8 @@ namespace SalesLinq
             }
             else
             {
-                DataBaseClass.ShowConnectionSettingsForm();
+                var settingsForm = new Forms.ConnectionSettingsForm();
+                settingsForm.ShowDialog();
             }
         }
     }

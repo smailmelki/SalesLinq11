@@ -9,18 +9,10 @@ namespace SalesLinq.Class
         /// <summary>
         /// دالة تتحقق من صحة جملة الاتصال بقاعدة البيانات
         /// </summary>
-        public static bool TestDatabaseConnection(string database, string serverName, string UserName = null, string Password = null)
+        public static bool TestDatabaseConnection(string serverName , string dataBase = "master")
         {
-            string connectionString;
             // الحصول على جملة الاتصال من ملف الإعدادات
-            if (UserName != null && Password != null)
-            {
-                connectionString = $"Data Source={serverName};Initial Catalog={database};User ID={UserName};Password={Password};";
-            }
-            else
-            {
-                connectionString = $"Data Source={serverName};Initial Catalog={database};Integrated Security=True;TrustServerCertificate=True";
-            }
+            string connectionString = $"Data Source={serverName};Initial Catalog={dataBase};Integrated Security=True;TrustServerCertificate=True";
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -29,21 +21,10 @@ namespace SalesLinq.Class
                     return true; // تم الاتصال بنجاح
                 }
             }
-            catch(Exception ex) 
+            catch(Exception) 
             {               
                 return false; // فشل الاتصال
             }
-        }
-        /// <summary>
-        /// دالة تعرض نافذة إعدادات الاتصال
-        /// </summary>
-        public static void ShowConnectionSettingsForm()
-        {
-            // يمكنك هنا إنشاء نافذة جديدة لإعدادات الاتصال
-            var settingsForm = new Forms.ConnectionSettingsForm();
-
-            // عرض النافذة كحوار مشروط - البرنامج ينتظر حتى يتم إغلاق هذه النافذة
-            settingsForm.ShowDialog();
         }
     }
 }
