@@ -26,6 +26,7 @@ namespace SalesLinq.Forms
                 usernameTextBox.Text = Properties.Settings.Default.UserName;
                 passwordTextBox.Text = Properties.Settings.Default.Password;
             }
+            this.labelVersion.Text = "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         // في نافذة ConnectionSettingsForm
@@ -94,7 +95,8 @@ namespace SalesLinq.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            this.Close();
+            //Application.Exit();
         }
 
         private async void btnCheked_Click(object sender, EventArgs e)

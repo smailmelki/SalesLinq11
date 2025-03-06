@@ -41,6 +41,7 @@
             this.passwordTextBox = new DevExpress.XtraEditors.TextEdit();
             this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl4 = new DevExpress.XtraEditors.LabelControl();
+            this.labelVersion = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.serverTextBox.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.databaseTextBox.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.usernameTextBox.Properties)).BeginInit();
@@ -51,7 +52,7 @@
             // 
             this.btnSave.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSave.Appearance.Options.UseFont = true;
-            this.btnSave.Location = new System.Drawing.Point(185, 234);
+            this.btnSave.Location = new System.Drawing.Point(185, 226);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(103, 39);
             this.btnSave.TabIndex = 0;
@@ -62,7 +63,7 @@
             // 
             this.btnCancel.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancel.Appearance.Options.UseFont = true;
-            this.btnCancel.Location = new System.Drawing.Point(311, 234);
+            this.btnCancel.Location = new System.Drawing.Point(311, 226);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(103, 39);
             this.btnCancel.TabIndex = 1;
@@ -182,11 +183,21 @@
             this.labelControl4.TabIndex = 7;
             this.labelControl4.Text = "الرقم السري :";
             // 
+            // labelVersion
+            // 
+            this.labelVersion.AutoSize = true;
+            this.labelVersion.Location = new System.Drawing.Point(12, 262);
+            this.labelVersion.Name = "labelVersion";
+            this.labelVersion.Size = new System.Drawing.Size(102, 19);
+            this.labelVersion.TabIndex = 11;
+            this.labelVersion.Text = "Version 1.0.0.0";
+            // 
             // ConnectionSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(588, 290);
+            this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.passwordTextBox);
             this.Controls.Add(this.usernameTextBox);
             this.Controls.Add(this.labelControl2);
@@ -205,6 +216,7 @@
             this.MinimumSize = new System.Drawing.Size(590, 322);
             this.Name = "ConnectionSettingsForm";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "اعدادات الاتصال بالسيرفر";
             ((System.ComponentModel.ISupportInitialize)(this.serverTextBox.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.databaseTextBox.Properties)).EndInit();
@@ -230,5 +242,6 @@
         private DevExpress.XtraEditors.TextEdit passwordTextBox;
         private DevExpress.XtraEditors.LabelControl labelControl3;
         private DevExpress.XtraEditors.LabelControl labelControl4;
+        private System.Windows.Forms.Label labelVersion;
     }
 }

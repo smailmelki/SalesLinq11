@@ -28,7 +28,19 @@ namespace SalesLinq.Forms
         {
             InitializeComponent();
             accordionControl1.ElementClick += AccordionControl1_ElementClick;
+            this.Load += Frm_Main_Load1;
         }
+
+        private void Frm_Main_Load1(object sender, EventArgs e)
+        {
+            using (var db = new DAL.DBDataContext())
+            {
+                var info = db.CompanyInfos.FirstOrDefault();
+                if (info != null && info.Logo != null)
+                    this.peLogo.Image = Utils.GetImageFromByteArray(info.Logo.ToArray());
+            }
+        }
+
         /// <summary>
         /// حدث الضغط على Element في الفورم الرئيسية
         /// </summary>

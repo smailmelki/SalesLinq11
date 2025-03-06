@@ -30,9 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.fluentDesignFormContainer1 = new DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormContainer();
-            this.accordionControl1 = new DevExpress.XtraBars.Navigation.AccordionControl();
-            this.accordionControlElement2 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            this.fluentDesignFormControl1 = new DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormControl();
+            this.peLogo = new DevExpress.XtraEditors.PictureEdit();
+            this.fluentFormDefaultManager1 = new DevExpress.XtraBars.FluentDesignSystem.FluentFormDefaultManager(this.components);
             this.skinDropDownButtonItem1 = new DevExpress.XtraBars.SkinDropDownButtonItem();
             this.skinPaletteDropDownButtonItem1 = new DevExpress.XtraBars.SkinPaletteDropDownButtonItem();
             this.skinBarSubItem1 = new DevExpress.XtraBars.SkinBarSubItem();
@@ -41,45 +40,42 @@
             this.skinPaletteDropDownButtonItem2 = new DevExpress.XtraBars.SkinPaletteDropDownButtonItem();
             this.btn_SignOut = new DevExpress.XtraBars.BarButtonItem();
             this.Lbl_UserName = new DevExpress.XtraBars.BarStaticItem();
-            this.fluentFormDefaultManager1 = new DevExpress.XtraBars.FluentDesignSystem.FluentFormDefaultManager(this.components);
+            this.accordionControl1 = new DevExpress.XtraBars.Navigation.AccordionControl();
+            this.accordionControlElement2 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            this.fluentDesignFormControl1 = new DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormControl();
             this.accordionControlElement12 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.accordionControlElement13 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            this.fluentDesignFormContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.peLogo.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fluentFormDefaultManager1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.accordionControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fluentDesignFormControl1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.fluentFormDefaultManager1)).BeginInit();
             this.SuspendLayout();
             // 
             // fluentDesignFormContainer1
             // 
+            this.fluentDesignFormContainer1.Controls.Add(this.peLogo);
             this.fluentDesignFormContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fluentDesignFormContainer1.Location = new System.Drawing.Point(464, 46);
-            this.fluentDesignFormContainer1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.fluentDesignFormContainer1.Location = new System.Drawing.Point(321, 31);
+            this.fluentDesignFormContainer1.Margin = new System.Windows.Forms.Padding(4);
             this.fluentDesignFormContainer1.Name = "fluentDesignFormContainer1";
-            this.fluentDesignFormContainer1.Size = new System.Drawing.Size(1340, 969);
+            this.fluentDesignFormContainer1.Size = new System.Drawing.Size(928, 683);
             this.fluentDesignFormContainer1.TabIndex = 0;
             // 
-            // accordionControl1
+            // peLogo
             // 
-            this.accordionControl1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.accordionControl1.Location = new System.Drawing.Point(0, 46);
-            this.accordionControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.accordionControl1.Name = "accordionControl1";
-            this.accordionControl1.ScrollBarMode = DevExpress.XtraBars.Navigation.ScrollBarMode.Touch;
-            this.accordionControl1.Size = new System.Drawing.Size(464, 969);
-            this.accordionControl1.TabIndex = 1;
-            this.accordionControl1.ViewType = DevExpress.XtraBars.Navigation.AccordionControlViewType.HamburgerMenu;
+            this.peLogo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.peLogo.Location = new System.Drawing.Point(0, 0);
+            this.peLogo.MenuManager = this.fluentFormDefaultManager1;
+            this.peLogo.Name = "peLogo";
+            this.peLogo.Properties.ShowCameraMenuItem = DevExpress.XtraEditors.Controls.CameraMenuItemVisibility.Auto;
+            this.peLogo.Size = new System.Drawing.Size(928, 683);
+            this.peLogo.TabIndex = 0;
             // 
-            // accordionControlElement2
+            // fluentFormDefaultManager1
             // 
-            this.accordionControlElement2.Name = "accordionControlElement2";
-            this.accordionControlElement2.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
-            this.accordionControlElement2.Tag = "frm_Drawer";
-            this.accordionControlElement2.Text = "اضافة خزنة";
-            // 
-            // fluentDesignFormControl1
-            // 
-            this.fluentDesignFormControl1.FluentDesignForm = this;
-            this.fluentDesignFormControl1.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
+            this.fluentFormDefaultManager1.Form = this;
+            this.fluentFormDefaultManager1.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
             this.skinDropDownButtonItem1,
             this.skinPaletteDropDownButtonItem1,
             this.skinBarSubItem1,
@@ -88,18 +84,7 @@
             this.skinPaletteDropDownButtonItem2,
             this.btn_SignOut,
             this.Lbl_UserName});
-            this.fluentDesignFormControl1.Location = new System.Drawing.Point(0, 0);
-            this.fluentDesignFormControl1.Manager = this.fluentFormDefaultManager1;
-            this.fluentDesignFormControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.fluentDesignFormControl1.Name = "fluentDesignFormControl1";
-            this.fluentDesignFormControl1.Size = new System.Drawing.Size(1804, 46);
-            this.fluentDesignFormControl1.TabIndex = 2;
-            this.fluentDesignFormControl1.TabStop = false;
-            this.fluentDesignFormControl1.TitleItemLinks.Add(this.skinBarSubItem1);
-            this.fluentDesignFormControl1.TitleItemLinks.Add(this.skinDropDownButtonItem2);
-            this.fluentDesignFormControl1.TitleItemLinks.Add(this.skinPaletteDropDownButtonItem2);
-            this.fluentDesignFormControl1.TitleItemLinks.Add(this.btn_SignOut);
-            this.fluentDesignFormControl1.TitleItemLinks.Add(this.Lbl_UserName);
+            this.fluentFormDefaultManager1.MaxItemId = 8;
             // 
             // skinDropDownButtonItem1
             // 
@@ -148,10 +133,28 @@
             this.Lbl_UserName.Id = 7;
             this.Lbl_UserName.Name = "Lbl_UserName";
             // 
-            // fluentFormDefaultManager1
+            // accordionControl1
             // 
-            this.fluentFormDefaultManager1.Form = this;
-            this.fluentFormDefaultManager1.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
+            this.accordionControl1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.accordionControl1.Location = new System.Drawing.Point(0, 31);
+            this.accordionControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.accordionControl1.Name = "accordionControl1";
+            this.accordionControl1.ScrollBarMode = DevExpress.XtraBars.Navigation.ScrollBarMode.Touch;
+            this.accordionControl1.Size = new System.Drawing.Size(321, 683);
+            this.accordionControl1.TabIndex = 1;
+            this.accordionControl1.ViewType = DevExpress.XtraBars.Navigation.AccordionControlViewType.HamburgerMenu;
+            // 
+            // accordionControlElement2
+            // 
+            this.accordionControlElement2.Name = "accordionControlElement2";
+            this.accordionControlElement2.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            this.accordionControlElement2.Tag = "frm_Drawer";
+            this.accordionControlElement2.Text = "اضافة خزنة";
+            // 
+            // fluentDesignFormControl1
+            // 
+            this.fluentDesignFormControl1.FluentDesignForm = this;
+            this.fluentDesignFormControl1.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
             this.skinDropDownButtonItem1,
             this.skinPaletteDropDownButtonItem1,
             this.skinBarSubItem1,
@@ -160,7 +163,18 @@
             this.skinPaletteDropDownButtonItem2,
             this.btn_SignOut,
             this.Lbl_UserName});
-            this.fluentFormDefaultManager1.MaxItemId = 8;
+            this.fluentDesignFormControl1.Location = new System.Drawing.Point(0, 0);
+            this.fluentDesignFormControl1.Manager = this.fluentFormDefaultManager1;
+            this.fluentDesignFormControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.fluentDesignFormControl1.Name = "fluentDesignFormControl1";
+            this.fluentDesignFormControl1.Size = new System.Drawing.Size(1249, 31);
+            this.fluentDesignFormControl1.TabIndex = 2;
+            this.fluentDesignFormControl1.TabStop = false;
+            this.fluentDesignFormControl1.TitleItemLinks.Add(this.skinBarSubItem1);
+            this.fluentDesignFormControl1.TitleItemLinks.Add(this.skinDropDownButtonItem2);
+            this.fluentDesignFormControl1.TitleItemLinks.Add(this.skinPaletteDropDownButtonItem2);
+            this.fluentDesignFormControl1.TitleItemLinks.Add(this.btn_SignOut);
+            this.fluentDesignFormControl1.TitleItemLinks.Add(this.Lbl_UserName);
             // 
             // accordionControlElement12
             // 
@@ -179,15 +193,15 @@
             // 
             // frm_Main
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 27F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1804, 1015);
+            this.ClientSize = new System.Drawing.Size(1249, 714);
             this.ControlContainer = this.fluentDesignFormContainer1;
             this.Controls.Add(this.fluentDesignFormContainer1);
             this.Controls.Add(this.accordionControl1);
             this.Controls.Add(this.fluentDesignFormControl1);
             this.FluentDesignFormControl = this.fluentDesignFormControl1;
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frm_Main";
             this.NavigationControl = this.accordionControl1;
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -197,9 +211,11 @@
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Frm_Main_FormClosing);
             this.Load += new System.EventHandler(this.Frm_Main_Load);
+            this.fluentDesignFormContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.peLogo.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fluentFormDefaultManager1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.accordionControl1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fluentDesignFormControl1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.fluentFormDefaultManager1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -220,5 +236,6 @@
         private DevExpress.XtraBars.SkinPaletteDropDownButtonItem skinPaletteDropDownButtonItem2;
         private DevExpress.XtraBars.BarButtonItem btn_SignOut;
         public DevExpress.XtraBars.BarStaticItem Lbl_UserName;
+        private DevExpress.XtraEditors.PictureEdit peLogo;
     }
 }
