@@ -200,9 +200,12 @@
             this.Controls.Add(this.serverTextBox);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(590, 322);
+            this.MinimumSize = new System.Drawing.Size(590, 322);
             this.Name = "ConnectionSettingsForm";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.Text = "ConnectionSettingsForm";
+            this.Text = "اعدادات الاتصال بالسيرفر";
             ((System.ComponentModel.ISupportInitialize)(this.serverTextBox.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.databaseTextBox.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.usernameTextBox.Properties)).EndInit();

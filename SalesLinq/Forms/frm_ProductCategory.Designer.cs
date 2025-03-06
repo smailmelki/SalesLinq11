@@ -54,7 +54,7 @@
             this.layoutControl1.Controls.Add(this.textEdit1);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layoutControl1.Location = new System.Drawing.Point(0, 26);
-            this.layoutControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.layoutControl1.Margin = new System.Windows.Forms.Padding(4);
             this.layoutControl1.Name = "layoutControl1";
             this.layoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(778, 146, 650, 400);
             this.layoutControl1.OptionsView.RightToLeftMirroringApplied = true;
@@ -67,32 +67,32 @@
             // 
             this.treeList1.FixedLineWidth = 3;
             this.treeList1.HorzScrollStep = 4;
-            this.treeList1.Location = new System.Drawing.Point(18, 82);
-            this.treeList1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.treeList1.Location = new System.Drawing.Point(12, 72);
+            this.treeList1.Margin = new System.Windows.Forms.Padding(4);
             this.treeList1.MinWidth = 30;
             this.treeList1.Name = "treeList1";
-            this.treeList1.Size = new System.Drawing.Size(796, 470);
+            this.treeList1.Size = new System.Drawing.Size(808, 486);
             this.treeList1.TabIndex = 6;
             this.treeList1.TreeLevelWidth = 27;
             // 
             // lookUpEdit1
             // 
-            this.lookUpEdit1.Location = new System.Drawing.Point(18, 50);
-            this.lookUpEdit1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lookUpEdit1.Location = new System.Drawing.Point(12, 42);
+            this.lookUpEdit1.Margin = new System.Windows.Forms.Padding(4);
             this.lookUpEdit1.Name = "lookUpEdit1";
             this.lookUpEdit1.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.lookUpEdit1.Properties.NullText = "";
-            this.lookUpEdit1.Size = new System.Drawing.Size(711, 26);
+            this.lookUpEdit1.Size = new System.Drawing.Size(729, 26);
             this.lookUpEdit1.StyleController = this.layoutControl1;
             this.lookUpEdit1.TabIndex = 5;
             // 
             // textEdit1
             // 
-            this.textEdit1.Location = new System.Drawing.Point(18, 18);
-            this.textEdit1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textEdit1.Location = new System.Drawing.Point(12, 12);
+            this.textEdit1.Margin = new System.Windows.Forms.Padding(4);
             this.textEdit1.Name = "textEdit1";
-            this.textEdit1.Size = new System.Drawing.Size(711, 26);
+            this.textEdit1.Size = new System.Drawing.Size(729, 26);
             this.textEdit1.StyleController = this.layoutControl1;
             this.textEdit1.TabIndex = 4;
             // 
@@ -111,9 +111,9 @@
             // layoutControlItem2
             // 
             this.layoutControlItem2.Control = this.lookUpEdit1;
-            this.layoutControlItem2.Location = new System.Drawing.Point(0, 32);
+            this.layoutControlItem2.Location = new System.Drawing.Point(0, 30);
             this.layoutControlItem2.Name = "layoutControlItem2";
-            this.layoutControlItem2.Size = new System.Drawing.Size(802, 32);
+            this.layoutControlItem2.Size = new System.Drawing.Size(812, 30);
             this.layoutControlItem2.Text = "تابع لمجموعة";
             this.layoutControlItem2.TextSize = new System.Drawing.Size(67, 19);
             // 
@@ -122,16 +122,16 @@
             this.layoutControlItem1.Control = this.textEdit1;
             this.layoutControlItem1.Location = new System.Drawing.Point(0, 0);
             this.layoutControlItem1.Name = "layoutControlItem1";
-            this.layoutControlItem1.Size = new System.Drawing.Size(802, 32);
+            this.layoutControlItem1.Size = new System.Drawing.Size(812, 30);
             this.layoutControlItem1.Text = "الاسم";
             this.layoutControlItem1.TextSize = new System.Drawing.Size(67, 19);
             // 
             // layoutControlItem3
             // 
             this.layoutControlItem3.Control = this.treeList1;
-            this.layoutControlItem3.Location = new System.Drawing.Point(0, 64);
+            this.layoutControlItem3.Location = new System.Drawing.Point(0, 60);
             this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Size = new System.Drawing.Size(802, 476);
+            this.layoutControlItem3.Size = new System.Drawing.Size(812, 490);
             this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
             this.layoutControlItem3.TextVisible = false;
             // 
@@ -141,9 +141,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(832, 596);
             this.Controls.Add(this.layoutControl1);
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "frm_ProductCategory";
-            this.Text = "frm_ProductCategory";
+            this.Text = "مجموعات الاصناف";
             this.Load += new System.EventHandler(this.Frm_ProductCategory_Load);
             this.Controls.SetChildIndex(this.layoutControl1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();

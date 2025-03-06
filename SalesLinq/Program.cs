@@ -32,7 +32,7 @@ namespace SalesLinq
                         frm.Show();
                         if (Debugger.IsAttached)
                         {
-                            frm.txt_UserName.Text = "admin";
+                            frm.txt_UserName.Text = "admin2";
                             frm.txt_UserPassword.Text = "admin";
                             frm.Btn_LogIn_Click(null, null);
                         }

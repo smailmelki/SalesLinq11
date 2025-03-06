@@ -69,6 +69,12 @@ namespace SalesLinq.Forms
                 case "frm_SalesInvoice":
                     frm = new frm_Invoice(Class.Master.InvoiceType.Sales);
                     break;
+                case "frm_PurchaseReturnInvoice":
+                    frm = new frm_Invoice(Class.Master.InvoiceType.PurchaseReturn);
+                    break;
+                case "frm_SalesReturnInvoice":
+                    frm = new frm_Invoice(Class.Master.InvoiceType.SalesReturn);
+                    break;
                 case "frm_PurchaseInvoiceList":
                     frm = new frm_InvoiceList(Class.Master.InvoiceType.Purchase);
                     break;
@@ -80,12 +86,6 @@ namespace SalesLinq.Forms
                     break;
                 case "frm_SalesReturnInvoiceList":
                     frm = new frm_InvoiceList(Class.Master.InvoiceType.SalesReturn);
-                    break;
-                case "frm_PurchaseReturnInvoice":
-                    frm = new frm_Invoice(Class.Master.InvoiceType.PurchaseReturn);
-                    break;
-                case "frm_SalesReturnInvoice":
-                    frm = new frm_Invoice(Class.Master.InvoiceType.SalesReturn);
                     break;
                 default:
                     var ins = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.Name == name);
@@ -116,6 +116,7 @@ namespace SalesLinq.Forms
         {
             if (Session.User.UserType == (byte)Master.UserType.Admin)
             {
+                frm.Icon = Icon.ExtractAssociatedIcon("SalesLinq.exe");
                 if (OpenInDialog)
                     frm.ShowDialog();
                 else
@@ -127,11 +128,11 @@ namespace SalesLinq.Forms
             {
                 if (screen.CanOpen == true)
                 {
+                    frm.Icon = Icon.ExtractAssociatedIcon("SalesLinq.exe");
                     if (OpenInDialog)
                         frm.ShowDialog();
                     else
                         frm.Show();
-                    frm.Icon = Icon.ExtractAssociatedIcon("SalesLinq.exe");
                     return;
                 }
                 else

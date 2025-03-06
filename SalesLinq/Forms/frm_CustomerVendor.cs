@@ -89,13 +89,13 @@ namespace SalesLinq.Forms
             CusVnd.IsCustomer = IsCustomer;
             CusVnd.MaxCredit = Convert.ToDouble(spinEdit1.EditValue);
             base.SetData();
-        }      
+        }
 
-         /// <summary>
-         /// التحقق من كتابة الاسم وكذلك من تكراره في قاعدة البياات 
-         /// </summary>
-         /// <returns> اذا كان الاسم فارغا أو موجودا من قبل يرجع خطأ وإلا يرجع صح</returns>
-         public override bool IsDataValide()
+        /// <summary>
+        /// التحقق من كتابة الاسم وكذلك من تكراره في قاعدة البيانات 
+        /// </summary>
+        /// <returns> اذا كان الاسم فارغا أو موجودا من قبل يرجع خطأ وإلا يرجع صح</returns>
+        public override bool IsDataValide()
          {
             // التحقق من أن الاسم مكتوب
             if (txt_Name.Text.Trim() == string.Empty)

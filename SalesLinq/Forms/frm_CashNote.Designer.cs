@@ -77,8 +77,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.spinEdit2.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridControl_ReturnInvoices)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView_ReturnInvoices)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dt_Date.Properties.CalendarTimeProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dt_Date.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dt_Date.Properties.CalendarTimeProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spn_Discount.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txt_Code.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txt_ID.Properties)).BeginInit();
@@ -652,7 +652,6 @@
             this.ClientSize = new System.Drawing.Size(843, 547);
             this.Controls.Add(this.layoutControl1);
             this.Name = "frm_CashNote";
-            this.RightToLeftLayout = true;
             this.Text = "......................";
             this.Load += new System.EventHandler(this.Frm_CashNote_Load);
             this.Controls.SetChildIndex(this.layoutControl1, 0);

@@ -352,7 +352,8 @@ namespace SalesLinq.Class
         public static ScreensAccessProfile AddCashIn = new ScreensAccessProfile(nameof(frm_CashNoteIn), Finance)
         {
             Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Delete },
-            ScreenCaption = "اضافة سند قبض نقدي" };
+            ScreenCaption = "اضافة سند قبض نقدي" 
+        };
         /// <summary>
         /// زر اضافة سند دفع نقدي تابع لمجموعة المالية
         /// </summary>
@@ -360,12 +361,13 @@ namespace SalesLinq.Class
         {
             Actions = new List<Master.Actions>() { Master.Actions.Show, Master.Actions.Open, Master.Actions.Add, Master.Actions.Delete },
             ScreenCaption = "اضافة سند دفع نقدي" 
-        }; 
+        };
 
         /// <summary>
         /// دالة ترجع قائمة بكل الشاشات
         /// </summary>
-        public static List<ScreensAccessProfile> GetScreens {
+        public static List<ScreensAccessProfile> GetScreens 
+        {
             get
             {
                 Type t = typeof(Screens);
