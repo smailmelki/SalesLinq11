@@ -39,7 +39,7 @@
             // 
             // labelStatus
             // 
-            this.labelStatus.Location = new System.Drawing.Point(19, 380);
+            this.labelStatus.Location = new System.Drawing.Point(28, 389);
             this.labelStatus.Margin = new System.Windows.Forms.Padding(3, 3, 3, 1);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(58, 19);
@@ -51,49 +51,50 @@
             this.progressBarControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBarControl.EditValue = 0;
-            this.progressBarControl.Location = new System.Drawing.Point(19, 409);
+            this.progressBarControl.Location = new System.Drawing.Point(13, 412);
             this.progressBarControl.Name = "progressBarControl";
-            this.progressBarControl.Size = new System.Drawing.Size(518, 12);
+            this.progressBarControl.Size = new System.Drawing.Size(540, 22);
             this.progressBarControl.TabIndex = 5;
             // 
             // labelCopyright
             // 
             this.labelCopyright.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelCopyright.Location = new System.Drawing.Point(336, 425);
+            this.labelCopyright.Location = new System.Drawing.Point(336, 438);
             this.labelCopyright.Margin = new System.Windows.Forms.Padding(3, 3, 3, 1);
             this.labelCopyright.Name = "labelCopyright";
-            this.labelCopyright.Size = new System.Drawing.Size(201, 31);
+            this.labelCopyright.Size = new System.Drawing.Size(217, 31);
             this.labelCopyright.TabIndex = 7;
             this.labelCopyright.Text = "Copyright";
             // 
             // labelVersion
             // 
-            this.labelVersion.Location = new System.Drawing.Point(19, 431);
+            this.labelVersion.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
+            this.labelVersion.Location = new System.Drawing.Point(13, 438);
             this.labelVersion.Margin = new System.Windows.Forms.Padding(3, 3, 3, 1);
             this.labelVersion.Name = "labelVersion";
-            this.labelVersion.Size = new System.Drawing.Size(48, 19);
+            this.labelVersion.Size = new System.Drawing.Size(218, 31);
             this.labelVersion.TabIndex = 7;
             this.labelVersion.Text = "Version";
             // 
             // peLogo
             // 
-            this.peLogo.Location = new System.Drawing.Point(4, 4);
+            this.peLogo.Location = new System.Drawing.Point(13, 13);
             this.peLogo.Name = "peLogo";
-            this.peLogo.Size = new System.Drawing.Size(558, 370);
+            this.peLogo.Size = new System.Drawing.Size(540, 361);
             this.peLogo.TabIndex = 8;
             // 
             // StartSplash
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(566, 466);
+            this.ClientSize = new System.Drawing.Size(566, 479);
             this.Controls.Add(this.peLogo);
             this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.labelCopyright);
             this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.progressBarControl);
             this.Name = "StartSplash";
-            this.Padding = new System.Windows.Forms.Padding(1);
+            this.Padding = new System.Windows.Forms.Padding(10);
             this.Text = "StartSplash";
             ((System.ComponentModel.ISupportInitialize)(this.progressBarControl.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.peLogo.Properties)).EndInit();
