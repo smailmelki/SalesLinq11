@@ -47,7 +47,7 @@ namespace SalesLinq.Forms
                 textEditUsername.Text = Properties.Settings.Default.UserName;
                 textEditPassword.Text = Properties.Settings.Default.Password;
             }
-            this.labelControlVersion.Text = "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            this.labelControlVersion.Text = "الاصدار : " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private async void btnConectionChek_Click(object sender, EventArgs e)
