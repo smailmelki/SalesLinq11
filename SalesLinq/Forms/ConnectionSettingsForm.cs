@@ -1,56 +1,102 @@
 ﻿using DevExpress.XtraEditors;
 using SalesLinq.Class;
 using System;
-using System.Data.Sql;
-using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SalesLinq.Forms
 {
-    public partial class ConnectionSettingsForm: XtraForm
+    public partial class ConnectionSettingsForm : XtraForm
     {
         public ConnectionSettingsForm()
         {
             InitializeComponent();
-            // تعبئة الحقول بالقيم المحفوظة
-            serverTextBox.Text = Properties.Settings.Default.ServerName;
-            databaseTextBox.Text = Properties.Settings.Default.DataBase;
-            if (Properties.Settings.Default.SalesDBConnectionString.Contains("Integrated Security=True"))
+        }
+
+        private void ComboBoxAuth_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxAuth.SelectedIndex == (int)Authentication.WindowsAuthentication)
             {
-                windowsAuthRadio.Checked = true;
+                textEditUsername.Enabled =
+                textEditPassword.Enabled = false;
             }
             else
             {
-                windowsAuthRadio.Checked = false;
-                usernameTextBox.Text = Properties.Settings.Default.UserName;
-                passwordTextBox.Text = Properties.Settings.Default.Password;
+                textEditUsername.Enabled =
+                textEditPassword.Enabled = true;
             }
-            this.labelVersion.Text = "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
-        // في نافذة ConnectionSettingsForm
-        private async void btnSave_Click(object sender, EventArgs e)
+        private void ConnectionSettingsForm_Load(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(serverTextBox.Text.Trim()) || string.IsNullOrWhiteSpace(databaseTextBox.Text.Trim()))
+            ///////////////////////////////////
+            comboBoxAuth.Properties.Items.Add(Authentication.WindowsAuthentication.ToString());
+            comboBoxAuth.Properties.Items.Add(Authentication.SqlServerAuthentication.ToString());
+            comboBoxAuth.SelectedIndexChanged += ComboBoxAuth_OnSelectedIndexChanged;
+            ///////////////////////////////////
+            // تعبئة الحقول بالقيم المحفوظة
+            textEditServer.Text = Properties.Settings.Default.ServerName;
+            textEditDataBase.Text = Properties.Settings.Default.DataBase;
+            if (Properties.Settings.Default.SalesDBConnectionString.Contains("Integrated Security=True"))
+            {
+                comboBoxAuth.SelectedIndex = (int)Authentication.WindowsAuthentication;
+            }
+            else
+            {
+                comboBoxAuth.SelectedIndex = (int)Authentication.SqlServerAuthentication;
+                textEditUsername.Text = Properties.Settings.Default.UserName;
+                textEditPassword.Text = Properties.Settings.Default.Password;
+            }
+            this.labelControlVersion.Text = "Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
+
+        private async void btnConectionChek_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(textEditServer.Text.Trim()))
+            {
+                if (await Task.Run(() => DataBaseClass.TestDatabaseConnection(textEditServer.Text)))
+                {
+                    XtraMessageBox.Show("تم الاتصال بالسيرفر", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                    XtraMessageBox.Show("فشل الاتصال بالسيرفر", "فشل", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void btn_Save_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(textEditServer.Text.Trim()) || string.IsNullOrWhiteSpace(textEditDataBase.Text.Trim()))
             {
                 XtraMessageBox.Show("الرجاء ادخال اسم السيرفر وقاعدة البيانات", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                serverTextBox.Focus();
+                textEditServer.Focus();
                 return;
             }
 
-            btnSave.Enabled = false; // تعطيل الزر أثناء العملية لمنع التكرار
+            btn_Save.Enabled = false; // تعطيل الزر أثناء العملية لمنع التكرار
             try
             {
-                string connectionString = $"Data Source={serverTextBox.Text};Initial Catalog={databaseTextBox.Text};";
-                connectionString += windowsAuthRadio.Checked ? "Integrated Security=True;" : $"User ID={usernameTextBox.Text};Password={passwordTextBox.Text};";
-
-                if (await Task.Run(() => DataBaseClass.TestDatabaseConnection(serverTextBox.Text)))
+                string connectionString = $"Data Source={textEditServer.Text};Initial Catalog={textEditDataBase.Text};";
+                if (comboBoxAuth.SelectedIndex == 1)
                 {
-                    Properties.Settings.Default.DataBase = databaseTextBox.Text;
-                    Properties.Settings.Default.ServerName = serverTextBox.Text;
-                    Properties.Settings.Default.UserName = usernameTextBox.Text;
-                    Properties.Settings.Default.Password = passwordTextBox.Text;
+                    if (string.IsNullOrWhiteSpace(textEditUsername.Text.Trim()) || string.IsNullOrWhiteSpace(textEditPassword.Text.Trim()))
+                    {
+                        XtraMessageBox.Show("الرجاء ادخال اسم المستخدم وكلمة المرور", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        textEditUsername.Focus();
+                        return;
+                    }
+                    connectionString += $"User ID={textEditUsername.Text};Password={textEditPassword.Text};";
+                }
+                else
+                {
+                    connectionString += "Integrated Security=True;";
+                }
+
+                if (await Task.Run(() => DataBaseClass.TestDatabaseConnection(textEditServer.Text)))
+                {
+                    Properties.Settings.Default.DataBase = textEditDataBase.Text;
+                    Properties.Settings.Default.ServerName = textEditServer.Text;
+                    Properties.Settings.Default.UserName = textEditUsername.Text;
+                    Properties.Settings.Default.Password = textEditPassword.Text;
                     Properties.Settings.Default.SalesDBConnectionString = connectionString;
                     Properties.Settings.Default.Save();
 
@@ -88,42 +134,14 @@ namespace SalesLinq.Forms
             }
             finally
             {
-                btnSave.Enabled = true; // إعادة تمكين الزر بعد انتهاء العملية
+                btn_Save.Enabled = true; // إعادة تمكين الزر بعد انتهاء العملية
             }
         }
+    }
 
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            this.Close();
-            //Application.Exit();
-        }
-
-        private async void btnCheked_Click(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(serverTextBox.Text.Trim()))
-            {
-                if (await Task.Run(() => DataBaseClass.TestDatabaseConnection(serverTextBox.Text)))
-                {
-                    XtraMessageBox.Show("تم الاتصال بالسيرفر", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                    XtraMessageBox.Show("فشل الاتصال بالسيرفر", "فشل", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void windowsAuthRadio_CheckedChanged(object sender, EventArgs e)
-        {
-            if (windowsAuthRadio.Checked)
-            {
-                usernameTextBox.Enabled = false;
-                passwordTextBox.Enabled = false;
-            }
-            else
-            {
-                usernameTextBox.Enabled = true;
-                passwordTextBox.Enabled = true;
-            }
-        }     
+    enum Authentication
+    {
+        WindowsAuthentication,
+        SqlServerAuthentication
     }
 }

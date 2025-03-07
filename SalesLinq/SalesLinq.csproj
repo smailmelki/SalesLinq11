@@ -505,7 +505,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CompanyICON.ico" />
-    <Content Include="edit product.ico" />
     <None Include="Resources\save4.svg" />
     <None Include="Resources\save3.svg" />
     <None Include="Resources\save2.svg" />

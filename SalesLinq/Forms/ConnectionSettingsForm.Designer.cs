@@ -28,220 +28,267 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnSave = new DevExpress.XtraEditors.SimpleButton();
-            this.btnCancel = new DevExpress.XtraEditors.SimpleButton();
-            this.serverTextBox = new DevExpress.XtraEditors.TextEdit();
-            this.databaseTextBox = new DevExpress.XtraEditors.TextEdit();
-            this.windowsAuthRadio = new System.Windows.Forms.RadioButton();
-            this.SqlServerAuthRadio = new System.Windows.Forms.RadioButton();
-            this.btnCheked = new DevExpress.XtraEditors.SimpleButton();
-            this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
-            this.labelControl2 = new DevExpress.XtraEditors.LabelControl();
-            this.usernameTextBox = new DevExpress.XtraEditors.TextEdit();
-            this.passwordTextBox = new DevExpress.XtraEditors.TextEdit();
-            this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
-            this.labelControl4 = new DevExpress.XtraEditors.LabelControl();
-            this.labelVersion = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.serverTextBox.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.databaseTextBox.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.usernameTextBox.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.passwordTextBox.Properties)).BeginInit();
+            this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+            this.labelControlVersion = new DevExpress.XtraEditors.LabelControl();
+            this.textEditPassword = new DevExpress.XtraEditors.TextEdit();
+            this.textEditUsername = new DevExpress.XtraEditors.TextEdit();
+            this.comboBoxAuth = new DevExpress.XtraEditors.ComboBoxEdit();
+            this.btnConectionChek = new DevExpress.XtraEditors.SimpleButton();
+            this.textEditDataBase = new DevExpress.XtraEditors.TextEdit();
+            this.textEditServer = new DevExpress.XtraEditors.TextEdit();
+            this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
+            this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
+            this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.layoutControlItem4 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.layoutControlItem5 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.layoutControlItem6 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.layoutControlItem7 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.btn_Save = new DevExpress.XtraEditors.SimpleButton();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
+            this.layoutControl1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditPassword.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditUsername.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.comboBoxAuth.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditDataBase.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditServer.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem7)).BeginInit();
             this.SuspendLayout();
             // 
-            // btnSave
+            // layoutControl1
             // 
-            this.btnSave.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSave.Appearance.Options.UseFont = true;
-            this.btnSave.Location = new System.Drawing.Point(185, 226);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(103, 39);
-            this.btnSave.TabIndex = 0;
-            this.btnSave.Text = "حفظ";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.layoutControl1.Controls.Add(this.labelControlVersion);
+            this.layoutControl1.Controls.Add(this.textEditPassword);
+            this.layoutControl1.Controls.Add(this.textEditUsername);
+            this.layoutControl1.Controls.Add(this.comboBoxAuth);
+            this.layoutControl1.Controls.Add(this.btnConectionChek);
+            this.layoutControl1.Controls.Add(this.textEditDataBase);
+            this.layoutControl1.Controls.Add(this.textEditServer);
+            this.layoutControl1.Location = new System.Drawing.Point(12, 33);
+            this.layoutControl1.Name = "layoutControl1";
+            this.layoutControl1.OptionsView.RightToLeftMirroringApplied = true;
+            this.layoutControl1.Root = this.Root;
+            this.layoutControl1.Size = new System.Drawing.Size(540, 203);
+            this.layoutControl1.TabIndex = 13;
+            this.layoutControl1.Text = "layoutControl1";
             // 
-            // btnCancel
+            // labelControlVersion
             // 
-            this.btnCancel.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancel.Appearance.Options.UseFont = true;
-            this.btnCancel.Location = new System.Drawing.Point(311, 226);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(103, 39);
-            this.btnCancel.TabIndex = 1;
-            this.btnCancel.Text = "الغاء";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.labelControlVersion.Location = new System.Drawing.Point(435, 162);
+            this.labelControlVersion.Name = "labelControlVersion";
+            this.labelControlVersion.Size = new System.Drawing.Size(93, 19);
+            this.labelControlVersion.StyleController = this.layoutControl1;
+            this.labelControlVersion.TabIndex = 10;
+            this.labelControlVersion.Text = "Version 1.0.0.0";
             // 
-            // serverTextBox
+            // textEditPassword
             // 
-            this.serverTextBox.Location = new System.Drawing.Point(264, 37);
-            this.serverTextBox.Name = "serverTextBox";
-            this.serverTextBox.Properties.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.serverTextBox.Properties.Appearance.Options.UseFont = true;
-            this.serverTextBox.Size = new System.Drawing.Size(173, 30);
-            this.serverTextBox.TabIndex = 2;
+            this.textEditPassword.Location = new System.Drawing.Point(12, 132);
+            this.textEditPassword.Name = "textEditPassword";
+            this.textEditPassword.Size = new System.Drawing.Size(430, 26);
+            this.textEditPassword.StyleController = this.layoutControl1;
+            this.textEditPassword.TabIndex = 9;
             // 
-            // databaseTextBox
+            // textEditUsername
             // 
-            this.databaseTextBox.Location = new System.Drawing.Point(264, 87);
-            this.databaseTextBox.Name = "databaseTextBox";
-            this.databaseTextBox.Properties.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.databaseTextBox.Properties.Appearance.Options.UseFont = true;
-            this.databaseTextBox.Size = new System.Drawing.Size(173, 30);
-            this.databaseTextBox.TabIndex = 3;
+            this.textEditUsername.Location = new System.Drawing.Point(12, 102);
+            this.textEditUsername.Name = "textEditUsername";
+            this.textEditUsername.Size = new System.Drawing.Size(430, 26);
+            this.textEditUsername.StyleController = this.layoutControl1;
+            this.textEditUsername.TabIndex = 8;
             // 
-            // windowsAuthRadio
+            // comboBoxAuth
             // 
-            this.windowsAuthRadio.AutoSize = true;
-            this.windowsAuthRadio.Checked = true;
-            this.windowsAuthRadio.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.windowsAuthRadio.Location = new System.Drawing.Point(412, 144);
-            this.windowsAuthRadio.Name = "windowsAuthRadio";
-            this.windowsAuthRadio.Size = new System.Drawing.Size(151, 27);
-            this.windowsAuthRadio.TabIndex = 4;
-            this.windowsAuthRadio.TabStop = true;
-            this.windowsAuthRadio.Text = "Windows Auth";
-            this.windowsAuthRadio.UseVisualStyleBackColor = true;
-            this.windowsAuthRadio.CheckedChanged += new System.EventHandler(this.windowsAuthRadio_CheckedChanged);
+            this.comboBoxAuth.Location = new System.Drawing.Point(12, 72);
+            this.comboBoxAuth.Name = "comboBoxAuth";
+            this.comboBoxAuth.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.comboBoxAuth.Size = new System.Drawing.Size(430, 26);
+            this.comboBoxAuth.StyleController = this.layoutControl1;
+            this.comboBoxAuth.TabIndex = 7;
             // 
-            // SqlServerAuthRadio
+            // btnConectionChek
             // 
-            this.SqlServerAuthRadio.AutoSize = true;
-            this.SqlServerAuthRadio.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SqlServerAuthRadio.Location = new System.Drawing.Point(405, 182);
-            this.SqlServerAuthRadio.Name = "SqlServerAuthRadio";
-            this.SqlServerAuthRadio.Size = new System.Drawing.Size(158, 27);
-            this.SqlServerAuthRadio.TabIndex = 5;
-            this.SqlServerAuthRadio.Text = "Sql Server Auth";
-            this.SqlServerAuthRadio.UseVisualStyleBackColor = true;
-            this.SqlServerAuthRadio.CheckedChanged += new System.EventHandler(this.windowsAuthRadio_CheckedChanged);
+            this.btnConectionChek.Location = new System.Drawing.Point(12, 12);
+            this.btnConectionChek.Name = "btnConectionChek";
+            this.btnConectionChek.Size = new System.Drawing.Size(144, 24);
+            this.btnConectionChek.StyleController = this.layoutControl1;
+            this.btnConectionChek.TabIndex = 6;
+            this.btnConectionChek.Text = "تحقق من الاتصال بالسيرفر";
+            this.btnConectionChek.Click += new System.EventHandler(this.btnConectionChek_Click);
             // 
-            // btnCheked
+            // textEditDataBase
             // 
-            this.btnCheked.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCheked.Appearance.Options.UseFont = true;
-            this.btnCheked.Location = new System.Drawing.Point(17, 35);
-            this.btnCheked.Name = "btnCheked";
-            this.btnCheked.Size = new System.Drawing.Size(198, 34);
-            this.btnCheked.TabIndex = 6;
-            this.btnCheked.Text = "تحقق من الاتصال بالسيرفر";
-            this.btnCheked.Click += new System.EventHandler(this.btnCheked_Click);
+            this.textEditDataBase.Location = new System.Drawing.Point(12, 42);
+            this.textEditDataBase.Name = "textEditDataBase";
+            this.textEditDataBase.Size = new System.Drawing.Size(430, 26);
+            this.textEditDataBase.StyleController = this.layoutControl1;
+            this.textEditDataBase.TabIndex = 5;
             // 
-            // labelControl1
+            // textEditServer
             // 
-            this.labelControl1.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl1.Appearance.Options.UseFont = true;
-            this.labelControl1.Location = new System.Drawing.Point(502, 41);
-            this.labelControl1.Name = "labelControl1";
-            this.labelControl1.Size = new System.Drawing.Size(61, 23);
-            this.labelControl1.TabIndex = 7;
-            this.labelControl1.Text = "السيرفر :";
+            this.textEditServer.Location = new System.Drawing.Point(160, 12);
+            this.textEditServer.Name = "textEditServer";
+            this.textEditServer.Size = new System.Drawing.Size(282, 26);
+            this.textEditServer.StyleController = this.layoutControl1;
+            this.textEditServer.TabIndex = 4;
             // 
-            // labelControl2
+            // Root
             // 
-            this.labelControl2.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl2.Appearance.Options.UseFont = true;
-            this.labelControl2.Location = new System.Drawing.Point(464, 90);
-            this.labelControl2.Name = "labelControl2";
-            this.labelControl2.Size = new System.Drawing.Size(99, 23);
-            this.labelControl2.TabIndex = 8;
-            this.labelControl2.Text = "قاعدة البيانات :";
+            this.Root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+            this.Root.GroupBordersVisible = false;
+            this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutControlItem1,
+            this.emptySpaceItem1,
+            this.layoutControlItem2,
+            this.layoutControlItem3,
+            this.layoutControlItem4,
+            this.layoutControlItem5,
+            this.layoutControlItem6,
+            this.layoutControlItem7});
+            this.Root.Name = "Root";
+            this.Root.Size = new System.Drawing.Size(540, 203);
+            this.Root.TextVisible = false;
             // 
-            // usernameTextBox
+            // layoutControlItem1
             // 
-            this.usernameTextBox.Enabled = false;
-            this.usernameTextBox.Location = new System.Drawing.Point(17, 144);
-            this.usernameTextBox.Name = "usernameTextBox";
-            this.usernameTextBox.Size = new System.Drawing.Size(198, 26);
-            this.usernameTextBox.TabIndex = 9;
+            this.layoutControlItem1.Control = this.textEditServer;
+            this.layoutControlItem1.Location = new System.Drawing.Point(148, 0);
+            this.layoutControlItem1.Name = "layoutControlItem1";
+            this.layoutControlItem1.Size = new System.Drawing.Size(372, 30);
+            this.layoutControlItem1.Text = "السيرفر :";
+            this.layoutControlItem1.TextSize = new System.Drawing.Size(74, 19);
             // 
-            // passwordTextBox
+            // emptySpaceItem1
             // 
-            this.passwordTextBox.Enabled = false;
-            this.passwordTextBox.Location = new System.Drawing.Point(17, 182);
-            this.passwordTextBox.Name = "passwordTextBox";
-            this.passwordTextBox.Size = new System.Drawing.Size(198, 26);
-            this.passwordTextBox.TabIndex = 10;
+            this.emptySpaceItem1.AllowHotTrack = false;
+            this.emptySpaceItem1.Location = new System.Drawing.Point(0, 173);
+            this.emptySpaceItem1.Name = "emptySpaceItem1";
+            this.emptySpaceItem1.Size = new System.Drawing.Size(520, 10);
+            this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
             // 
-            // labelControl3
+            // layoutControlItem2
             // 
-            this.labelControl3.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl3.Appearance.Options.UseFont = true;
-            this.labelControl3.Enabled = false;
-            this.labelControl3.Location = new System.Drawing.Point(248, 146);
-            this.labelControl3.Name = "labelControl3";
-            this.labelControl3.Size = new System.Drawing.Size(95, 23);
-            this.labelControl3.TabIndex = 7;
-            this.labelControl3.Text = "اسم المستخدم :";
+            this.layoutControlItem2.Control = this.textEditDataBase;
+            this.layoutControlItem2.Location = new System.Drawing.Point(0, 30);
+            this.layoutControlItem2.Name = "layoutControlItem2";
+            this.layoutControlItem2.Size = new System.Drawing.Size(520, 30);
+            this.layoutControlItem2.Text = "قاعدة البيانات :";
+            this.layoutControlItem2.TextSize = new System.Drawing.Size(74, 19);
             // 
-            // labelControl4
+            // layoutControlItem3
             // 
-            this.labelControl4.Appearance.Font = new System.Drawing.Font("Times New Roman", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl4.Appearance.Options.UseFont = true;
-            this.labelControl4.Enabled = false;
-            this.labelControl4.Location = new System.Drawing.Point(254, 184);
-            this.labelControl4.Name = "labelControl4";
-            this.labelControl4.Size = new System.Drawing.Size(89, 23);
-            this.labelControl4.TabIndex = 7;
-            this.labelControl4.Text = "الرقم السري :";
+            this.layoutControlItem3.Control = this.btnConectionChek;
+            this.layoutControlItem3.Location = new System.Drawing.Point(0, 0);
+            this.layoutControlItem3.Name = "layoutControlItem3";
+            this.layoutControlItem3.Size = new System.Drawing.Size(148, 30);
+            this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
+            this.layoutControlItem3.TextVisible = false;
             // 
-            // labelVersion
+            // layoutControlItem4
             // 
-            this.labelVersion.AutoSize = true;
-            this.labelVersion.Location = new System.Drawing.Point(12, 262);
-            this.labelVersion.Name = "labelVersion";
-            this.labelVersion.Size = new System.Drawing.Size(102, 19);
-            this.labelVersion.TabIndex = 11;
-            this.labelVersion.Text = "Version 1.0.0.0";
+            this.layoutControlItem4.Control = this.comboBoxAuth;
+            this.layoutControlItem4.Location = new System.Drawing.Point(0, 60);
+            this.layoutControlItem4.Name = "layoutControlItem4";
+            this.layoutControlItem4.Size = new System.Drawing.Size(520, 30);
+            this.layoutControlItem4.Text = "المصادقة :";
+            this.layoutControlItem4.TextSize = new System.Drawing.Size(74, 19);
+            // 
+            // layoutControlItem5
+            // 
+            this.layoutControlItem5.Control = this.textEditUsername;
+            this.layoutControlItem5.Location = new System.Drawing.Point(0, 90);
+            this.layoutControlItem5.Name = "layoutControlItem5";
+            this.layoutControlItem5.Size = new System.Drawing.Size(520, 30);
+            this.layoutControlItem5.Text = "اسم المستخدم :";
+            this.layoutControlItem5.TextSize = new System.Drawing.Size(74, 19);
+            // 
+            // layoutControlItem6
+            // 
+            this.layoutControlItem6.Control = this.textEditPassword;
+            this.layoutControlItem6.Location = new System.Drawing.Point(0, 120);
+            this.layoutControlItem6.Name = "layoutControlItem6";
+            this.layoutControlItem6.Size = new System.Drawing.Size(520, 30);
+            this.layoutControlItem6.Text = "الرقم السري :";
+            this.layoutControlItem6.TextSize = new System.Drawing.Size(74, 19);
+            // 
+            // layoutControlItem7
+            // 
+            this.layoutControlItem7.Control = this.labelControlVersion;
+            this.layoutControlItem7.Location = new System.Drawing.Point(0, 150);
+            this.layoutControlItem7.Name = "layoutControlItem7";
+            this.layoutControlItem7.Size = new System.Drawing.Size(520, 23);
+            this.layoutControlItem7.TextSize = new System.Drawing.Size(0, 0);
+            this.layoutControlItem7.TextVisible = false;
+            // 
+            // btn_Save
+            // 
+            this.btn_Save.Location = new System.Drawing.Point(75, 243);
+            this.btn_Save.Name = "btn_Save";
+            this.btn_Save.Size = new System.Drawing.Size(93, 37);
+            this.btn_Save.TabIndex = 14;
+            this.btn_Save.Text = "Save";
+            this.btn_Save.Click += new System.EventHandler(this.btn_Save_Click);
             // 
             // ConnectionSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(588, 290);
-            this.Controls.Add(this.labelVersion);
-            this.Controls.Add(this.passwordTextBox);
-            this.Controls.Add(this.usernameTextBox);
-            this.Controls.Add(this.labelControl2);
-            this.Controls.Add(this.labelControl4);
-            this.Controls.Add(this.labelControl3);
-            this.Controls.Add(this.labelControl1);
-            this.Controls.Add(this.btnCheked);
-            this.Controls.Add(this.SqlServerAuthRadio);
-            this.Controls.Add(this.windowsAuthRadio);
-            this.Controls.Add(this.databaseTextBox);
-            this.Controls.Add(this.serverTextBox);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnSave);
+            this.ClientSize = new System.Drawing.Size(551, 283);
+            this.Controls.Add(this.btn_Save);
+            this.Controls.Add(this.layoutControl1);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(590, 322);
-            this.MinimumSize = new System.Drawing.Size(590, 322);
             this.Name = "ConnectionSettingsForm";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "اعدادات الاتصال بالسيرفر";
-            ((System.ComponentModel.ISupportInitialize)(this.serverTextBox.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.databaseTextBox.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.usernameTextBox.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.passwordTextBox.Properties)).EndInit();
+            this.Text = "Smai";
+            this.Load += new System.EventHandler(this.ConnectionSettingsForm_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
+            this.layoutControl1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.textEditPassword.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditUsername.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.comboBoxAuth.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditDataBase.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditServer.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem7)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private DevExpress.XtraEditors.SimpleButton btnSave;
-        private DevExpress.XtraEditors.SimpleButton btnCancel;
-        private DevExpress.XtraEditors.TextEdit serverTextBox;
-        private DevExpress.XtraEditors.TextEdit databaseTextBox;
-        private System.Windows.Forms.RadioButton windowsAuthRadio;
-        private System.Windows.Forms.RadioButton SqlServerAuthRadio;
-        private DevExpress.XtraEditors.SimpleButton btnCheked;
-        private DevExpress.XtraEditors.LabelControl labelControl1;
-        private DevExpress.XtraEditors.LabelControl labelControl2;
-        private DevExpress.XtraEditors.TextEdit usernameTextBox;
-        private DevExpress.XtraEditors.TextEdit passwordTextBox;
-        private DevExpress.XtraEditors.LabelControl labelControl3;
-        private DevExpress.XtraEditors.LabelControl labelControl4;
-        private System.Windows.Forms.Label labelVersion;
+        private DevExpress.XtraLayout.LayoutControl layoutControl1;
+        private DevExpress.XtraEditors.LabelControl labelControlVersion;
+        private DevExpress.XtraEditors.TextEdit textEditPassword;
+        private DevExpress.XtraEditors.TextEdit textEditUsername;
+        private DevExpress.XtraEditors.ComboBoxEdit comboBoxAuth;
+        private DevExpress.XtraEditors.SimpleButton btnConectionChek;
+        private DevExpress.XtraEditors.TextEdit textEditDataBase;
+        private DevExpress.XtraEditors.TextEdit textEditServer;
+        private DevExpress.XtraLayout.LayoutControlGroup Root;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
+        private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem4;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem5;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem6;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem7;
+        private DevExpress.XtraEditors.SimpleButton btn_Save;
     }
 }
