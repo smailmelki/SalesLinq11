@@ -38,9 +38,17 @@ namespace SalesLinq.Class
                 var query = db.StoreLogs.Where(sl => sl.ProductID == productID && sl.StoreID == storeID)
                     .OrderBy(sl => sl.InsertTime);
 
+                if (qty <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(qty), "يجب أن تكون الكمية المطلوبة أكبر من صفر.");
+
                 if (query.Count() == 0) // في حالة لم تكن هناك أي حركة على الصنف نضع السعر الأصلي
                 {
-                    return Session.ProductView.Single(x => x.ID == productID).Units.OrderByDescending(x => x.Factor).First().BuyPrice;
+                    var product = Session.ProductView.SingleOrDefault(x => x.ID == productID);
+                    var defaultUnit = product?.Units?.OrderByDescending(x => x.Factor).FirstOrDefault();
+                    if (defaultUnit == null)
+                        throw new InvalidOperationException("لا يوجد سعر شراء افتراضي للصنف.");
+
+                    return defaultUnit.BuyPrice;
                 }
 
                 double TotalQtyOut = query.Where(q => q.IsInTransaction == false).Sum(q => (double?)q.Qty) ?? 0;//مجموع الكمية المباعة
@@ -52,12 +60,23 @@ namespace SalesLinq.Class
                 var subQuery = query
                     .Where(q => query.Where(q1 => q1.IsInTransaction == true && q1.InsertTime <= q.InsertTime)
                     .Sum(q1 => q1.Qty) > TotalQtyOut && q.IsInTransaction == true).ToList();
-                var subQueryBalance = subQuery.Where(q => q.IsInTransaction == true).Sum(q => q.Qty) - subQuery.Where(q => q.IsInTransaction == false).Sum(q => q.Qty);
+                if (subQuery.Count == 0)
+                    throw new InvalidOperationException("رصيد الصنف موجب، لكن تعذر تحديد طبقات تكلفة المخزون. راجع حركات الصنف.");
+
+                var subQueryBalance = subQuery.Sum(q => q.Qty);
                 if (subQueryBalance > Balance)
                 {
                     var diff = subQueryBalance - Balance;
-                    subQuery[0].Qty -= diff;                // حذف الكمية الزائدة (المباعة ) من أول سطر
+                    if (diff > subQuery[0].Qty)
+                        throw new InvalidOperationException("تعذر مطابقة طبقات المخزون مع الرصيد الحالي.");
+
+                    subQuery[0].Qty -= diff;                // حذف الكمية الزائدة (المباعة ) من أول طبقة
                 }
+
+                subQuery = subQuery.Where(q => q.Qty > 0).ToList();
+                if (subQuery.Count == 0 || subQuery.Sum(q => q.Qty) <= 0)
+                    throw new InvalidOperationException("لا توجد طبقات مخزون موجبة لحساب تكلفة الصنف.");
+
                 double fifo;
                 double lifo;
                 double WAC;
@@ -103,7 +122,11 @@ namespace SalesLinq.Class
                     lifo = subQuery.First().CostValue;
                 }
                 ////////////////// المتوسط المرجح - WAC - حساب التكلفة بحسب ///////////////////
-                WAC = subQuery.Select(q=>q.Qty*q.CostValue).Sum(q=>q)/Balance;
+                var remainingQty = subQuery.Sum(q => q.Qty);
+                if (remainingQty <= 0)
+                    throw new InvalidOperationException("لا يمكن حساب المتوسط المرجح دون رصيد موجب.");
+
+                WAC = subQuery.Sum(q => q.Qty * q.CostValue) / remainingQty;
                 /////////////////////////////////////////////////////////////////////////////////
                 var method = (CostCalculationMethod)Session.Products.Single(x => x.ID == productID).CostCalculationMethod;
                 switch (method)
