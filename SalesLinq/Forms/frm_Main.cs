@@ -16,7 +16,6 @@ namespace SalesLinq.Forms
     {
         private static frm_Main _Instance;
         private readonly List<Form> _openForms = new List<Form>();
-        private bool _navigationReady;
 
         private static readonly Color Navy = Color.FromArgb(27, 45, 72);
         private static readonly Color NavyLight = Color.FromArgb(39, 61, 94);
@@ -89,6 +88,7 @@ namespace SalesLinq.Forms
         /// </summary>
         public void AddAccordionElement()
         {
+            BuildDashboard();
             BuildNavigation();
             Lbl_UserName.Text = Session.User == null ? "غير مسجل" : Session.User.Name;
         }
@@ -143,7 +143,6 @@ namespace SalesLinq.Forms
                 navFlow.Controls.Add(CreateNavigationHint("لا توجد قوائم متاحة أو لا توجد نتائج مطابقة."));
 
             navFlow.ResumeLayout();
-            _navigationReady = true;
         }
 
         private void AddNavigationGroup(ScreensAccessProfile group, IList<ScreensAccessProfile> children)
@@ -307,7 +306,7 @@ namespace SalesLinq.Forms
             var quickPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
-                Height = 132,
+                Height = 230,
                 FlowDirection = FlowDirection.RightToLeft,
                 WrapContents = true,
                 Padding = new Padding(0, 4, 0, 8),
