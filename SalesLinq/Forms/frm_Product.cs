@@ -447,6 +447,8 @@ namespace SalesLinq.Forms
 
         public override void Save()
         {
+            int originalProductId = product.ID;
+
             try
             {
                 gridView1.EndEdit();
@@ -517,17 +519,30 @@ namespace SalesLinq.Forms
                         product = savedProduct;
                     }
                 }
-
-                PartID = product.ID;
-                PartName = product.Name;
-                base.Save();
-                Text = "بيانات صنف: " + product.Name;
             }
             catch (Exception ex)
             {
+                if (originalProductId == 0 && product != null)
+                    product.ID = 0;
+
                 MessageBox.Show("تعذر حفظ الصنف ووحدات قياسه: " + ex.Message,
                     "خطأ في الحفظ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
+
+            using (var db = new DAL.DBDataContext())
+            {
+                unitRows = new BindingList<DAL.ProductUnit>(db.ProductUnits
+                    .Where(x => x.ProductID == product.ID)
+                    .OrderBy(x => x.ID)
+                    .ToList());
+            }
+
+            gridView1.DataSource = unitRows;
+            PartID = product.ID;
+            PartName = product.Name;
+            base.Save();
+            Text = "بيانات صنف: " + product.Name;
         }
 
         public override void Delete()
