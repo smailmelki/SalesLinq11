@@ -449,10 +449,11 @@ namespace SalesLinq.Forms
             {
                 gridView1.EndEdit();
                 using (var db = new DAL.DBDataContext())
-                db.Connection.Open();
-                using (var transaction = db.Connection.BeginTransaction())
                 {
-                    db.Transaction = transaction;
+                    db.Connection.Open();
+                    using (var transaction = db.Connection.BeginTransaction())
+                    {
+                        db.Transaction = transaction;
 
                     DAL.Product savedProduct;
                     if (product.ID == 0)
@@ -534,10 +535,11 @@ namespace SalesLinq.Forms
             try
             {
                 using (var db = new DAL.DBDataContext())
-                db.Connection.Open();
-                using (var transaction = db.Connection.BeginTransaction())
                 {
-                    db.Transaction = transaction;
+                    db.Connection.Open();
+                    using (var transaction = db.Connection.BeginTransaction())
+                    {
+                        db.Transaction = transaction;
 
                     if (db.StoreLogs.Any(x => x.ProductID == product.ID))
                     {
@@ -555,7 +557,8 @@ namespace SalesLinq.Forms
                     db.Products.DeleteOnSubmit(trackedProduct);
                     db.SubmitChanges();
 
-                    transaction.Commit();
+                        transaction.Commit();
+                    }
                 }
 
                 base.Delete();
