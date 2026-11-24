@@ -34,7 +34,6 @@ namespace SalesLinq.Forms
             BackColor = Color.FromArgb(244, 247, 251);
             ForeColor = Color.FromArgb(38, 52, 72);
             Font = new Font("Segoe UI", 9F);
-            MinimumSize = new Size(760, 520);
             KeyPreview = true;
             StartPosition = FormStartPosition.CenterScreen;
 
