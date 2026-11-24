@@ -149,14 +149,15 @@ namespace SalesLinq.Forms
                 valid = false;
             }
 
-            if (cmb_SettingProfile.SelectedValue == null)
+            bool isAdmin = Convert.ToInt32(cmb_UserType.SelectedValue ?? 0) ==
+                           (int)Master.UserType.Admin;
+            if (!isAdmin && cmb_SettingProfile.SelectedValue == null)
             {
                 errorProvider.SetError(cmb_SettingProfile, "يرجى تحديد نموذج الإعدادات.");
                 valid = false;
             }
+            else errorProvider.SetError(cmb_SettingProfile, string.Empty);
 
-            bool isAdmin = Convert.ToInt32(cmb_UserType.SelectedValue ?? 0) ==
-                           (int)Master.UserType.Admin;
             if (!isAdmin && cmb_ScreenProfile.SelectedValue == null)
             {
                 errorProvider.SetError(cmb_ScreenProfile, "يرجى تحديد نموذج الوصول.");
@@ -205,7 +206,8 @@ namespace SalesLinq.Forms
                     entity.Name = txt_Name.Text.Trim();
                     entity.UserName = txt_UserName.Text.Trim();
                     entity.UserType = Convert.ToByte(cmb_UserType.SelectedValue);
-                    entity.SettingsProfileID = Convert.ToInt32(cmb_SettingProfile.SelectedValue);
+                    entity.SettingsProfileID = cmb_SettingProfile.SelectedValue == null
+                        ? 0 : Convert.ToInt32(cmb_SettingProfile.SelectedValue);
 
                     bool isAdmin = entity.UserType == (byte)Master.UserType.Admin;
                     if (!isAdmin)
