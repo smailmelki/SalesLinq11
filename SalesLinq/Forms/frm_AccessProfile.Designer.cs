@@ -15,6 +15,18 @@ namespace SalesLinq.Forms
             base.Dispose(disposing);
         }
 
+        private static System.Windows.Forms.DataGridViewCheckBoxColumn CreatePermissionColumn(string property, string caption)
+        {
+            return new System.Windows.Forms.DataGridViewCheckBoxColumn
+            {
+                Name = property,
+                DataPropertyName = property,
+                HeaderText = caption,
+                Width = 65,
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
+            };
+        }
+
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
@@ -51,7 +63,24 @@ namespace SalesLinq.Forms
             gridPermissions.AllowUserToAddRows = false;
             gridPermissions.AllowUserToDeleteRows = false;
             gridPermissions.AllowUserToResizeRows = false;
-            gridPermissions.AutoGenerateColumns = true;
+            gridPermissions.AutoGenerateColumns = false;
+            gridPermissions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[]
+            {
+                new System.Windows.Forms.DataGridViewTextBoxColumn
+                {
+                    Name = nameof(SalesLinq.Class.ScreensAccessProfile.ScreenCaption),
+                    DataPropertyName = nameof(SalesLinq.Class.ScreensAccessProfile.ScreenCaption),
+                    HeaderText = "الشاشة",
+                    ReadOnly = true,
+                    AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
+                },
+                CreatePermissionColumn(nameof(SalesLinq.Class.ScreensAccessProfile.CanShow), "عرض"),
+                CreatePermissionColumn(nameof(SalesLinq.Class.ScreensAccessProfile.CanOpen), "فتح"),
+                CreatePermissionColumn(nameof(SalesLinq.Class.ScreensAccessProfile.CanAdd), "إضافة"),
+                CreatePermissionColumn(nameof(SalesLinq.Class.ScreensAccessProfile.CanEdit), "تعديل"),
+                CreatePermissionColumn(nameof(SalesLinq.Class.ScreensAccessProfile.CanDelete), "حذف"),
+                CreatePermissionColumn(nameof(SalesLinq.Class.ScreensAccessProfile.CanPrint), "طباعة")
+            });
             gridPermissions.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None;
             gridPermissions.BackgroundColor = System.Drawing.SystemColors.Window;
             gridPermissions.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
