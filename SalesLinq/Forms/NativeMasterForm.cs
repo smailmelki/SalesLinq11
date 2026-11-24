@@ -24,6 +24,7 @@ namespace SalesLinq.Forms
         public static string ErrorText => "هذا الحقل مطلوب";
 
         protected virtual bool AuthorizeNewAction => true;
+        protected virtual bool AllowUnauthenticatedSave => false;
 
         public NativeMasterForm()
         {
@@ -55,7 +56,7 @@ namespace SalesLinq.Forms
 
             btn_Save.Click += (s, e) =>
             {
-                if (CheckActionAuthorization(Name, IsNew ? Master.Actions.Add : Master.Actions.Edit) &&
+                if ((AllowUnauthenticatedSave || CheckActionAuthorization(Name, IsNew ? Master.Actions.Add : Master.Actions.Edit)) &&
                     IsDataValide())
                 {
                     Save();
