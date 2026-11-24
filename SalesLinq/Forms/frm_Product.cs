@@ -149,20 +149,6 @@ namespace SalesLinq.Forms
                 if (product == null)
                     throw new InvalidOperationException("الصنف المطلوب غير موجود.");
 
-                product = db.Products.Where(x => x.ID == id)
-                    .Select(x => new DAL.Product
-                    {
-                        ID = x.ID,
-                        Code = x.Code,
-                        Name = x.Name,
-                        Type = x.Type,
-                        CostCalculationMethod = x.CostCalculationMethod,
-                        Descreption = x.Descreption,
-                        IsActive = x.IsActive,
-                        CategoryID = x.CategoryID,
-                        Image = x.Image
-                    }).Single();
-
                 unitRows = new BindingList<DAL.ProductUnit>(db.ProductUnits
                     .Where(x => x.ProductID == id)
                     .OrderBy(x => x.ID)
@@ -463,6 +449,7 @@ namespace SalesLinq.Forms
             {
                 gridView1.EndEdit();
                 using (var db = new DAL.DBDataContext())
+                db.Connection.Open();
                 using (var transaction = db.Connection.BeginTransaction())
                 {
                     db.Transaction = transaction;
@@ -547,6 +534,7 @@ namespace SalesLinq.Forms
             try
             {
                 using (var db = new DAL.DBDataContext())
+                db.Connection.Open();
                 using (var transaction = db.Connection.BeginTransaction())
                 {
                     db.Transaction = transaction;
