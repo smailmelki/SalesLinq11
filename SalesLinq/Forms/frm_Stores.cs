@@ -18,8 +18,9 @@ namespace SalesLinq.Forms
         public frm_Stores(int id)
         {
             InitializeComponent();
-            var db = new DAL.DBDataContext();
-            store = db.Stores.Where(s => s.ID == id).First();
+            using (var db = new DAL.DBDataContext())
+                store = db.Stores.Single(s => s.ID == id);
+
             GetData();
         }
 
