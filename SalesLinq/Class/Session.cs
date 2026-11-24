@@ -403,9 +403,23 @@ namespace SalesLinq.Class
         //}
         private static DAL.User _user;
         public static DAL.User User { get => _user;}
+        public static void ClearUser()
+        {
+            _user = null;
+            _screenAccesses = null;
+            _userSettings = null;
+        }
+
         public static void SetUser(DAL.User user)
         {
+            if (user == null)
+            {
+                ClearUser();
+                return;
+            }
+
             _user = user;
+            _userSettings = null;
             using (DAL.DBDataContext db = new DAL.DBDataContext())
             {
                 _screenAccesses = (from s in Class.Screens.GetScreens
