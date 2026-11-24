@@ -70,8 +70,10 @@ namespace SalesLinq.Forms
                     if (info.Logo != null && info.Logo.Length > 0)
                     {
                         using (var stream = new System.IO.MemoryStream(info.Logo.ToArray()))
+                        using (Image image = Image.FromStream(stream))
                         {
-                            Image image = Image.FromStream(stream);
+                            if (peLogo.Image != null)
+                                peLogo.Image.Dispose();
                             peLogo.Image = new Bitmap(image);
                         }
                     }
@@ -453,8 +455,10 @@ namespace SalesLinq.Forms
             }
 
             Form form = null;
-            switch (name)
+            try
             {
+                switch (name)
+                {
                 case "frm_Vendor": form = new frm_CustomerVendor(false); break;
                 case "frm_Customer": form = new frm_CustomerVendor(true); break;
                 case "frm_VendorList": form = new frm_CustomerVendorList(false); break;
@@ -473,6 +477,13 @@ namespace SalesLinq.Forms
                     if (type != null)
                         form = Activator.CreateInstance(type) as Form;
                     break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("تعذر إنشاء الشاشة المطلوبة.\\n" + ex.Message,
+                    "التنقل", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
             if (form == null)
