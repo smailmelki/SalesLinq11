@@ -1,35 +1,39 @@
-﻿using System;
+using System;
 using System.Linq;
 
 namespace SalesLinq.Forms
 {
-    public partial class frm_DrawerList : frm_MasterList
+    public partial class frm_DrawerList : NativeMasterListForm
     {
         public frm_DrawerList()
         {
             InitializeComponent();
-            RefreshData();
         }
 
         private void Frm_DrawerList_Load(object sender, EventArgs e)
         {
-            gridView1.Columns["ID"].Visible = false;// اخفاء عمود الرقم
-            gridView1.Columns["Name"].Caption = "الاسم";// تغيير عنوان رأس العمود
+            if (gridView1.Columns.Contains("ID"))
+                gridView1.Columns["ID"].Visible = false;
+
+            if (gridView1.Columns.Contains("Name"))
+                gridView1.Columns["Name"].HeaderText = "الاسم";
         }
 
         public override void RefreshData()
         {
             using (var db = new DAL.DBDataContext())
             {
-                gridControl1.DataSource = db.Drawers.Select(x => new { x.ID, x.Name });
+                gridView1.DataSource = db.Drawers
+                    .Select(x => new { x.ID, x.Name })
+                    .ToList();
             }
-            base.RefreshData();
         }
 
         public override void OpenForm(int id)
         {
             frm_Main.OpenForm(new frm_Drawer(id), true);
         }
+
         public override void New()
         {
             frm_Main.OpenForm(new frm_Drawer(), true);
