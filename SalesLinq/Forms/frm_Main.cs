@@ -192,6 +192,8 @@ namespace SalesLinq.Forms
 
             foreach (var child in children)
             {
+                bool canOpen = Session.User != null &&
+                    (Session.User.UserType == (byte)Master.UserType.Admin || child.CanOpen);
                 var button = new Button
                 {
                     Text = "     " + child.ScreenCaption,
@@ -201,8 +203,9 @@ namespace SalesLinq.Forms
                     TextAlign = ContentAlignment.MiddleRight,
                     Padding = new Padding(8, 0, 12, 0),
                     Font = new Font("Segoe UI", 9F),
-                    ForeColor = Color.FromArgb(226, 234, 244),
+                    ForeColor = canOpen ? Color.FromArgb(226, 234, 244) : Color.FromArgb(118, 134, 154),
                     BackColor = Navy,
+                    Enabled = canOpen,
                     FlatStyle = FlatStyle.Flat,
                     Cursor = Cursors.Hand,
                     UseVisualStyleBackColor = false
@@ -348,7 +351,7 @@ namespace SalesLinq.Forms
                 button.Enabled = Session.User != null &&
                     (Session.User.UserType == (byte)Master.UserType.Admin ||
                      (Session.ScreenAccesses != null &&
-                      Session.ScreenAccesses.Any(x => x.ScreenName == screenName && x.CanShow)));
+                      Session.ScreenAccesses.Any(x => x.ScreenName == screenName && x.CanShow && x.CanOpen)));
             }
         }
 
