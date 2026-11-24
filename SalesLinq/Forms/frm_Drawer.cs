@@ -39,6 +39,7 @@ namespace SalesLinq.Forms
             txt_Name.Text = drawer == null ? string.Empty : drawer.Name;
             PartID = drawer == null ? 0 : drawer.ID;
             PartName = drawer == null ? string.Empty : drawer.Name;
+            btn_Delete.Enabled = drawer != null && drawer.ID != 0;
             base.GetData();
         }
 
