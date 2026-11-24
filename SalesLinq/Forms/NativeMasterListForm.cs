@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace SalesLinq.Forms
 {
@@ -30,7 +31,32 @@ namespace SalesLinq.Forms
                 RowHeadersVisible = false,
                 RightToLeft = RightToLeft.Yes,
                 BackgroundColor = System.Drawing.SystemColors.Window,
-                BorderStyle = BorderStyle.None
+                BorderStyle = BorderStyle.None,
+                GridColor = Color.FromArgb(229, 234, 241),
+                EnableHeadersVisualStyles = false,
+                ColumnHeadersHeight = 42,
+                RowTemplate = { Height = 36 },
+                Font = new Font("Segoe UI", 9F),
+                ColumnHeadersDefaultCellStyle =
+                {
+                    BackColor = Color.FromArgb(232, 238, 246),
+                    ForeColor = Color.FromArgb(38, 52, 72),
+                    Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                    Alignment = DataGridViewContentAlignment.MiddleRight
+                },
+                DefaultCellStyle =
+                {
+                    BackColor = Color.White,
+                    ForeColor = Color.FromArgb(38, 52, 72),
+                    SelectionBackColor = Color.FromArgb(218, 240, 238),
+                    SelectionForeColor = Color.FromArgb(27, 45, 72),
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Padding = new Padding(5, 2, 5, 2)
+                },
+                AlternatingRowsDefaultCellStyle =
+                {
+                    BackColor = Color.FromArgb(248, 250, 252)
+                }
             };
 
             Controls.Add(gridView1);
