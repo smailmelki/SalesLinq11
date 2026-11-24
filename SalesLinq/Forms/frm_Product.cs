@@ -587,7 +587,8 @@ namespace SalesLinq.Forms
                 {
                     Code = GetNewProductCode(),
                     IsActive = true,
-                    Type = (byte)Master.ProductType.Inventory
+                    Type = (byte)Master.ProductType.Inventory,
+                    CostCalculationMethod = (byte)MasterInventory.CostCalculationMethod.FIFO
                 };
 
                 var category = db.ProductCategories
