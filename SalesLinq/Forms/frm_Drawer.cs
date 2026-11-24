@@ -144,10 +144,12 @@ namespace SalesLinq.Forms
 
                             db.Drawers.Attach(drawer);
                             db.Drawers.DeleteOnSubmit(drawer);
+                            db.SubmitChanges();
+
                             db.Accounts.DeleteAllOnSubmit(
                                 db.Accounts.Where(x => x.ID == drawer.AccountID));
-
                             db.SubmitChanges();
+
                             transaction.Commit();
                         }
                         catch
