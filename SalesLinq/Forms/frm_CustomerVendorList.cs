@@ -55,11 +55,15 @@ namespace SalesLinq.Forms
 
         public override void RefreshData()
         {
-            var data = IsCustomer
-                ? Session.Customers.Where(x => x.IsCustomer).ToList()
-                : Session.vendores.Where(x => !x.IsCustomer).ToList();
+            using (var db = new DAL.DBDataContext())
+            {
+                var data = db.CustomersAndVendores
+                    .Where(x => x.IsCustomer == IsCustomer)
+                    .OrderBy(x => x.Name)
+                    .ToList();
 
-            gridView1.DataSource = data;
+                gridView1.DataSource = data;
+            }
             base.RefreshData();
         }
 
