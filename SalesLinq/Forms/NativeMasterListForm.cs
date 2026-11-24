@@ -14,16 +14,20 @@ namespace SalesLinq.Forms
         {
             gridView1 = new DataGridView
             {
+                Name = "gridView1",
                 Dock = DockStyle.Fill,
                 ReadOnly = true,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
+                AllowUserToResizeRows = false,
                 MultiSelect = false,
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 AutoGenerateColumns = true,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 RowHeadersVisible = false,
-                RightToLeft = RightToLeft.Yes
+                RightToLeft = RightToLeft.Yes,
+                BackgroundColor = System.Drawing.SystemColors.Window,
+                BorderStyle = BorderStyle.None
             };
 
             Controls.Add(gridView1);
@@ -52,7 +56,11 @@ namespace SalesLinq.Forms
             if (value == null || value == DBNull.Value)
                 return;
 
-            OpenForm(Convert.ToInt32(value));
+            int id;
+            if (!int.TryParse(Convert.ToString(value), out id))
+                return;
+
+            OpenForm(id);
             RefreshData();
         }
 
