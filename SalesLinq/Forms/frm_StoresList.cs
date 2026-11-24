@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Linq;
 
 namespace SalesLinq.Forms
 {
-    public partial class frm_StoresList : frm_MasterList
+    public partial class frm_StoresList : NativeMasterListForm
     {
         public frm_StoresList()
         {
@@ -12,17 +12,23 @@ namespace SalesLinq.Forms
 
         private void Frm_StoresList_Load(object sender, EventArgs e)
         {
-            gridView1.OptionsBehavior.Editable = false;// عدم السماح بالتعديل على الجدول
-            gridView1.Columns["ID"].Visible = false;// اخفاء عمود الرقم
-            gridView1.Columns["Name"].Caption = "الاسم";// تغيير عنوان رأس العمود
+            if (gridView1.Columns.Contains("ID"))
+                gridView1.Columns["ID"].Visible = false;
+
+            if (gridView1.Columns.Contains("Name"))
+                gridView1.Columns["Name"].HeaderText = "الاسم";
         }
 
         public override void RefreshData()
         {
             using (var db = new DAL.DBDataContext())
             {
-                gridControl1.DataSource = db.Stores.Select(x => new { x.ID, x.Name });
+                gridView1.DataSource = db.Stores
+                    .OrderBy(x => x.Name)
+                    .Select(x => new { x.ID, x.Name })
+                    .ToList();
             }
+
             base.RefreshData();
         }
 
@@ -30,9 +36,11 @@ namespace SalesLinq.Forms
         {
             frm_Main.OpenForm(new frm_Stores(id), true);
         }
+
         public override void New()
         {
             frm_Main.OpenForm(new frm_Stores(), true);
+            RefreshData();
         }
     }
 }
