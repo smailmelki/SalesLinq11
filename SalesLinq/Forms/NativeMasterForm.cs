@@ -28,6 +28,7 @@ namespace SalesLinq.Forms
             RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
             KeyPreview = true;
+            StartPosition = FormStartPosition.CenterScreen;
 
             toolStrip = new ToolStrip
             {
@@ -38,7 +39,7 @@ namespace SalesLinq.Forms
 
             btn_Save = new ToolStripButton("حفظ");
             btn_New = new ToolStripButton("جديد");
-            btn_Delete = new ToolStripButton("حذف");
+            btn_Delete = new ToolStripButton("حذف") { Enabled = false };
             btn_Print = new ToolStripButton("طباعة");
             btn_Refresh = new ToolStripButton("تحديث");
 
@@ -56,20 +57,29 @@ namespace SalesLinq.Forms
                     IsDataValide())
                 {
                     Save();
-                    btn_Delete.Enabled = true;
+                    if (!IsNew)
+                        btn_Delete.Enabled = true;
                 }
             };
-            btn_New.Click += (s, e) => New();
+
+            btn_New.Click += (s, e) =>
+            {
+                if (CheckActionAuthorization(Name, Master.Actions.Add))
+                    New();
+            };
+
             btn_Delete.Click += (s, e) =>
             {
                 if (CheckActionAuthorization(Name, Master.Actions.Delete))
                     Delete();
             };
+
             btn_Print.Click += (s, e) =>
             {
                 if (CheckActionAuthorization(Name, Master.Actions.Print))
                     Print();
             };
+
             btn_Refresh.Click += (s, e) => RefreshData();
             KeyDown += NativeMasterForm_KeyDown;
         }
@@ -83,20 +93,29 @@ namespace SalesLinq.Forms
             else return;
 
             e.Handled = true;
+            e.SuppressKeyPress = true;
         }
 
         public static bool CheckActionAuthorization(string formName, Master.Actions action, DAL.User user = null)
         {
             user = user ?? Session.User;
             if (user == null)
+            {
+                MessageBox.Show("يجب تسجيل الدخول أولاً.", "الصلاحيات",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
+            }
 
             if (user.UserType == (byte)Master.UserType.Admin)
                 return true;
 
             var screen = Session.ScreenAccesses?.SingleOrDefault(x => x.ScreenName == formName);
             if (screen == null)
+            {
+                MessageBox.Show("لا توجد صلاحية معرفة لهذه الشاشة.", "الصلاحيات",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
+            }
 
             bool allowed;
             switch (action)
@@ -155,6 +174,7 @@ namespace SalesLinq.Forms
             RefreshData();
             InsertUserAction(IsNew ? ActionType.Add : ActionType.Edit);
             IsNew = false;
+            btn_Delete.Enabled = true;
             GetHistory();
         }
 
