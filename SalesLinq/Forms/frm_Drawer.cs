@@ -76,10 +76,9 @@ namespace SalesLinq.Forms
                         db.Transaction = transaction;
                         try
                         {
-                            SetData();
-
                             if (drawer.ID == 0)
                             {
+                                SetData();
                                 var account = new DAL.Account { Name = drawer.Name };
                                 db.Accounts.InsertOnSubmit(account);
                                 db.SubmitChanges();
@@ -90,6 +89,7 @@ namespace SalesLinq.Forms
                             else
                             {
                                 db.Drawers.Attach(drawer);
+                                SetData();
                                 var account = db.Accounts.Single(x => x.ID == drawer.AccountID);
                                 account.Name = drawer.Name;
                             }
