@@ -53,6 +53,7 @@ namespace SalesLinq.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(520, 230);
             this.Controls.Add(this.layoutPanel);
+            this.toolStrip.BringToFront();
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.MinimumSize = new System.Drawing.Size(420, 190);
             this.Name = "frm_Stores";
