@@ -243,7 +243,9 @@ namespace SalesLinq.Forms
                     db.SubmitChanges();
                 }
 
-                categories.Add(category);
+                if (!categories.Any(x => x.ID == category.ID))
+                    categories.Add(category);
+
                 lkp_Category.DataSource = null;
                 lkp_Category.DisplayMember = nameof(DAL.ProductCategory.Name);
                 lkp_Category.ValueMember = nameof(DAL.ProductCategory.ID);
