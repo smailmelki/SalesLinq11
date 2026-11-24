@@ -108,11 +108,6 @@ namespace SalesLinq.Forms
                 gridPermissions.Columns[column].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             }
 
-            gridPermissions.Columns[nameof(ScreensAccessProfile.ScreenName)].Visible = false;
-            gridPermissions.Columns[nameof(ScreensAccessProfile.ScreenID)].Visible = false;
-            gridPermissions.Columns[nameof(ScreensAccessProfile.ParentScreenID)].Visible = false;
-            gridPermissions.Columns[nameof(ScreensAccessProfile.Actions)].Visible = false;
-
             var captionColumn = gridPermissions.Columns[nameof(ScreensAccessProfile.ScreenCaption)];
             captionColumn.HeaderText = "الشاشة";
             captionColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
