@@ -4,7 +4,7 @@ using System.Windows.Forms;
 namespace SalesLinq.Forms
 {
     /// <summary>
-    /// أساس شاشات القوائم والجداول دون الاعتماد على DevExpress.
+    /// أساس شاشات القوائم والجداول باستخدام عناصر Windows Forms الأصلية.
     /// </summary>
     public class NativeMasterListForm : NativeMasterForm
     {
