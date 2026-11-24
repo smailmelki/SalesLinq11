@@ -36,6 +36,8 @@ namespace SalesLinq.Forms
             SetHeader("Units", "وحدات القياس");
             SetHeader("Descreption", "الوصف");
             SetHeader("IsActive", "نشط");
+            gridView1.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            gridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
         }
 
         private void SetHeader(string columnName, string caption)
@@ -68,11 +70,17 @@ namespace SalesLinq.Forms
                         .Select(x => x.Name)
                         .FirstOrDefault();
 
-                    string unitSummary = string.Join("، ", units.Select(unit =>
+                    string unitSummary = string.Join(Environment.NewLine, units.Select(unit =>
                     {
                         string unitName;
-                        return unitNames.TryGetValue(unit.UnitID, out unitName) ? unitName : string.Empty;
-                    }).Where(x => !string.IsNullOrWhiteSpace(x)));
+                        if (!unitNames.TryGetValue(unit.UnitID, out unitName))
+                            unitName = "وحدة غير معروفة";
+
+                        return string.Format(
+                            "{0} | معامل: {1} | بيع: {2:N2} | شراء: {3:N2} | خصم: {4:N2} | باركود: {5}",
+                            unitName, unit.Factor, unit.SellPrice, unit.BuyPrice,
+                            unit.SellDiscount, unit.Barcode);
+                    }));
 
                     return new ProductListRow
                     {
