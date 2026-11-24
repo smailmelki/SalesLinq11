@@ -1,240 +1,294 @@
-﻿using DevExpress.Utils.Animation;
-using DevExpress.XtraEditors;
-using DevExpress.XtraLayout;
-using SalesLinq.Class;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using SalesLinq.Class;
 
 namespace SalesLinq.Forms
 {
-    public partial class frm_UserSettingsProfile : frm_Master
+    public partial class frm_UserSettingsProfile : NativeMasterForm
     {
-        DAL.UserSettingsProfile profile;
-        List<BaseEdit> editors;// قائمة للتحقق من البيانات المدخلة
+        private DAL.UserSettingsProfile profile;
+        private readonly List<Control> editors = new List<Control>();
+        private readonly Dictionary<string, Type> editorValueTypes = new Dictionary<string, Type>();
+
         public frm_UserSettingsProfile()
         {
             InitializeComponent();
-            accordionControl1.ElementClick += AccordionControl1_ElementClick;
             New();
-            GetData();
         }
+
         public frm_UserSettingsProfile(int id)
         {
             InitializeComponent();
-            accordionControl1.ElementClick += AccordionControl1_ElementClick;
             using (var db = new DAL.DBDataContext())
             {
-                profile = db.UserSettingsProfiles.Single(x => x.ID == id);
-                textEdit1.Text = profile.Name;
-                GetData();
+                profile = db.UserSettingsProfiles.SingleOrDefault(x => x.ID == id);
             }
-        }
-        /// <summary>
-        /// دالة لفتح التاب عند الضغط على العنصر
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AccordionControl1_ElementClick(object sender, DevExpress.XtraBars.Navigation.ElementClickEventArgs e)
-        {
-            var index = accordionControl1.Elements.IndexOf(e.Element);
-            xtraTabControl1.SelectedTabPageIndex = index;
+
+            if (profile == null)
+                throw new InvalidOperationException("نموذج الإعدادات المطلوب غير موجود.");
+
+            txt_Name.Text = profile.Name;
+            BuildEditorPages();
+            IsNew = false;
+            btn_Delete.Enabled = true;
+            PartID = profile.ID;
+            PartName = profile.Name;
         }
 
         public override void New()
         {
             profile = new DAL.UserSettingsProfile();
-            textEdit1.Text = profile.Name;
-            btn_Delete.Enabled = false;
+            txt_Name.Clear();
+            BuildEditorPages();
             IsNew = true;
-            //base.New();
+            PartID = 0;
+            PartName = string.Empty;
+            btn_Delete.Enabled = false;
+            txt_Name.Focus();
         }
-        /// <summary>
-        /// تصميم شاشة نماذج الاعدادات بالكود
-        /// </summary>
-        public override void GetData()
+
+        private void BuildEditorPages()
         {
+            editors.Clear();
+            editorValueTypes.Clear();
+            navigation.Items.Clear();
+            tabs.TabPages.Clear();
 
-            editors = new List<BaseEdit>();
-            Class.UserSettingsTemplate settings = new Class.UserSettingsTemplate(profile.ID);
-            accordionControl1.Elements.Clear();             //حذف كل العناصر
-            xtraTabControl1.TabPages.Clear();               //حذف كل التابات
-            accordionControl1.AllowItemSelection = true;    //الابقاء على تحديد العنصر المختار
-
-            var catalog = settings.GetType().GetProperties();//settingsTemplate متغير يحتوي بيانات جميع البروبرتيز العامة التي في 
-            //اضافة التابات والعناصر 
-            foreach (var item in catalog)
+            var settings = new UserSettingsTemplate(profile.ID);
+            foreach (var category in typeof(UserSettingsTemplate).GetProperties())
             {
-                accordionControl1.Elements.Add(new DevExpress.XtraBars.Navigation.AccordionControlElement()
-                {
-                    Name = nameof(item),
-                    Text = Class.UserSettingsTemplate.GetPropCaption(item.Name),
-                    Style = DevExpress.XtraBars.Navigation.ElementStyle.Item,
-                });
+                object categorySettings = category.GetValue(settings, null);
+                if (categorySettings == null) continue;
 
-                var page = new DevExpress.XtraTab.XtraTabPage()
-                { Name = item.Name, Text = Class.UserSettingsTemplate.GetPropCaption(item.Name) };
-                xtraTabControl1.TabPages.Add(page);
-                LayoutControl lc = new LayoutControl();
-                EmptySpaceItem empty1 = new EmptySpaceItem();
-                EmptySpaceItem empty2 = new EmptySpaceItem();
-                empty2.SizeConstraintsType = SizeConstraintsType.Custom;
-                empty2.MaxSize = new Size(500, 0);
-                empty2.MinSize = new Size(250, 0);
-                lc.AddItem(empty1);
-                lc.AddItem(empty2, empty1, DevExpress.XtraLayout.Utils.InsertType.Right);
-
-                var props = item.GetValue(settings).GetType().GetProperties();// متغير لجلب البيانات
-                foreach (var prop in props)
+                string caption = UserSettingsTemplate.GetPropCaption(category.Name);
+                var page = new TabPage(caption) { Name = category.Name, AutoScroll = true };
+                var table = new TableLayoutPanel
                 {
-                    BaseEdit edit = Class.UserSettingsTemplate.GetPropertyControl(prop.Name, prop.GetValue(item.GetValue(settings)));
-                    if (edit != null)
+                    Dock = DockStyle.Top,
+                    AutoSize = true,
+                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                    ColumnCount = 2,
+                    Padding = new Padding(12),
+                    RightToLeft = RightToLeft.Yes
+                };
+                table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 42F));
+                table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58F));
+
+                foreach (var property in categorySettings.GetType().GetProperties())
+                {
+                    object value = property.GetValue(categorySettings, null);
+                    Control editor = UserSettingsTemplate.GetPropertyControl(property.Name, value);
+                    if (editor == null) continue;
+
+                    editor.Name = property.Name;
+                    editorValueTypes[property.Name] = property.PropertyType;
+                    editors.Add(editor);
+
+                    int row = table.RowCount++;
+                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
+                    var label = new Label
                     {
-                        var layoutItem = lc.AddItem(string.Empty, edit, empty1, DevExpress.XtraLayout.Utils.InsertType.Top);
-                        layoutItem.TextVisible = true;
-                        layoutItem.Text = Class.UserSettingsTemplate.GetPropCaption(prop.Name);
-                        layoutItem.SizeConstraintsType = SizeConstraintsType.Custom;
-                        layoutItem.MaxSize = new Size(700, 30);
-                        layoutItem.MinSize = new Size(250, 30);
-                        editors.Add(edit);
-                    }
-
+                        Text = UserSettingsTemplate.GetPropCaption(property.Name),
+                        Dock = DockStyle.Fill,
+                        TextAlign = System.Drawing.ContentAlignment.MiddleRight,
+                        AutoSize = true
+                    };
+                    table.Controls.Add(label, 0, row);
+                    table.Controls.Add(editor, 1, row);
                 }
-                lc.Dock = DockStyle.Fill;
-                page.Controls.Add(lc);
+
+                page.Controls.Add(table);
+                tabs.TabPages.Add(page);
+                navigation.Items.Add(caption);
             }
-            PartID = profile.ID;     // لتسجيل حركات المستخدم
-            PartName = profile.Name; // لتسجيل حركات المستخدم
+
+            if (tabs.TabPages.Count > 0)
+            {
+                tabs.SelectedIndex = 0;
+                navigation.SelectedIndex = 0;
+            }
         }
-        /// <summary>
-        /// التحقق من المدخلات في الاعدادات
-        /// </summary>
-        /// <returns></returns>
+
+        private void Navigation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (navigation.SelectedIndex >= 0 &&
+                navigation.SelectedIndex < tabs.TabPages.Count)
+                tabs.SelectedIndex = navigation.SelectedIndex;
+        }
+
+        private void Tabs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabs.SelectedIndex >= 0 && tabs.SelectedIndex < navigation.Items.Count &&
+                navigation.SelectedIndex != tabs.SelectedIndex)
+                navigation.SelectedIndex = tabs.SelectedIndex;
+        }
+
         public override bool IsDataValide()
         {
-            int flag = 0;
-            if (textEdit1.Text.Trim() == string.Empty)
+            string name = txt_Name.Text.Trim();
+            if (string.IsNullOrWhiteSpace(name))
             {
-                flag++;
-                textEdit1.ErrorText = ErrorText;
+                errorProvider.SetError(txt_Name, ErrorText);
+                return false;
             }
-            else
+
+            errorProvider.SetError(txt_Name, string.Empty);
+            using (var db = new DAL.DBDataContext())
             {
-                using (var db = new DAL.DBDataContext())
+                if (db.UserSettingsProfiles.Any(x => x.Name == name && x.ID != profile.ID))
                 {
-                    if( db.UserSettingsProfiles.Where(x => x.Name == textEdit1.Text.Trim() && x.ID != profile.ID).Count()>0)
-                    {
-                        flag++;
-                        textEdit1.ErrorText = "هذا الاسم مستخدم";
-                    }
+                    errorProvider.SetError(txt_Name, "هذا الاسم مستخدم بالفعل.");
+                    return false;
                 }
             }
-            editors.ForEach(e =>
+
+            foreach (var editor in editors)
             {
-                if (e.GetType() == typeof(LookUpEdit) && ((LookUpEdit)e).EditValue.ToString().Trim() == "0")
+                var combo = editor as ComboBox;
+                if (combo != null && combo.SelectedValue == null)
                 {
-                    flag += ((LookUpEdit)e).IsEditValueValideAndNotZero() ? 0 : 1;
+                    MessageBox.Show("يرجى تحديد قيمة الحقل: " +
+                        UserSettingsTemplate.GetPropCaption(combo.Name),
+                        "بيانات غير مكتملة", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    combo.Focus();
+                    return false;
                 }
-                //if (e.GetType() == typeof(LookUpEdit) && ((LookUpEdit)e).Properties.DataSource.GetType() != typeof(List<Master.ValueAndID>))
-                //{
-                //    Debug.Print(((LookUpEdit)e).EditValue.ToString().Trim());
-                //    flag += ((LookUpEdit)e).IsEditValueValideAndNotZero() ? 0 : 1;
-                //}
-            });
-            return (flag == 0);
+            }
+
+            return true;
+        }
+
+        private object GetEditorValue(Control editor)
+        {
+            var check = editor as CheckBox;
+            if (check != null) return check.Checked;
+
+            var combo = editor as ComboBox;
+            if (combo != null)
+            {
+                object selected = combo.SelectedValue;
+                Type targetType = editorValueTypes[editor.Name];
+                if (targetType.IsEnum)
+                    return Enum.ToObject(targetType, Convert.ToInt32(selected));
+                return Convert.ToInt32(selected);
+            }
+
+            var numeric = editor as NumericUpDown;
+            if (numeric != null) return numeric.Value;
+
+            throw new InvalidOperationException("نوع عنصر إعدادات غير مدعوم: " + editor.Name);
         }
 
         public override void Save()
         {
-            var db = new DAL.DBDataContext();
-            if (profile.ID == 0)
-            {
-                db.UserSettingsProfiles.InsertOnSubmit(profile);
-            }
-            else
-            {
-                db.UserSettingsProfiles.Attach(profile);
-            }
-            profile.Name = textEdit1.Text;
-            db.SubmitChanges();
-            db.UserSettingsProfileProperties.DeleteAllOnSubmit(
-            db.UserSettingsProfileProperties.Where(x => x.ProfileID == profile.ID));
-            db.SubmitChanges();
-            editors.ForEach(e =>
-            {
-                db.UserSettingsProfileProperties.InsertOnSubmit(new DAL.UserSettingsProfileProperty()
-                {
-                    ProfileID = profile.ID,
-                    PropertyName = e.Name,
-                    PropertyValue = Master.ToByteArray<object>(e.EditValue)
-                });
-            });
-            db.SubmitChanges();
-            PartID = profile.ID;     // لتسجيل حركات المستخدم
-            PartName = profile.Name; // لتسجيل حركات المستخدم
-            base.Save();
-        }
-        public override void Delete()
-        {
-            if (AskForDeletion())
+            try
             {
                 using (var db = new DAL.DBDataContext())
                 {
-                    //التأكد من أنه غير مستخدم قبل حذفه
-                    var log = db.Users.Where(x => x.SettingsProfileID == profile.ID).Count();
-                    if (log > 0)
+                    db.Connection.Open();
+                    using (var transaction = db.Connection.BeginTransaction())
                     {
-                        XtraMessageBox.Show(text: "عفوا لا يمكن حذف الاعداد حيث أنه مرتبط بأحد المستخدمين"
-                            , caption: "", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Error);
-                        return;
+                        db.Transaction = transaction;
+                        try
+                        {
+                            DAL.UserSettingsProfile entity;
+                            if (profile.ID == 0)
+                            {
+                                entity = new DAL.UserSettingsProfile();
+                                db.UserSettingsProfiles.InsertOnSubmit(entity);
+                            }
+                            else
+                            {
+                                entity = db.UserSettingsProfiles.Single(x => x.ID == profile.ID);
+                            }
+
+                            entity.Name = txt_Name.Text.Trim();
+                            db.SubmitChanges();
+
+                            db.UserSettingsProfileProperties.DeleteAllOnSubmit(
+                                db.UserSettingsProfileProperties.Where(x => x.ProfileID == entity.ID));
+
+                            var properties = editors.Select(editor =>
+                                new DAL.UserSettingsProfileProperty
+                                {
+                                    ProfileID = entity.ID,
+                                    PropertyName = editor.Name,
+                                    PropertyValue = Master.ToByteArray<object>(GetEditorValue(editor))
+                                }).ToList();
+
+                            db.UserSettingsProfileProperties.InsertAllOnSubmit(properties);
+                            db.SubmitChanges();
+                            transaction.Commit();
+
+                            profile = entity;
+                            PartID = entity.ID;
+                            PartName = entity.Name;
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
                     }
-                    db.UserSettingsProfiles.Attach(profile);
-                    db.UserSettingsProfiles.DeleteOnSubmit(profile);
-                    db.UserSettingsProfileProperties.DeleteAllOnSubmit(db.UserSettingsProfileProperties.Where(x => x.ProfileID == profile.ID));
-                    db.SubmitChanges();
                 }
-                base.Delete();
+
+                base.Save();
+                txt_Name.Text = profile.Name;
+                IsNew = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("تعذر حفظ نموذج الإعدادات.\n" + ex.Message,
+                    "خطأ في الحفظ", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void Frm_UserSettingsProfile_Load(object sender, EventArgs e)
+        public override void Delete()
         {
-            accordionControl1.AnimationType = DevExpress.XtraBars.Navigation.AnimationType.Simple;
-            accordionControl1.Appearance.Item.Hovered.Font =
-                new Font(accordionControl1.Appearance.Item.Hovered.Font, FontStyle.Bold);
-            accordionControl1.Appearance.Item.Hovered.Options.UseFont = true;//تغيير الخط عند وضع مؤشر الفأرة عليه
-            accordionControl1.Appearance.Item.Pressed.Font =
-                new Font(accordionControl1.Appearance.Item.Pressed.Font, FontStyle.Bold);
-            accordionControl1.Appearance.Item.Pressed.Options.UseFont = true;//تغيير الخط عند الصغط عليه
-            accordionControl1.ScrollBarMode = DevExpress.XtraBars.Navigation.ScrollBarMode.Hidden;//ScrollBar اخفاء 
-            accordionControl1.OptionsMinimizing.AllowMinimizeMode = DevExpress.Utils.DefaultBoolean.False;
-            xtraTabControl1.ShowTabHeader = DevExpress.Utils.DefaultBoolean.False;//xtraTabControl1 اخفاء راس الصفحة الخاص ب 
-            // خاص باعدادات الانيميشن عند تغيير التاب
-            xtraTabControl1.Transition.AllowTransition = DevExpress.Utils.DefaultBoolean.True;
-            xtraTabControl1.Transition.EasingMode = DevExpress.Data.Utils.EasingMode.EaseInOut;
-            SlideFadeTransition trans = new SlideFadeTransition();
-            trans.Parameters.EffectOptions = PushEffectOptions.FromBottom;
-            xtraTabControl1.Transition.TransitionType = trans;
-            xtraTabControl1.SelectedPageChanging += XtraTabControl1_SelectedPageChanging;
-        }
-        /// <summary>
-        /// دالة لجعل التابات تتغير من الاعلى الى الأسفل والعكس
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void XtraTabControl1_SelectedPageChanging(object sender, DevExpress.XtraTab.TabPageChangingEventArgs e)
-        {
-            SlideFadeTransition trans = new SlideFadeTransition();
-            var currenPage = xtraTabControl1.TabPages.IndexOf(e.Page);
-            var PrevPage = xtraTabControl1.TabPages.IndexOf(e.PrevPage);
-            if (currenPage > PrevPage)
-                trans.Parameters.EffectOptions = PushEffectOptions.FromBottom;
-            else
-                trans.Parameters.EffectOptions = PushEffectOptions.FromTop;
-            xtraTabControl1.Transition.TransitionType = trans;
-        }
+            if (profile == null || profile.ID == 0 || !AskForDeletion())
+                return;
 
+            try
+            {
+                using (var db = new DAL.DBDataContext())
+                {
+                    if (db.Users.Any(x => x.SettingsProfileID == profile.ID))
+                    {
+                        MessageBox.Show("لا يمكن حذف نموذج الإعدادات لأنه مرتبط بمستخدم.",
+                            "تعذر الحذف", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    db.Connection.Open();
+                    using (var transaction = db.Connection.BeginTransaction())
+                    {
+                        db.Transaction = transaction;
+                        try
+                        {
+                            db.UserSettingsProfileProperties.DeleteAllOnSubmit(
+                                db.UserSettingsProfileProperties.Where(x => x.ProfileID == profile.ID));
+                            var entity = db.UserSettingsProfiles.Single(x => x.ID == profile.ID);
+                            db.UserSettingsProfiles.DeleteOnSubmit(entity);
+                            db.SubmitChanges();
+                            transaction.Commit();
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
+
+                base.Delete();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("تعذر حذف نموذج الإعدادات.\n" + ex.Message,
+                    "تعذر الحذف", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }
