@@ -56,7 +56,6 @@ namespace SalesLinq.Forms
 
             split.Dock = System.Windows.Forms.DockStyle.Fill;
             split.Orientation = System.Windows.Forms.Orientation.Vertical;
-            split.SplitterDistance = 230;
             split.Panel1.Controls.Add(navigation);
             split.Panel2.Controls.Add(tabs);
 
