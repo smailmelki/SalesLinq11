@@ -221,6 +221,8 @@
     <Compile Include="Forms\frm_Master.Designer.cs">
       <DependentUpon>frm_Master.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\NativeMasterForm.cs" />
+    <Compile Include="Forms\NativeMasterListForm.cs" />
     <Compile Include="Forms\frm_MasterList.cs">
       <SubType>Form</SubType>
     </Compile>
