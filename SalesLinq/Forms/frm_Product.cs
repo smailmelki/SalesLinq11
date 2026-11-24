@@ -96,6 +96,9 @@ namespace SalesLinq.Forms
                 FillWeight = 55
             });
 
+            foreach (DataGridViewColumn column in gridView1.Columns)
+                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+
             gridView1.CellContentClick += GridView1_CellContentClick;
             gridView1.DataError += (s, e) => { e.ThrowException = false; };
             gridView1.CellValidating += GridView1_CellValidating;
@@ -118,15 +121,18 @@ namespace SalesLinq.Forms
             if (e.RowIndex < 0 || gridView1.Columns[e.ColumnIndex].Name != "DeleteRow")
                 return;
 
-            if (e.RowIndex == 0)
+            var selectedUnit = gridView1.Rows[e.RowIndex].DataBoundItem as DAL.ProductUnit;
+            if (selectedUnit == null)
+                return;
+
+            if (unitRows.IndexOf(selectedUnit) == 0)
             {
                 MessageBox.Show("لا يمكن حذف أول وحدة؛ يمكنك تعديلها بدلاً من ذلك.",
                     "وحدات القياس", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            if (e.RowIndex < unitRows.Count)
-                unitRows.RemoveAt(e.RowIndex);
+            unitRows.Remove(selectedUnit);
         }
 
         private void GridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
