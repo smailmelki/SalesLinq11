@@ -1634,8 +1634,11 @@ namespace SalesLinq.Forms
                     {
                         var total = items.Sum(x => x.TotalPrice);                           //السعر الكلي
                         var totalQty = items.Sum(x => x.ItemQty);                           // العدد الكلي
-                        var ByPriceUnit = Invoice.Expences / total;                         // السعر لكل جنيه واحد
-                        var ByQtyUnit = Invoice.Expences / totalQty;                        // السعر لكل قطعة واحدة من الوحدة المختارة
+                        if (total <= 0 || totalQty <= 0 || items.Any(x => x.ItemQty <= 0))
+                            throw new InvalidOperationException("لا يمكن توزيع المصاريف على فاتورة تحتوي على قيمة أو كمية صفرية.");
+
+                        var ByPriceUnit = Invoice.Expences / total;                         // نسبة المصاريف إلى قيمة المشتريات
+                        var ByQtyUnit = Invoice.Expences / totalQty;                        // المصاريف لكل وحدة
 
                         /////////////// تخصيص الفورم المنبثقة للسؤال على طريقة تقسيم التكلفة ///////////////
                         XtraDialogArgs args = new XtraDialogArgs();
@@ -1652,9 +1655,9 @@ namespace SalesLinq.Forms
                         foreach (var row in items)
                         {
                             if (distributionOption.SelectedOption == Master.CostDistributionOptions.ByPrice)
-                                row.CostValue = (row.TotalPrice / row.ItemQty) + (ByPriceUnit * row.Price); // توزيع التكلفة على حسب السعر                
+                                row.CostValue = (row.TotalPrice / row.ItemQty) + (ByPriceUnit * row.TotalPrice / row.ItemQty);
                             else
-                                row.CostValue = (row.TotalPrice / row.ItemQty) + (ByQtyUnit); // توزيع التكلفة على حسب الكمية
+                                row.CostValue = (row.TotalPrice / row.ItemQty) + ByQtyUnit;
 
                             row.TotalCostValue = row.ItemQty * row.CostValue;  // حساب سعر التكلفة الاجمالية
                         }
@@ -1900,7 +1903,7 @@ namespace SalesLinq.Forms
 
                     foreach (var otherStore in otherStores)
                     {
-                        var Cost = items.Where(x => x.ID == otherStore).Sum(x => x.TotalCostValue);
+                        var Cost = items.Where(x => x.StoreID == otherStore).Sum(x => x.TotalCostValue);
                         db.Journals.InsertOnSubmit(new DAL.Journal()  // CostOfSoldGoods
                         {
                             AccountID = store.InventoryAccountID,
