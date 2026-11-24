@@ -88,7 +88,7 @@ namespace SalesLinq.Forms
                 foreach (var property in properties)
                     property.GetValue(null);
 
-                frm_Main.Instance.Lbl_UserName.Caption = user.Name;
+                frm_Main.Instance.Lbl_UserName.Text = user.Name;
                 frm_Main.Instance.AddAccordionElement();
                 frm_Main.Instance.Show();
 
