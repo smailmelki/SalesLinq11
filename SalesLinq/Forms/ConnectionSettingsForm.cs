@@ -49,6 +49,7 @@ namespace SalesLinq.Forms
 
             string savedConnection = Properties.Settings.Default.SalesDBConnectionString ?? string.Empty;
             bool windowsAuthentication =
+                string.IsNullOrWhiteSpace(savedConnection) ||
                 savedConnection.IndexOf("Integrated Security=True", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 savedConnection.IndexOf("Integrated Security=SSPI", StringComparison.OrdinalIgnoreCase) >= 0;
 
