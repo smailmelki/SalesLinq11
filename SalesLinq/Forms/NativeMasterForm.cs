@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Drawing;
 using System.Windows.Forms;
 using SalesLinq.Class;
 
@@ -30,6 +31,10 @@ namespace SalesLinq.Forms
         {
             RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
+            BackColor = Color.FromArgb(244, 247, 251);
+            ForeColor = Color.FromArgb(38, 52, 72);
+            Font = new Font("Segoe UI", 9F);
+            MinimumSize = new Size(760, 520);
             KeyPreview = true;
             StartPosition = FormStartPosition.CenterScreen;
 
@@ -37,14 +42,20 @@ namespace SalesLinq.Forms
             {
                 Dock = DockStyle.Top,
                 GripStyle = ToolStripGripStyle.Hidden,
-                RightToLeft = RightToLeft.Yes
+                RightToLeft = RightToLeft.Yes,
+                BackColor = Color.White,
+                ForeColor = Color.FromArgb(38, 52, 72),
+                Font = new Font("Segoe UI", 9F),
+                Padding = new Padding(4, 2, 4, 2),
+                RenderMode = ToolStripRenderMode.System
             };
 
-            btn_Save = new ToolStripButton("حفظ");
-            btn_New = new ToolStripButton("جديد");
-            btn_Delete = new ToolStripButton("حذف") { Enabled = false };
-            btn_Print = new ToolStripButton("طباعة");
-            btn_Refresh = new ToolStripButton("تحديث");
+            btn_Save = CreateToolbarButton("حفظ");
+            btn_New = CreateToolbarButton("جديد");
+            btn_Delete = CreateToolbarButton("حذف");
+            btn_Delete.Enabled = false;
+            btn_Print = CreateToolbarButton("طباعة");
+            btn_Refresh = CreateToolbarButton("تحديث");
 
             toolStrip.Items.AddRange(new ToolStripItem[]
             {
@@ -85,6 +96,17 @@ namespace SalesLinq.Forms
 
             btn_Refresh.Click += (s, e) => RefreshData();
             KeyDown += NativeMasterForm_KeyDown;
+        }
+
+        private static ToolStripButton CreateToolbarButton(string text)
+        {
+            return new ToolStripButton(text)
+            {
+                DisplayStyle = ToolStripItemDisplayStyle.Text,
+                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(38, 52, 72),
+                Margin = new Padding(3, 2, 3, 2)
+            };
         }
 
         private void NativeMasterForm_KeyDown(object sender, KeyEventArgs e)
