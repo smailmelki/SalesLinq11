@@ -146,37 +146,55 @@ namespace SalesLinq.Forms
         }
         public override void Save()
         {
-            var db = new DAL.DBDataContext();
-            if (profile.ID == 0)
-            {
-                db.UserAccessProfileNames.InsertOnSubmit(profile);
-            }
-            else
-            {
-                db.UserAccessProfileNames.Attach(profile);
-            }
-            profile.Name = textEdit1.Text;
-            db.SubmitChanges();
-            db.UserAccessProfileDetails.DeleteAllOnSubmit(
-            db.UserAccessProfileDetails.Where(x => x.ProfileID == profile.ID));
-            db.SubmitChanges();
-
             var data = treeList1.DataSource as List<Class.ScreensAccessProfile>;
-            var dbData = data.Select(s => new DAL.UserAccessProfileDetail
+            if (data == null)
+                throw new InvalidOperationException("تعذر قراءة صلاحيات الشاشة.");
+
+            using (var db = new DAL.DBDataContext())
             {
-                CanAdd = s.CanAdd,
-                CanDelete = s.CanDelete,
-                CanEdit = s.CanEdit,
-                CanOpen = s.CanOpen,
-                CanPrint = s.CanPrint,
-                CanShow = s.CanShow,                
-                ProfileID = profile.ID,   
-                ScreenID = s.ScreenID   
-            }).ToList();
-            db.UserAccessProfileDetails.InsertAllOnSubmit(dbData);
-            db.SubmitChanges();
-            PartID = profile.ID;     // لتسجيل حركات المستخدم
-            PartName = profile.Name; // لتسجيل حركات المستخدم
+                db.Connection.Open();
+                using (var transaction = db.Connection.BeginTransaction())
+                {
+                    db.Transaction = transaction;
+                    try
+                    {
+                        if (profile.ID == 0)
+                            db.UserAccessProfileNames.InsertOnSubmit(profile);
+                        else
+                            db.UserAccessProfileNames.Attach(profile);
+
+                        profile.Name = textEdit1.Text.Trim();
+                        db.SubmitChanges();
+
+                        db.UserAccessProfileDetails.DeleteAllOnSubmit(
+                            db.UserAccessProfileDetails.Where(x => x.ProfileID == profile.ID));
+
+                        var dbData = data.Select(s => new DAL.UserAccessProfileDetail
+                        {
+                            CanAdd = s.CanAdd,
+                            CanDelete = s.CanDelete,
+                            CanEdit = s.CanEdit,
+                            CanOpen = s.CanOpen,
+                            CanPrint = s.CanPrint,
+                            CanShow = s.CanShow,
+                            ProfileID = profile.ID,
+                            ScreenID = s.ScreenID
+                        }).ToList();
+
+                        db.UserAccessProfileDetails.InsertAllOnSubmit(dbData);
+                        db.SubmitChanges();
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+
+            PartID = profile.ID;
+            PartName = profile.Name;
             base.Save();
         }
         RepositoryItemCheckEdit repoCheck;
