@@ -26,58 +26,73 @@ namespace SalesLinq.Forms
 
         public override void Save()
         {
-            if (txt_Name.Text.Trim() == string.Empty)
+            if (string.IsNullOrWhiteSpace(txt_Name.Text))
             {
-                txt_Name.ErrorText = ("الرجاء ادخال اسم الفرع");
+                txt_Name.ErrorText = "الرجاء إدخال اسم المخزن";
                 return;
             }
-            // انشاء حسابات المخزن
-            DAL.Account SalesAccount = new DAL.Account();
-            DAL.Account SalesReturnAccount = new DAL.Account();
-            DAL.Account InventoryAccount = new DAL.Account();
-            DAL.Account CostOfGoodsAccount = new DAL.Account();
 
-
-            var db = new DAL.DBDataContext();
-
-            if (store.ID == 0)// ID=0 في حالة الضغط على جديد يكون
+            using (var db = new DAL.DBDataContext())
             {
-                // اضافة الحسابات للمخزن في حالة كانت اضافة
-                db.Stores.InsertOnSubmit(store);
-                db.Accounts.InsertOnSubmit(SalesAccount);
-                db.Accounts.InsertOnSubmit(SalesReturnAccount);
-                db.Accounts.InsertOnSubmit(InventoryAccount);
-                db.Accounts.InsertOnSubmit(CostOfGoodsAccount);
+                db.Connection.Open();
+                using (var transaction = db.Connection.BeginTransaction())
+                {
+                    db.Transaction = transaction;
+                    try
+                    {
+                        var salesAccount = new DAL.Account();
+                        var salesReturnAccount = new DAL.Account();
+                        var inventoryAccount = new DAL.Account();
+                        var costOfGoodsAccount = new DAL.Account();
 
-                store.DiscountAllowedAccountID = Session.Defualts.DiscountAllowedAccountID;
-                store.DiscountReceivedAccountID = Session.Defualts.DiscountReceivedAccountID;
+                        if (store.ID == 0)
+                        {
+                            store.DiscountAllowedAccountID = Session.Defualts.DiscountAllowedAccountID;
+                            store.DiscountReceivedAccountID = Session.Defualts.DiscountReceivedAccountID;
+
+                            db.Stores.InsertOnSubmit(store);
+                            db.Accounts.InsertOnSubmit(salesAccount);
+                            db.Accounts.InsertOnSubmit(salesReturnAccount);
+                            db.Accounts.InsertOnSubmit(inventoryAccount);
+                            db.Accounts.InsertOnSubmit(costOfGoodsAccount);
+                        }
+                        else
+                        {
+                            db.Stores.Attach(store);
+                            salesAccount = db.Accounts.Single(x => x.ID == store.SalesAccountID);
+                            salesReturnAccount = db.Accounts.Single(x => x.ID == store.SalesReturnAccountID);
+                            inventoryAccount = db.Accounts.Single(x => x.ID == store.InventoryAccountID);
+                            costOfGoodsAccount = db.Accounts.Single(x => x.ID == store.CostOfSoldGoodsAccountID);
+                        }
+
+                        SetData();
+
+                        salesAccount.Name = store.Name + "- مبيعات";
+                        salesReturnAccount.Name = store.Name + "- مردود مبيعات";
+                        inventoryAccount.Name = store.Name + "- المخزون";
+                        costOfGoodsAccount.Name = store.Name + "- تكلفة البضاعة المباعة";
+
+                        // حفظ أولي للحصول على أرقام الحسابات الجديدة عند إنشاء مخزن.
+                        db.SubmitChanges();
+
+                        store.SalesAccountID = salesAccount.ID;
+                        store.SalesReturnAccountID = salesReturnAccount.ID;
+                        store.InventoryAccountID = inventoryAccount.ID;
+                        store.CostOfSoldGoodsAccountID = costOfGoodsAccount.ID;
+
+                        db.SubmitChanges();
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
             }
-            else
-            {
-                // جلب الحسابات من المخزن في حالة التعديل
-                db.Stores.Attach(store);
-                SalesAccount = db.Accounts.Single(x => x.ID == store.SalesAccountID);
-                SalesReturnAccount = db.Accounts.Single(x => x.ID == store.SalesReturnAccountID);
-                InventoryAccount = db.Accounts.Single(x => x.ID == store.InventoryAccountID);
-                CostOfGoodsAccount = db.Accounts.Single(x => x.ID == store.CostOfSoldGoodsAccountID);
-            }
 
-            SetData();
-            // تعديل أسماء الحسابات
-            SalesAccount.Name = store.Name + "- مبيعات";
-            SalesReturnAccount.Name = store.Name + "- مردود مبيعات";
-            InventoryAccount.Name = store.Name + "- المخزون";
-            CostOfGoodsAccount.Name = store.Name + "- تكلفة البضاعة المباعة";
-            db.SubmitChanges();// اعتماد التغييرات
-
-            store.SalesAccountID = SalesAccount.ID;
-            store.SalesReturnAccountID = SalesReturnAccount.ID;
-            store.InventoryAccountID = InventoryAccount.ID;
-            store.CostOfSoldGoodsAccountID = CostOfGoodsAccount.ID;
-
-            db.SubmitChanges();// اعتماد التغييرات
-            PartID = store.ID;     // لتسجيل حركات المستخدم
-            PartName = store.Name; // لتسجيل حركات المستخدم
+            PartID = store.ID;
+            PartName = store.Name;
             base.Save();
         }
 
@@ -106,38 +121,56 @@ namespace SalesLinq.Forms
         /// </summary>
         public override void Delete()
         {
-            if (AskForDeletion())
+            if (!AskForDeletion())
+                return;
+
+            using (var db = new DAL.DBDataContext())
             {
-                using (var db = new DAL.DBDataContext())
+                db.Connection.Open();
+                using (var transaction = db.Connection.BeginTransaction())
                 {
-
-                    //التأكد من أن المخزن غير مستخدم قبل حذفه
-                    var log = db.StoreLogs.Where(x => x.StoreID == store.ID).Count();
-                    var accountLog = db.Journals.Where(x => x.AccountID == store.CostOfSoldGoodsAccountID ||
-                                                        x.AccountID == store.SalesAccountID ||
-                                                        x.AccountID == store.SalesReturnAccountID ||
-                                                        x.AccountID == store.InventoryAccountID
-                                                       ).Count();
-
-                    if (log + accountLog > 0)
+                    db.Transaction = transaction;
+                    try
                     {
-                        XtraMessageBox.Show(text: "عفوا لا يمكن حذف المخزن حيث أنه تم استخدامه في النظام"
-                            , caption: "", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Error);
-                        return;
-                    }
+                        // لا نحذف مخزناً له حركات مخزون أو قيود محاسبية مرتبطة.
+                        bool hasStoreLogs = db.StoreLogs.Any(x => x.StoreID == store.ID);
+                        bool hasAccountLogs = db.Journals.Any(x =>
+                            x.AccountID == store.CostOfSoldGoodsAccountID ||
+                            x.AccountID == store.SalesAccountID ||
+                            x.AccountID == store.SalesReturnAccountID ||
+                            x.AccountID == store.InventoryAccountID);
 
-                    db.Stores.Attach(store);
-                    db.Stores.DeleteOnSubmit(store);
-                    db.Accounts.DeleteAllOnSubmit(db.Accounts.Where(x =>
-                                                                    x.ID == store.CostOfSoldGoodsAccountID ||
-                                                                    x.ID == store.SalesAccountID ||
-                                                                    x.ID == store.SalesReturnAccountID ||
-                                                                    x.ID == store.InventoryAccountID
-                                                                   ));
-                    db.SubmitChanges();
+                        if (hasStoreLogs || hasAccountLogs)
+                        {
+                            transaction.Rollback();
+                            XtraMessageBox.Show(
+                                "عفواً، لا يمكن حذف المخزن لأنه مستخدم في النظام.",
+                                "تعذر الحذف",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        db.Stores.Attach(store);
+                        db.Stores.DeleteOnSubmit(store);
+                        db.Accounts.DeleteAllOnSubmit(db.Accounts.Where(x =>
+                            x.ID == store.CostOfSoldGoodsAccountID ||
+                            x.ID == store.SalesAccountID ||
+                            x.ID == store.SalesReturnAccountID ||
+                            x.ID == store.InventoryAccountID));
+
+                        db.SubmitChanges();
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
                 }
-                base.Delete();
             }
+
+            base.Delete();
         }
 
         public override bool IsDataValide()
