@@ -316,9 +316,9 @@ namespace SalesLinq.Forms
                 BackColor = PageBackground
             };
             AddQuickAction(quickActionsPanel, "فاتورة مبيعات", "frm_SalesInvoice", "إنشاء فاتورة جديدة");
-            AddQuickAction(quickPanel, "فاتورة مشتريات", "frm_PurchaseInvoice", "تسجيل عملية شراء");
-            AddQuickAction(quickPanel, "الأصناف", "frm_ProductList", "عرض وإدارة الأصناف");
-            AddQuickAction(quickPanel, "العملاء", "frm_CustomerList", "قائمة العملاء");
+            AddQuickAction(quickActionsPanel, "فاتورة مشتريات", "frm_PurchaseInvoice", "تسجيل عملية شراء");
+            AddQuickAction(quickActionsPanel, "الأصناف", "frm_ProductList", "عرض وإدارة الأصناف");
+            AddQuickAction(quickActionsPanel, "العملاء", "frm_CustomerList", "قائمة العملاء");
 
             var openTitle = new Label
             {
