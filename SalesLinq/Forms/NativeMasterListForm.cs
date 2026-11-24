@@ -10,6 +10,9 @@ namespace SalesLinq.Forms
     {
         protected readonly DataGridView gridView1;
 
+        // عملية الإضافة تُفوض إلى شاشة الإدخال التي تتحقق من صلاحيتها باسمها.
+        protected override bool AuthorizeNewAction => false;
+
         public NativeMasterListForm()
         {
             gridView1 = new DataGridView
