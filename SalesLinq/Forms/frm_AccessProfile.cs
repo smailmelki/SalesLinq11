@@ -134,7 +134,6 @@ namespace SalesLinq.Forms
                     if (!item.Actions.Contains(action))
                     {
                         row.Cells[column].ReadOnly = true;
-                        row.Cells[column].Value = false;
                         row.Cells[column].Style.BackColor = System.Drawing.SystemColors.Control;
                     }
                 }
