@@ -47,7 +47,7 @@ namespace SalesLinq.Forms
         {
             try
             {
-                Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+                Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             }
             catch { }
 
@@ -152,7 +152,7 @@ namespace SalesLinq.Forms
                 FlowDirection = FlowDirection.TopDown,
                 WrapContents = false,
                 AutoSize = true,
-                Width = navFlow.ClientSize.Width - 8,
+                Width = Math.Max(190, navFlow.ClientSize.Width - 8),
                 Margin = new Padding(0, 0, 0, 9),
                 Padding = new Padding(0),
                 BackColor = Navy
@@ -180,7 +180,7 @@ namespace SalesLinq.Forms
                 FlowDirection = FlowDirection.TopDown,
                 WrapContents = false,
                 AutoSize = true,
-                Width = groupContainer.Width,
+                Width = Math.Max(180, groupContainer.Width),
                 BackColor = Navy,
                 Margin = new Padding(0),
                 Padding = new Padding(5, 5, 5, 4),
@@ -530,6 +530,11 @@ namespace SalesLinq.Forms
                     .FirstOrDefault(x => x != main && !x.IsDisposed && x.Name == form.Name);
                 if (existing != null)
                 {
+                    if (existing == form)
+                    {
+                        existing.Activate();
+                        return;
+                    }
                     form.Dispose();
                     if (existing.WindowState == FormWindowState.Minimized)
                         existing.WindowState = FormWindowState.Normal;
