@@ -1,8 +1,6 @@
-﻿using DevExpress.LookAndFeel;
-using SalesLinq.Class;
+﻿using SalesLinq.Class;
 using SalesLinq.Properties;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -16,13 +14,13 @@ namespace SalesLinq
         [STAThread]
         static void Main()
         {
-            if (DataBaseClass.TestDatabaseConnection(Settings.Default.ServerName,Settings.Default.DataBase))
+            string connectionString = Settings.Default.SalesDBConnectionString;
+            string connectionError;
+            if (!string.IsNullOrWhiteSpace(connectionString) &&
+                DataBaseClass.TestDatabaseConnection(connectionString, out connectionError))
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-
-                UserLookAndFeel.Default.SkinName = Settings.Default.SkinName.ToString();                                            // تحميل سمة البرنامج
-                UserLookAndFeel.Default.SetSkinStyle(Settings.Default.SkinName.ToString(), Settings.Default.PaletteName.ToString());// تحميل سمة البرنامج
 
                 using (var db = new DAL.DBDataContext())
                 {
@@ -30,12 +28,6 @@ namespace SalesLinq
                     {
                         var frm = new Forms.frm_Login();
                         frm.Show();
-                        if (Debugger.IsAttached)
-                        {
-                            frm.txt_UserName.Text = "admin";
-                            frm.txt_UserPassword.Text = "admin";
-                            frm.Btn_LogIn_Click(null, null);
-                        }
                     }
                     else
                     {
