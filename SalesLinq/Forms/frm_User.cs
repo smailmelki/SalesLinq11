@@ -9,11 +9,11 @@ namespace SalesLinq.Forms
     public partial class frm_User : NativeMasterForm
     {
         private DAL.User user;
-        private string originalPasswordHash;
 
         public frm_User()
         {
             InitializeComponent();
+            cmb_UserType.SelectedValueChanged += (s, e) => UpdateProfileControls();
             RefreshData();
             New();
         }
@@ -33,7 +33,6 @@ namespace SalesLinq.Forms
                 if (user == null)
                     throw new InvalidOperationException("المستخدم المطلوب غير موجود.");
 
-                originalPasswordHash = user.Password;
                 GetData();
                 IsNew = false;
                 btn_Delete.Enabled = true;
@@ -78,7 +77,6 @@ namespace SalesLinq.Forms
         public override void New()
         {
             user = new DAL.User { IsActive = true };
-            originalPasswordHash = null;
 
             txt_Name.Clear();
             txt_UserName.Clear();
@@ -223,7 +221,6 @@ namespace SalesLinq.Forms
                     db.SubmitChanges();
 
                     user = entity;
-                    originalPasswordHash = entity.Password;
                     PartID = entity.ID;
                     PartName = entity.Name;
                 }
