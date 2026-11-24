@@ -455,64 +455,65 @@ namespace SalesLinq.Forms
                     {
                         db.Transaction = transaction;
 
-                    DAL.Product savedProduct;
-                    if (product.ID == 0)
-                    {
-                        savedProduct = product;
-                        db.Products.InsertOnSubmit(savedProduct);
-                    }
-                    else
-                    {
-                        savedProduct = db.Products.Single(x => x.ID == product.ID);
-                    }
-
-                    product = savedProduct;
-                    SetData();
-                    db.SubmitChanges();
-
-                    var existingUnits = db.ProductUnits
-                        .Where(x => x.ProductID == savedProduct.ID)
-                        .ToList();
-
-                    foreach (var oldUnit in existingUnits)
-                    {
-                        if (!unitRows.Any(x => x.ID == oldUnit.ID))
-                            db.ProductUnits.DeleteOnSubmit(oldUnit);
-                    }
-
-                    foreach (var row in unitRows)
-                    {
-                        if (row.ID > 0)
+                        DAL.Product savedProduct;
+                        if (product.ID == 0)
                         {
-                            var tracked = existingUnits.SingleOrDefault(x => x.ID == row.ID);
-                            if (tracked == null)
-                                throw new InvalidOperationException("إحدى وحدات الصنف لم تعد موجودة في قاعدة البيانات.");
-
-                            tracked.UnitID = row.UnitID;
-                            tracked.Factor = row.Factor;
-                            tracked.SellPrice = row.SellPrice;
-                            tracked.BuyPrice = row.BuyPrice;
-                            tracked.SellDiscount = row.SellDiscount;
-                            tracked.Barcode = row.Barcode ?? string.Empty;
+                            savedProduct = product;
+                            db.Products.InsertOnSubmit(savedProduct);
                         }
                         else
                         {
-                            db.ProductUnits.InsertOnSubmit(new DAL.ProductUnit
-                            {
-                                ProductID = savedProduct.ID,
-                                UnitID = row.UnitID,
-                                Factor = row.Factor,
-                                SellPrice = row.SellPrice,
-                                BuyPrice = row.BuyPrice,
-                                SellDiscount = row.SellDiscount,
-                                Barcode = row.Barcode ?? string.Empty
-                            });
+                            savedProduct = db.Products.Single(x => x.ID == product.ID);
                         }
-                    }
 
-                    db.SubmitChanges();
-                    transaction.Commit();
-                    product = savedProduct;
+                        product = savedProduct;
+                        SetData();
+                        db.SubmitChanges();
+
+                        var existingUnits = db.ProductUnits
+                            .Where(x => x.ProductID == savedProduct.ID)
+                            .ToList();
+
+                        foreach (var oldUnit in existingUnits)
+                        {
+                            if (!unitRows.Any(x => x.ID == oldUnit.ID))
+                                db.ProductUnits.DeleteOnSubmit(oldUnit);
+                        }
+
+                        foreach (var row in unitRows)
+                        {
+                            if (row.ID > 0)
+                            {
+                                var tracked = existingUnits.SingleOrDefault(x => x.ID == row.ID);
+                                if (tracked == null)
+                                    throw new InvalidOperationException("إحدى وحدات الصنف لم تعد موجودة في قاعدة البيانات.");
+
+                                tracked.UnitID = row.UnitID;
+                                tracked.Factor = row.Factor;
+                                tracked.SellPrice = row.SellPrice;
+                                tracked.BuyPrice = row.BuyPrice;
+                                tracked.SellDiscount = row.SellDiscount;
+                                tracked.Barcode = row.Barcode ?? string.Empty;
+                            }
+                            else
+                            {
+                                db.ProductUnits.InsertOnSubmit(new DAL.ProductUnit
+                                {
+                                    ProductID = savedProduct.ID,
+                                    UnitID = row.UnitID,
+                                    Factor = row.Factor,
+                                    SellPrice = row.SellPrice,
+                                    BuyPrice = row.BuyPrice,
+                                    SellDiscount = row.SellDiscount,
+                                    Barcode = row.Barcode ?? string.Empty
+                                });
+                            }
+                        }
+
+                        db.SubmitChanges();
+                        transaction.Commit();
+                        product = savedProduct;
+                    }
                 }
 
                 PartID = product.ID;
@@ -522,8 +523,8 @@ namespace SalesLinq.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("تعذر حفظ الصنف ووحدات قياسه. لم يتم اعتماد أي جزء من العملية.\n" +
-                    ex.Message, "خطأ في الحفظ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("تعذر حفظ الصنف ووحدات قياسه: " + ex.Message,
+                    "خطأ في الحفظ", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
