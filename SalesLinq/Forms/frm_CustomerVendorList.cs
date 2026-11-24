@@ -1,46 +1,80 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Forms;
 using SalesLinq.Class;
 
 namespace SalesLinq.Forms
 {
-    public partial class frm_CustomerVendorList : frm_MasterList
+    /// <summary>
+    /// قائمة العملاء أو الموردين بحسب النوع المحدد عند الإنشاء.
+    /// </summary>
+    public partial class frm_CustomerVendorList : NativeMasterListForm
     {
-        bool IsCustomer;
+        private readonly bool IsCustomer;
+        private bool isSubscribed;
+
         public frm_CustomerVendorList(bool isCustomer)
         {
             InitializeComponent();
             IsCustomer = isCustomer;
+            Text = IsCustomer ? "قائمة العملاء" : "قائمة الموردين";
             RefreshData();
-            this.Text = IsCustomer ? "قائمة العملاء" : "قائمة الموردين";
         }
 
         private void Frm_CustomerVendorList_Load(object sender, EventArgs e)
         {
-            var ins = new DAL.CustomersAndVendore();
-            gridView1.Columns[nameof(ins.ID)].Visible = false;
-            gridView1.Columns[nameof(ins.AccountID)].Visible = false;
-            gridView1.Columns[nameof(ins.IsCustomer)].Visible = false;
-            gridView1.Columns[nameof(ins.Name)].Caption = "الاسم";
-            gridView1.Columns[nameof(ins.Phone)].Caption = "الهاتف";
-            gridView1.Columns[nameof(ins.Mobile)].Caption = "الموبايل";
-            gridView1.Columns[nameof(ins.Address)].Caption = "العنوان";
-            // من أجل تشغسل الحدث الخاص بتحديث البيانات في الفورم مباشرة عند التغير في قاعدة البيانات
+            if (gridView1.Columns.Contains(nameof(DAL.CustomersAndVendore.ID)))
+                gridView1.Columns[nameof(DAL.CustomersAndVendore.ID)].Visible = false;
+
+            if (gridView1.Columns.Contains(nameof(DAL.CustomersAndVendore.AccountID)))
+                gridView1.Columns[nameof(DAL.CustomersAndVendore.AccountID)].Visible = false;
+
+            if (gridView1.Columns.Contains(nameof(DAL.CustomersAndVendore.IsCustomer)))
+                gridView1.Columns[nameof(DAL.CustomersAndVendore.IsCustomer)].Visible = false;
+
+            SetHeader(nameof(DAL.CustomersAndVendore.Name), "الاسم");
+            SetHeader(nameof(DAL.CustomersAndVendore.Phone), "الهاتف");
+            SetHeader(nameof(DAL.CustomersAndVendore.Mobile), "الهاتف المحمول");
+            SetHeader(nameof(DAL.CustomersAndVendore.Address), "العنوان");
+            SetHeader(nameof(DAL.CustomersAndVendore.MaxCredit), "حد الائتمان");
+
             if (IsCustomer)
-                Session.Customers.ListChanged += Vendores_ListChanged;
+                Session.Customers.ListChanged += Parties_ListChanged;
             else
-                Session.vendores.ListChanged += Vendores_ListChanged;
+                Session.vendores.ListChanged += Parties_ListChanged;
+
+            isSubscribed = true;
+        }
+
+        private void SetHeader(string columnName, string caption)
+        {
+            if (gridView1.Columns.Contains(columnName))
+                gridView1.Columns[columnName].HeaderText = caption;
         }
 
         public override void RefreshData()
         {
-            gridControl1.DataSource =(IsCustomer)? Session.Customers.ToList() : Session.vendores.ToList();
+            var data = IsCustomer
+                ? Session.Customers.Where(x => x.IsCustomer).ToList()
+                : Session.vendores.Where(x => !x.IsCustomer).ToList();
+
+            gridView1.DataSource = data;
             base.RefreshData();
         }
 
-        private void Vendores_ListChanged(object sender, ListChangedEventArgs e)
+        private void Parties_ListChanged(object sender, ListChangedEventArgs e)
         {
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            if (InvokeRequired)
+            {
+                try { BeginInvoke(new Action(RefreshData)); }
+                catch (InvalidOperationException) { }
+                return;
+            }
+
             RefreshData();
         }
 
@@ -51,9 +85,22 @@ namespace SalesLinq.Forms
 
         public override void New()
         {
-            var frm = new frm_CustomerVendor(IsCustomer);
-            frm_Main.OpenForm(frm);
-            //base.New();
+            frm_Main.OpenForm(new frm_CustomerVendor(IsCustomer), true);
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            if (isSubscribed)
+            {
+                if (IsCustomer)
+                    Session.Customers.ListChanged -= Parties_ListChanged;
+                else
+                    Session.vendores.ListChanged -= Parties_ListChanged;
+
+                isSubscribed = false;
+            }
+
+            base.OnFormClosed(e);
         }
     }
 }
