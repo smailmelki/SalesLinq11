@@ -78,7 +78,7 @@ namespace SalesLinq.Forms
                                 Name = txt_Name.Text.Trim(),
                                 UserName = txt_UserName.Text.Trim(),
                                 Password = new PasswordHasher().Hash(txt_Password.Text),
-                                UserType = (byte)Class.Master.UserType.Admin,
+                                UserType = (byte)SalesLinq.Class.Master.UserType.Admin,
                                 IsActive = true
                             };
 
