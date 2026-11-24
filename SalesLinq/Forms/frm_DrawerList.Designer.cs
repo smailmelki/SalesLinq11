@@ -1,49 +1,30 @@
-﻿namespace SalesLinq.Forms
+namespace SalesLinq.Forms
 {
     partial class frm_DrawerList
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
-            {
                 components.Dispose();
-            }
+
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            this.SuspendLayout();
-            // 
-            // frm_DrawerList
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(528, 536);
-            this.Margin = new System.Windows.Forms.Padding(6);
-            this.Name = "frm_DrawerList";
-            this.Text = "قائمة الخزن";
-            this.Load += new System.EventHandler(this.Frm_DrawerList_Load);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            SuspendLayout();
 
+            AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(528, 536);
+            Margin = new System.Windows.Forms.Padding(6);
+            Name = "frm_DrawerList";
+            Text = "قائمة الخزن";
+            Load += new System.EventHandler(Frm_DrawerList_Load);
+
+            ResumeLayout(false);
         }
-
-        #endregion
     }
 }
