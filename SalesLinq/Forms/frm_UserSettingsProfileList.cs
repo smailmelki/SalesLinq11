@@ -1,35 +1,35 @@
-﻿using System;
 using System.Linq;
 
 namespace SalesLinq.Forms
 {
-    public partial class frm_UserSettingsProfileList : frm_MasterList
+    public partial class frm_UserSettingsProfileList : NativeMasterListForm
     {
         public frm_UserSettingsProfileList()
         {
             InitializeComponent();
-            RefreshData();
-        }
-
-        private void Frm_UserSettingsProfileList_Load(object sender, EventArgs e)
-        {
-            gridView1.Columns["ID"].Visible = false;
-            gridView1.Columns["Name"].Caption = "الاسم";// تغيير عنوان رأس العمود
         }
 
         public override void RefreshData()
         {
             using (var db = new DAL.DBDataContext())
             {
-                gridControl1.DataSource = db.UserSettingsProfiles.ToList();
+                gridView1.DataSource = db.UserSettingsProfiles
+                    .OrderBy(x => x.Name)
+                    .Select(x => new { x.ID, x.Name })
+                    .ToList();
             }
-            base.RefreshData();
+
+            if (gridView1.Columns.Contains("ID"))
+                gridView1.Columns["ID"].Visible = false;
+            if (gridView1.Columns.Contains("Name"))
+                gridView1.Columns["Name"].HeaderText = "اسم النموذج";
         }
 
         public override void OpenForm(int id)
         {
             frm_Main.OpenForm(new frm_UserSettingsProfile(id), true);
         }
+
         public override void New()
         {
             frm_Main.OpenForm(new frm_UserSettingsProfile(), true);
