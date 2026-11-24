@@ -1,12 +1,11 @@
-﻿using DevExpress.XtraEditors;
-using SalesLinq.Class;
+﻿using SalesLinq.Class;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace SalesLinq.Forms
 {
-    public partial class frm_Stores : frm_Master
+    public partial class frm_Stores : NativeMasterForm
     {
         DAL.Store store;
 
@@ -28,7 +27,7 @@ namespace SalesLinq.Forms
         {
             if (string.IsNullOrWhiteSpace(txt_Name.Text))
             {
-                txt_Name.ErrorText = "الرجاء إدخال اسم المخزن";
+                MessageBox.Show("الرجاء إدخال اسم المخزن.", "بيانات ناقصة", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -145,7 +144,7 @@ namespace SalesLinq.Forms
                         if (hasStoreLogs || hasAccountLogs)
                         {
                             transaction.Rollback();
-                            XtraMessageBox.Show(
+                            MessageBox.Show(
                                 "عفواً، لا يمكن حذف المخزن لأنه مستخدم في النظام.",
                                 "تعذر الحذف",
                                 MessageBoxButtons.OK,
@@ -179,7 +178,7 @@ namespace SalesLinq.Forms
         {
             if (txt_Name.Text.Trim() == string.Empty)
             {
-                txt_Name.ErrorText = ("الرجاء ادخال اسم المخزن");
+                MessageBox.Show("الرجاء إدخال اسم المخزن.", "بيانات ناقصة", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
             else
