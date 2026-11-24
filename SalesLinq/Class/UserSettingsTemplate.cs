@@ -1,4 +1,6 @@
-﻿using DevExpress.XtraEditors;
+﻿using System;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace SalesLinq.Class
 {
@@ -76,10 +78,11 @@ namespace SalesLinq.Class
         /// </summary>
         /// <param name="propName"></param>
         /// <returns></returns>
-        public static BaseEdit GetPropertyControl(string propName, object propertyValue)
+        public static Control GetPropertyControl(string propName, object propertyValue)
         {
             UserSettingsTemplate ins;
-            BaseEdit edit = null;//أصل كل الكونترول
+            Control control = null;
+
             switch (propName)
             {
                 case nameof(ins.Default.CanChangeCustomer):
@@ -100,65 +103,77 @@ namespace SalesLinq.Class
                 case nameof(ins.Purchase.CanBuyFromCustomer):
                 case nameof(ins.Purchase.CanChangePurchaseInvoiceDate):
                 case nameof(ins.Genera.AcceptReadFromScaleBarcode):
-                    edit = new ToggleSwitch();
-                    ((ToggleSwitch)edit).Properties.OnText = "نعم";
-                    ((ToggleSwitch)edit).Properties.OffText = "لا";
+                    control = new CheckBox
+                    {
+                        Checked = Convert.ToBoolean(propertyValue),
+                        Text = "مفعّل",
+                        AutoSize = true
+                    };
                     break;
+
                 case nameof(ins.Default.DefaultStore):
                 case nameof(ins.Default.DefaultRowStore):
-                    edit = new LookUpEdit();
-                    ((LookUpEdit)edit).InitializeData(Session.Store);
+                    control = CreateLookup(Session.Store.Select(x => new Master.ValueAndID { ID = x.ID, Name = x.Name }), propertyValue);
                     break;
                 case nameof(ins.Default.DefaultDrawer):
-                    edit = new LookUpEdit();
-                    ((LookUpEdit)edit).InitializeData(Session.Drawer);
+                    control = CreateLookup(Session.Drawer.Select(x => new Master.ValueAndID { ID = x.ID, Name = x.Name }), propertyValue);
                     break;
                 case nameof(ins.Default.DefaultCustomer):
-                    edit = new LookUpEdit();
-                    ((LookUpEdit)edit).InitializeData(Session.Customers);
+                    control = CreateLookup(Session.Customers.Select(x => new Master.ValueAndID { ID = x.ID, Name = x.Name }), propertyValue);
                     break;
                 case nameof(ins.Default.DefaultVendor):
-                    edit = new LookUpEdit();
-                    ((LookUpEdit)edit).InitializeData(Session.vendores);
+                    control = CreateLookup(Session.vendores.Select(x => new Master.ValueAndID { ID = x.ID, Name = x.Name }), propertyValue);
                     break;
                 case nameof(ins.Sales.DefaultPayMethodInSales):
-                    edit = new LookUpEdit();
-                    ((LookUpEdit)edit).InitializeData(Master.PayMethodsList);
+                    control = CreateLookup(Master.PayMethodsList, propertyValue);
                     break;
                 case nameof(ins.Sales.WhenSellingToCustomerExeededMaxCredit):
                 case nameof(ins.Invoices.WhenSellingItemReachedReOrderLevel):
                 case nameof(ins.Invoices.WhenSellingItemWithQtyMoreThanAvailableQty):
                 case nameof(ins.Sales.WhenSellingItemWithPriceLowerThanCostPrice):
-                    edit = new LookUpEdit();
-                    ((LookUpEdit)edit).InitializeData(Master.WorningLevelsList);
+                    control = CreateLookup(Master.WorningLevelsList, propertyValue);
                     break;
                 case nameof(ins.Sales.MaxDiscountInInvoice):
                 case nameof(ins.Sales.MaxDiscountPerItem):
-                    edit = new SpinEdit();
-                    ((SpinEdit)edit).Properties.Increment = 0.01m;                                           // القيمة التي يأخذها عند تدوير عجلة الفأرة
-                    ((SpinEdit)edit).Properties.EditMask = "p";                                              //نوع الماسك الخاص بالنسبة المئوية
-                    ((SpinEdit)edit).Properties.Mask.UseMaskAsDisplayFormat = true;                          // استخدام الماسك في العرض
-                    ((SpinEdit)edit).Properties.MaxValue = 1;                                                //القيمة العليا للخلية 
+                    control = new NumericUpDown
+                    {
+                        Minimum = 0,
+                        Maximum = 1,
+                        Increment = 0.01m,
+                        DecimalPlaces = 2,
+                        Value = Math.Max(0, Math.Min(1, Convert.ToDecimal(propertyValue)))
+                    };
                     break;
                 case nameof(ins.Genera.PrintMode):
-                    edit = new LookUpEdit();
-                    ((LookUpEdit)edit).InitializeData(Master.PrintModeTypesList);
+                    control = CreateLookup(Master.PrintModeTypesList, propertyValue);
                     break;
                 case nameof(ins.Genera.ReadValueMode):
-                    edit = new LookUpEdit();
-                    ((LookUpEdit)edit).InitializeData(Master.ReadValueModeList);
+                    control = CreateLookup(Master.ReadValueModeList, propertyValue);
                     break;
+            }
 
-                default:
-                    break;
-            }
-            if (edit != null)
+            if (control != null)
             {
-                edit.Name = propName;
-                edit.Properties.NullText = "";
-                edit.EditValue = propertyValue;
+                control.Name = propName;
+                control.Dock = DockStyle.Fill;
+                control.Margin = new Padding(4, 6, 4, 6);
             }
-            return edit;
+
+            return control;
+        }
+
+        private static ComboBox CreateLookup(System.Collections.Generic.IEnumerable<Master.ValueAndID> source, object value)
+        {
+            var combo = new ComboBox
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                DisplayMember = "Name",
+                ValueMember = "ID",
+                DataSource = source.ToList()
+            };
+            if (value != null)
+                combo.SelectedValue = Convert.ToInt32(value);
+            return combo;
         }
     }
     /// <summary>
