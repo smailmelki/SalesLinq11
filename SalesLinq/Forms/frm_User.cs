@@ -226,6 +226,7 @@ namespace SalesLinq.Forms
                 }
 
                 base.Save();
+                GetData();
                 txt_Password.Clear();
             }
             catch (Exception ex)
