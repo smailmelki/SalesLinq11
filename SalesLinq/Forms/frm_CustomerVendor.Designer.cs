@@ -94,6 +94,7 @@ namespace SalesLinq.Forms
             this.ClientSize = new System.Drawing.Size(650, 390);
             this.MinimumSize = new System.Drawing.Size(550, 360);
             this.Controls.Add(this.mainLayout);
+            this.toolStrip.BringToFront();
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Name = "frm_CustomerVendor";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
