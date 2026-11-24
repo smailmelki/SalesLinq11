@@ -1,565 +1,663 @@
-﻿using DevExpress.XtraEditors;
-using DevExpress.XtraEditors.Controls;
-using DevExpress.XtraEditors.Repository;
-using DevExpress.XtraGrid;
-using DevExpress.XtraGrid.Columns;
-using DevExpress.XtraGrid.Views.Base;
-using DevExpress.XtraGrid.Views.Grid;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using static SalesLinq.Class.Master;
+using SalesLinq.Class;
 
 namespace SalesLinq.Forms
 {
-    public partial class frm_Product : frm_Master
+    public partial class frm_Product : NativeMasterForm
     {
-
-        DAL.ProductUnit ins = new DAL.ProductUnit();//nameof انشاء نسخة من أجل استخراج الاسماء منها فقط باستعمال 
-        DAL.Product product;
-        RepositoryItemLookUpEdit repoUOM = new RepositoryItemLookUpEdit();//gridControl1 لاضافتها في LookUpEdit من نوع RepositoryItem انشاء نسخة من
-        DAL.DBDataContext udb = new DAL.DBDataContext();
+        private DAL.Product product;
+        private BindingList<DAL.ProductUnit> unitRows = new BindingList<DAL.ProductUnit>();
+        private List<DAL.ProductCategory> categories = new List<DAL.ProductCategory>();
+        private List<DAL.UnitName> unitNames = new List<DAL.UnitName>();
 
         public frm_Product()
         {
             InitializeComponent();
+            ConfigureUnitsGrid();
             RefreshData();
             New();
         }
 
-        /// <summary>
-        /// id من اجل تعديل الصنف الذي رقمه
-        /// </summary>
-        /// <param name="id"></param>
         public frm_Product(int id)
         {
             InitializeComponent();
+            ConfigureUnitsGrid();
             RefreshData();
             LoadProduct(id);
         }
-        /// <summary>
-        /// دالة تتحقق من أن كود وحدة الصنف موجود
-        /// </summary>
-        /// <param name="barcode"></param>
-        /// <param name="prdID"></param>
-        /// <returns>ترجع صح اذا كان موجود وخطأ اذا كان جديد</returns>
-        Boolean CheckIfBarcodeExist(string barcode, int prdID)
+
+        private void ConfigureUnitsGrid()
         {
-            if (string.IsNullOrEmpty(barcode))
-                return false;
-            using (var db = new DAL.DBDataContext())
-                return db.ProductUnits.Where(x => x.Barcode == barcode && x.ProductID != prdID).Count() > 0;
-        }
+            gridView1.AutoGenerateColumns = false;
+            gridView1.Columns.Clear();
+            gridView1.AllowUserToAddRows = true;
+            gridView1.AllowUserToDeleteRows = false;
+            gridView1.MultiSelect = false;
+            gridView1.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            gridView1.EditMode = DataGridViewEditMode.EditOnEnter;
+            gridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            gridView1.RowHeadersVisible = false;
+            gridView1.RightToLeft = RightToLeft.Yes;
 
-        private void Frm_Product_Load(object sender, EventArgs e)
-        {
-            /////////////////////////  عند عرض التصنيف /////////////
-            lkp_Category.Properties.DisplayMember = "Name"; // لجع الاسم هو الظاهر 
-            lkp_Category.Properties.ValueMember = "ID"; // القيمة الفعلية للتصنيف
-            lkp_Category.Properties.PopulateColumns();  // 
-            lkp_Category.Properties.Columns["Name"].Caption = "اسم التصنيف"; // 
-            lkp_Category.Properties.Columns["ID"].Visible = false; //ID اخفاء عمود  
-            lkp_Category.Properties.Columns["ParentID"].Visible = false; // اخفاء عمود الأب
-            lkp_Category.Properties.Columns["Number"].Visible = false; // اخفاء عمود الرقم 
-            /////////////////////////
-            lkp_Category.ProcessNewValue += Lkp_Category_ProcessNewValue;//lkp_Category حدث مغادرة 
-            lkp_Category.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.Standard;//للسماح بالكتابة على العنصر
-
-            lkp_Type.Properties.DataSource = ProductTypesList;
-            lkp_Type.Properties.DisplayMember = "Name";
-            lkp_Type.Properties.ValueMember = "ID";
-
-            gridView1.OptionsView.ShowGroupPanel = false;
-            gridView1.OptionsView.NewItemRowPosition = DevExpress.XtraGrid.Views.Grid.NewItemRowPosition.Top;//للسماح باضافة سطر جديد
-
-            gridView1.Columns[nameof(ins.ID)].Visible = false; //ID اخفاء 
-            gridView1.Columns[nameof(ins.ProductID)].Visible = false;//ProductID اخفاء
-
-            RepositoryItemCalcEdit calcEdit = new RepositoryItemCalcEdit();//gridControl1 لاضافتها في calcEdit من نوع RepositoryItem انشاء نسخة من
-
-            gridControl1.RepositoryItems.Add(calcEdit); //gridView1 لاستعمالها في gridControl1 الى  calcEdit  اضافة
-            gridControl1.RepositoryItems.Add(repoUOM); //gridView1 لاستعمالها في gridControl1 الى  repoUOM  اضافة
-
-            gridView1.Columns[nameof(ins.SellPrice)].ColumnEdit = calcEdit; //gridView1 في calcEdit على شكل SellPrice اظهار  
-            gridView1.Columns[nameof(ins.BuyPrice)].ColumnEdit = calcEdit; //gridView1 في calcEdit على شكل BuyPrice اظهار
-            gridView1.Columns[nameof(ins.SellDiscount)].ColumnEdit = calcEdit; //gridView1 في calcEdit على شكل SellDiscount اظهار
-            gridView1.Columns[nameof(ins.Factor)].ColumnEdit = calcEdit; //gridView1 في calcEdit على شكل Factor اظهار
-            gridView1.Columns[nameof(ins.UnitID)].ColumnEdit = repoUOM; //gridView1 في repoUOM على شكل UnitID اظهار
-
-            gridView1.Columns[nameof(ins.Barcode)].Caption = "الباركود";
-            gridView1.Columns[nameof(ins.BuyPrice)].Caption = "سعر الشراء";
-            gridView1.Columns[nameof(ins.Factor)].Caption = "معامل التحويل";
-            gridView1.Columns[nameof(ins.SellDiscount)].Caption = "خصم البيع";
-            gridView1.Columns[nameof(ins.SellPrice)].Caption = "سعر البيع";
-            gridView1.Columns[nameof(ins.UnitID)].Caption = "اسم الوحدة";
-
-            repoUOM.ValueMember = "ID";
-            repoUOM.DisplayMember = "Name";
-            repoUOM.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.Standard;// للسماح بالكتابة في خانة الوحدات
-            repoUOM.ProcessNewValue += RepoUOM_ProcessNewValue;
-
-            gridView1.ValidateRow += GridView1_ValidateRow;//gridView1 انشاء حدث التحقق في
-            gridView1.RowDeleting += GridView1_RowDeleting;//gridView1 حدث حذف سطر(وحدة) في 
-            gridView1.InvalidRowException += GridView1_InvalidRowException; // حدث لمعالجة الغاء الرسالة المزعجة والاكتفاء بنص رسالة الخطأ
-            gridView1.FocusedRowChanged += GridView1_FocusedRowChanged;// انشاء حدث لمنع النعديل في أول سطر فقط
-            gridView1.CustomRowCellEditForEditing += GridView1_CustomRowCellEditForEditing;// انشاء حدث يمنع تكرار الوحدة في نفس المنتج
-
-            //اضافة ريبوزيتوري ايتم من أجل أن يحتوي على زر الحذف 
-            RepositoryItemButtonEdit buttonEdit = new RepositoryItemButtonEdit();
-            gridControl1.RepositoryItems.Add(buttonEdit);
-            buttonEdit.Buttons.Clear();
-            buttonEdit.Buttons.Add(new EditorButton(ButtonPredefines.Delete));
-            buttonEdit.ButtonClick += ButtonEdit_ButtonClick;
-            // انشاء زر الحذف 
-            GridColumn clmnDelete = new GridColumn()
+            var idColumn = new DataGridViewTextBoxColumn
             {
-                Name = "clmnDelete",
-                Caption = "حذف",
-                FieldName = "Delete",
-                ColumnEdit = buttonEdit,
-                VisibleIndex = 10,
-                Width = 30,
-                MaxWidth = 30
+                Name = "ID",
+                DataPropertyName = nameof(DAL.ProductUnit.ID),
+                Visible = false
             };
-            //لاظهار زر الحذف بدون نص
-            buttonEdit.TextEditStyle = TextEditStyles.HideTextEditor;
-            // اضافة زر الحذف في الجدول في اخر السطر
-            gridView1.Columns.Add(clmnDelete);
-        }
-        /// <summary>
-        /// منع حذف أول سطر
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GridView1_RowDeleting(object sender, DevExpress.Data.RowDeletingEventArgs e)
-        {
-            if (e.ListSourceIndex==0)
+            gridView1.Columns.Add(idColumn);
+
+            var productIdColumn = new DataGridViewTextBoxColumn
             {
-                e.Cancel = true;
-                XtraMessageBox.Show(
-                      text: "لا يمكن حذف أول سطر \n يمكنك التعديل عليه",
-                      caption: string.Empty,
-                      buttons: MessageBoxButtons.OK,
-                      icon: MessageBoxIcon.Error);
-            }
-        }
+                Name = "ProductID",
+                DataPropertyName = nameof(DAL.ProductUnit.ProductID),
+                Visible = false
+            };
+            gridView1.Columns.Add(productIdColumn);
 
-        /// <summary>
-        /// دالة حذف وحدة
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ButtonEdit_ButtonClick(object sender, ButtonPressedEventArgs e)
-        {
-            GridView view = ((GridControl)((ButtonEdit)sender).Parent).MainView as GridView;
-            if (view.FocusedRowHandle >= 0)
+            var unitColumn = new DataGridViewComboBoxColumn
             {
-                view.DeleteSelectedRows();
-            }
-        }
+                Name = nameof(DAL.ProductUnit.UnitID),
+                HeaderText = "اسم الوحدة",
+                DataPropertyName = nameof(DAL.ProductUnit.UnitID),
+                ValueMember = nameof(DAL.UnitName.ID),
+                DisplayMember = nameof(DAL.UnitName.Name),
+                DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton,
+                FlatStyle = FlatStyle.Flat,
+                FillWeight = 125
+            };
+            unitColumn.DataSource = unitNames;
+            gridView1.Columns.Add(unitColumn);
 
-        private string GetNewBarcode()
-        {
-            string maxCode;
-            using (var db = new DAL.DBDataContext())
+            AddNumberColumn(nameof(DAL.ProductUnit.Factor), "معامل التحويل", 85);
+            AddNumberColumn(nameof(DAL.ProductUnit.SellPrice), "سعر البيع", 95);
+            AddNumberColumn(nameof(DAL.ProductUnit.BuyPrice), "سعر الشراء", 95);
+            AddNumberColumn(nameof(DAL.ProductUnit.SellDiscount), "خصم البيع", 85);
+
+            gridView1.Columns.Add(new DataGridViewTextBoxColumn
             {
-                maxCode = db.ProductUnits.Select(x => x.Barcode).Max();
-            }
+                Name = nameof(DAL.ProductUnit.Barcode),
+                HeaderText = "الباركود",
+                DataPropertyName = nameof(DAL.ProductUnit.Barcode),
+                FillWeight = 125
+            });
 
-            return GetNextNumberInString(maxCode);
-        }
-
-        /// <summary>
-        /// دالة ترجع اكبر كود في قاعدة البيانات من جدول المنتجات وتضيف عليه 1
-        /// </summary>
-        /// <returns></returns>
-        private string GetNewProductCode()
-        {
-            string maxCode;
-            using (var db = new DAL.DBDataContext())
+            gridView1.Columns.Add(new DataGridViewButtonColumn
             {
-                maxCode = db.Products.OrderByDescending(x => x.ID).Select(x => x.Code ?? "0").FirstOrDefault();
-                //maxCode = db.Products.Select(x => x.Code).Max();
-            }
+                Name = "DeleteRow",
+                HeaderText = "حذف",
+                Text = "حذف",
+                UseColumnTextForButtonValue = true,
+                FillWeight = 55
+            });
 
-            return GetNextNumberInString(maxCode);
+            gridView1.CellContentClick += GridView1_CellContentClick;
+            gridView1.DataError += (s, e) => { e.ThrowException = false; };
+            gridView1.CellValidating += GridView1_CellValidating;
         }
 
-        private void GridControl1_Click(object sender, EventArgs e)
+        private void AddNumberColumn(string propertyName, string caption, float width)
         {
-        }
-        /// <summary>
-        /// منع تكرار استخدام وحدات القياس المستخدمة في المنتج
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GridView1_CustomRowCellEditForEditing(object sender, CustomRowCellEditEventArgs e)
-        {
-            if (e.Column.FieldName == nameof(ins.UnitID))
+            gridView1.Columns.Add(new DataGridViewTextBoxColumn
             {
-                var ids = ((Collection<DAL.ProductUnit>)gridView1.DataSource).Select(x => x.UnitID).ToList();
-                RepositoryItemLookUpEdit repo = new RepositoryItemLookUpEdit();// خاص بالخلية المحددة
-                using (var db = new DAL.DBDataContext())
-                {
-                    var currentID = (Int32?)e.CellValue;// متغير ممكن يقبل القيمة الفارغة
-                    ids.Remove(currentID ?? 0);// اذا كانت القيمة فارغة يحولها الى 0
-                    repo.DataSource = db.UnitNames.Where(x => ids.Contains(x.ID) == false).ToList();// اظهار الوحدات غير المختارة فقط
-                    repo.ValueMember = "ID";
-                    repo.DisplayMember = "Name";
-                    repo.PopulateColumns();
-                    repo.Columns[nameof(ins.ID)].Visible = false;
-                    repo.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.Standard;// للسماح بالكتابة في خانة الوحدات
-                    repo.ProcessNewValue += RepoUOM_ProcessNewValue;
-                    e.RepositoryItem = repo;// اعتمد هذا الريبوزيتوري ايتم بدل الاول
-                }
-            }
+                Name = propertyName,
+                HeaderText = caption,
+                DataPropertyName = propertyName,
+                ValueType = typeof(double),
+                FillWeight = width
+            });
         }
 
-        private void GridView1_FocusedRowChanged(object sender,DevExpress.XtraGrid.Views.Base.FocusedRowChangedEventArgs e)
+        private void GridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            gridView1.Columns[nameof(ins.Factor)].OptionsColumn.AllowEdit = !(e.FocusedRowHandle == 0);//منع النعديل في أول سطر فقط
-        }
-
-        private void GridView1_InvalidRowException(object sender, DevExpress.XtraGrid.Views.Base.InvalidRowExceptionEventArgs e)
-        {
-            e.ExceptionMode = DevExpress.XtraEditors.Controls.ExceptionMode.NoAction;
-        }
-        /// <summary>
-        /// دالة التحقق من القيم المدخلة للوحدات
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GridView1_ValidateRow(object sender, ValidateRowEventArgs e)
-        {            
-            var row = e.Row as DAL.ProductUnit;
-            var view = sender as GridView;
-            if (row == null)
+            if (e.RowIndex < 0 || gridView1.Columns[e.ColumnIndex].Name != "DeleteRow")
                 return;
-            //في أول خانة يجب أن تكون 1 (Factor) قيمة المعامل  
-            if (view.RowCount == 0)
+
+            if (e.RowIndex == 0)
             {
-                row.Factor = 1;
-            }
-            else if (row.Factor <= 1 && e.RowHandle != 0)
-            {
-                e.Valid = false;
-                view.SetColumnError(view.Columns[nameof(row.Factor)], "يجب أن تكون القيمة أكبر من 1");
-            }             
-            // يجب أن تكون أكبر من 0 (UnitID) قيمة الوحدة
-            if (row.UnitID <= 0)
-            {
-                e.Valid = false;
-                view.SetColumnError(view.Columns[nameof(row.UnitID)], ErrorText);
-            }
-            // التحقق من أن الباركود غير موجود في قاعدة البيانات
-            if (CheckIfBarcodeExist(row.Barcode, product.ID))
-            {
-                e.Valid = false;
-                view.SetColumnError(view.Columns[nameof(row.Barcode)], "هذا الكود موجود بالفعل");
-            }
-            //gridView1 التحقق من أن الباركود غير مكرر في 
-            if (row.Barcode != null && IsBarcodExistInGrid(row.Barcode, e.RowHandle))
-            {
-                e.Valid = false;
-                view.SetColumnError(view.Columns[nameof(row.Barcode)], "هذا الكود مكرر");
+                MessageBox.Show("لا يمكن حذف أول وحدة؛ يمكنك تعديلها بدلاً من ذلك.",
+                    "وحدات القياس", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
 
+            if (e.RowIndex < unitRows.Count)
+                unitRows.RemoveAt(e.RowIndex);
         }
-        /// <summary>
-        ///gridView1 منع تكرار الباركود في 
-        /// </summary>
-        Boolean IsBarcodExistInGrid(string Barcode,int indexRow)
+
+        private void GridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
-            List<string> vals = new List<string>();
-            vals.Clear();
-            for (int i = 0; i < gridView1.RowCount; i++)
-            {
-                if (vals.Contains(Barcode))
-                {
-                    return true;
-                }
-                if (indexRow != i && gridView1.GetRowCellValue(i, "Barcode") != null)
-                    vals.Add(gridView1.GetRowCellValue(i, "Barcode").ToString());
-            }
-            return false;
-           
-        }
+            if (e.RowIndex < 0 || e.RowIndex >= unitRows.Count)
+                return;
 
-
-        /// <summary>
-        /// التحقق من البيانات غير فارغة
-        /// </summary>
-        /// <returns>يرجع خطأ في حالة وجود أي حقل فارغ</returns>
-        public override bool IsDataValide()
-        {
-            bool IsValid = true;
-            if (lkp_Category.EditValue is int == false || Convert.ToInt32(lkp_Category.EditValue) <= 0) //  اذا لم يحدد فئة الصنف يرجع خطأ ويظهر رسالة الخطأ 
+            if (gridView1.Columns[e.ColumnIndex].Name == nameof(DAL.ProductUnit.Factor) &&
+                e.RowIndex == 0)
             {
-                lkp_Category.ErrorText = ErrorText;
-                IsValid = false;
-            }
-            if (lkp_Type.EditValue is byte == false) // اذا لم يحدد نوع الصنف يرجع خطأ ويظهر رسالة الخطأ
-            {
-                lkp_Type.ErrorText = ErrorText;
-                IsValid = false;
-            }
-            if (lkp_CostCalculationMethod.EditValue.ToString() == "0") // اذا لم يحدد طريقة حساب التكلفة يرجع خطأ ويظهر رسالة الخطأ
-            {
-                lkp_CostCalculationMethod.ErrorText = ErrorText;
-                IsValid = false;
-            }
-            if (txt_Name.Text.Trim() == string.Empty) // اذا كان فارغا يرجع خطأ ويظهر رسالة الخطأ
-            {
-                txt_Name.ErrorText = ErrorText;
-                IsValid = false;
-            }
-            if (txt_Code.Text.Trim() == string.Empty) // اذا كان فارغا يرجع خطأ ويظهر رسالة الخطأ
-            {
-                txt_Code.ErrorText = ErrorText;
-                IsValid = false;
-            }
-
-            var db = new DAL.DBDataContext();
-            if (db.Products.Where(x => x.ID != product.ID && x.Name.Trim() == txt_Name.Text.Trim()).Count() > 0) // اذا كان الاسم مسجل مسبقا يرجع خطأ ويظهر رسالة الخطأ
-            {
-                txt_Name.ErrorText = "هذا الاسم مسجل بالفعل";
-                IsValid = false;
-            }
-            if (db.Products.Where(x => x.ID != product.ID && x.Code.Trim() == txt_Code.Text.Trim()).Count() > 0) // اذا كان كود الصنف مسجل مسبقا يرجع خطأ ويظهر رسالة الخطأ 
-            {
-                txt_Code.ErrorText = "هذا الكود مسجل بالفعل";
-                IsValid = false;
-            }
-            if (gridView1.RowCount < 1)
-            {
-                XtraMessageBox.Show(
-                       text: "الرجاء اضافة وحدة أو أكثر الى الصنف",
-                       caption: string.Empty,
-                       buttons: MessageBoxButtons.OK,
-                       icon: MessageBoxIcon.Error);
-                IsValid = false;
-            }
-
-            for (int i = 0; i < gridView1.RowCount; i++)
-            {
-                gridView1.FocusedRowHandle = i;
-                GridView1_ValidateRow(gridView1, new ValidateRowEventArgs(i, gridView1.GetRow(i)));
-                if (gridView1.HasColumnErrors) // اللتحقق من أن الفاتورة لا تحتوي على اخطاء
-                {
-                    XtraMessageBox.Show(
-                       text: "الرجاء التحقق من الأخطاء في الجدول",
-                       caption: string.Empty,
-                       buttons: MessageBoxButtons.OK,
-                       icon: MessageBoxIcon.Error);
-                    GridView1_ValidateRow(gridView1, new ValidateRowEventArgs(i, gridView1.GetRow(i)));
-                    IsValid = false;
-                }
-            }
-            return IsValid;
-        }
-        
-        /// <summary>
-        /// اضافة تصنيف جديد اذا لم يكن موجود
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Lkp_Category_ProcessNewValue(object sender, DevExpress.XtraEditors.Controls.ProcessNewValueEventArgs e)
-        {
-            if (e.DisplayValue is string st && st.Trim() != string.Empty)
-            {
-                var newobject = new DAL.ProductCategory() { Name = st, ParentID = 0, Number = "0" };//انشاء نسخة من الجدول واسناد القيم مباشرة
-                using (var db = new DAL.DBDataContext())
-                {
-                    db.ProductCategories.InsertOnSubmit(newobject);
-                    db.SubmitChanges();
-                }
-               ((List<DAL.ProductCategory>)lkp_Category.Properties.DataSource).Add(newobject);//اضافة العنصر الجديد الى القائمة بدون اعادة تحميل
-                e.Handled = true;// اعتماد العنصر
+                e.Cancel = false;
             }
         }
 
-        void LoadProduct(int id)
+        private void LoadProduct(int id)
         {
             using (var db = new DAL.DBDataContext())
             {
-                product = db.Products.Single(x => x.ID == id);
-            }
-            this.Text = string.Format("بيانات صنف: {0}", product.Name);// تغيير عنوان الفورم
-            GetData();
-        }
+                product = db.Products.SingleOrDefault(x => x.ID == id);
+                if (product == null)
+                    throw new InvalidOperationException("الصنف المطلوب غير موجود.");
 
-        /// <summary>
-        /// اضافة وحدة جديدة اذا لم تكن موجودة
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RepoUOM_ProcessNewValue(object sender, DevExpress.XtraEditors.Controls.ProcessNewValueEventArgs e)
-        {
-            if (e.DisplayValue is string value && value.Trim() != string.Empty)
-            {
-                // اضافة نسخة من جدول الوحدات واسناد قيمة لها
-                var NewObject = new DAL.UnitName() { Name = value.Trim() };
-                using (DAL.DBDataContext db = new DAL.DBDataContext())
-                {
-                    //حفظ النسخة في قاعدة البيانات
-                    db.UnitNames.InsertOnSubmit(NewObject);
-                    db.SubmitChanges();
-                }
-                // ادراج النسخة الى وحدات القياس مباشرة بدون اغلاق وفتح الفورم
-                ((List<DAL.UnitName>)repoUOM.DataSource).Add(NewObject);
-                ((List<DAL.UnitName>)(((LookUpEdit)sender).Properties.DataSource)).Add(NewObject);
-                e.Handled = true;
-            }
-        }
-       
-
-        /// <summary>
-        /// حذف عنصر من قاعدة البيانات
-        /// </summary>
-        public override void Delete()
-        {
-            if (AskForDeletion())
-            {
-                using (var db = new DAL.DBDataContext())
-                {
-                    //التأكد من أن العنصر غير مستخدم قبل حذفه
-                    var accountLog = db.StoreLogs.Where(x => x.ProductID == product.ID).Count();
-
-                    if (accountLog > 0)
+                product = db.Products.Where(x => x.ID == id)
+                    .Select(x => new DAL.Product
                     {
-                        XtraMessageBox.Show(
-                            text: "عفوا لا يمكن حذف هذا العنصر حيث أنه تم استخدامه في عدة فواتير \n يمكنك الغاء تنشيطه بدلا من حذفه",
-                            caption: string.Empty,
-                            buttons: MessageBoxButtons.OK,
-                            icon: MessageBoxIcon.Error);
-                        return;
-                    }
-                    db.Products.Attach(product);
-                    db.Products.DeleteOnSubmit(product);
-                    db.ProductUnits.DeleteAllOnSubmit(db.ProductUnits.Where(x => x.ProductID == product.ID));
-                    db.SubmitChanges();
-                }
-                base.Delete();
+                        ID = x.ID,
+                        Code = x.Code,
+                        Name = x.Name,
+                        Type = x.Type,
+                        CostCalculationMethod = x.CostCalculationMethod,
+                        Descreption = x.Descreption,
+                        IsActive = x.IsActive,
+                        CategoryID = x.CategoryID,
+                        Image = x.Image
+                    }).Single();
+
+                unitRows = new BindingList<DAL.ProductUnit>(db.ProductUnits
+                    .Where(x => x.ProductID == id)
+                    .OrderBy(x => x.ID)
+                    .ToList());
             }
+
+            BindProductControls();
+            gridView1.DataSource = unitRows;
+            PartID = product.ID;
+            PartName = product.Name;
+            Text = "بيانات صنف: " + product.Name;
+            btn_Delete.Enabled = true;
         }
 
-
-        public override void New()
+        private void BindProductControls()
         {
-            product = new DAL.Product()
-            {
-                Code = GetNewProductCode(),
-                IsActive = true,
-                Type = (byte)Class.Master.ProductType.Inventory
-            };
-            var db = new DAL.DBDataContext();
-            // لاضافة التصنيف الأول في قاعدة البيانات افتراضيا عند اضافة منتج جديد اذا كانت قاعدة البيانات تحتوي تصنيفات  
-            var categ = db.ProductCategories
-                .Where(x => db.ProductCategories.Where(w => w.ParentID == x.ID).Count() == 0)
-                .FirstOrDefault();
-            if (categ != null)
-                product.CategoryID = categ.ID;
-            base.New();
-            this.Text = "اضافة صنف جديد";// تغيير عنوان الفورم
-            // نعمل وحدف افتراضية معاملها 1 getData بعد عمل
-            var data = gridView1.DataSource as BindingList<DAL.ProductUnit>;//gridView1 للتغيير عليها وارجاعها الى gridView1 انشاء نسخة من البيانات الموجودة في
+            txt_Code.Text = product.Code;
+            txt_Name.Text = product.Name;
+            lkp_Type.SelectedValue = (int)product.Type;
+            lkp_CostCalculationMethod.SelectedValue = (int)product.CostCalculationMethod;
+            memoEdit1.Text = product.Descreption;
+            checkEdit1.Checked = product.IsActive;
+            lkp_Category.SelectedValue = product.CategoryID;
 
-            //"اذا كان جدول الوحدات فارغا نضيف وحدة افتراضية... "قطعة 
-            if (db.UnitNames.Count() == 0)
+            if (product.Image != null)
             {
-                db.UnitNames.InsertOnSubmit(new DAL.UnitName() { Name = "قطعة" });
-                db.SubmitChanges();
-                RefreshData();
+                using (var stream = new System.IO.MemoryStream(product.Image.ToArray()))
+                    pictureEdit1.Image = new Bitmap(Image.FromStream(stream));
             }
-            data.Add(new DAL.ProductUnit() { Factor = 1, UnitID = db.UnitNames.First().ID, Barcode = GetNewBarcode() });//قيم افتراضية و ابتدائية
+            else
+            {
+                pictureEdit1.Image = null;
+            }
         }
-
 
         public override void RefreshData()
         {
             using (var db = new DAL.DBDataContext())
             {
-                lkp_Category.Properties.DataSource = db.ProductCategories
-                    .Where(x => db.ProductCategories.Where(w => w.ParentID == x.ID).Count() == 0)
-                    .ToList();//تحديد الفئات التي لا تحتوي على أبناء فقط
-                repoUOM.DataSource = db.UnitNames.ToList(); // gridView1 بالبيانات لاظهارها في repoUOM تعبئة
+                categories = db.ProductCategories
+                    .Where(x => !db.ProductCategories.Any(w => w.ParentID == x.ID))
+                    .OrderBy(x => x.Name)
+                    .ToList();
+
+                unitNames = db.UnitNames.OrderBy(x => x.Name).ToList();
             }
-            lkp_CostCalculationMethod.InitializeData(Class.MasterInventory.CostCalculationMethodList);
+
+            lkp_Category.DataSource = null;
+            lkp_Category.DisplayMember = nameof(DAL.ProductCategory.Name);
+            lkp_Category.ValueMember = nameof(DAL.ProductCategory.ID);
+            lkp_Category.DataSource = categories;
+
+            lkp_Type.DisplayMember = nameof(Master.ValueAndID.Name);
+            lkp_Type.ValueMember = nameof(Master.ValueAndID.ID);
+            lkp_Type.DataSource = Master.ProductTypesList;
+
+            lkp_CostCalculationMethod.DisplayMember = nameof(Master.ValueAndID.Name);
+            lkp_CostCalculationMethod.ValueMember = nameof(Master.ValueAndID.ID);
+            lkp_CostCalculationMethod.DataSource = MasterInventory.CostCalculationMethodList;
+
+            var unitColumn = gridView1.Columns[nameof(DAL.ProductUnit.UnitID)] as DataGridViewComboBoxColumn;
+            if (unitColumn != null)
+            {
+                unitColumn.DataSource = null;
+                unitColumn.DataSource = unitNames;
+            }
+
             base.RefreshData();
         }
 
-        /// <summary>
-        /// حفظ البيانات أو تعديلها
-        /// </summary>
-        public override void Save()
+        private void EnsureCategoryExists()
         {
-            gridView1.UpdateCurrentRow();
-            //if (!IsDataValide())
-            //   return;
-            var db = new DAL.DBDataContext();
-            if (product.ID == 0)
-                db.Products.InsertOnSubmit(product);
-            else
-                db.Products.Attach(product);
-            SetData();
+            if (lkp_Category.SelectedValue != null)
+                return;
 
-            db.SubmitChanges();
+            string categoryName = lkp_Category.Text.Trim();
+            if (categoryName.Length == 0)
+                return;
 
-            var data = gridView1.DataSource as BindingList<DAL.ProductUnit>;//gridView1 للتغيير عليها وارجاعها الى gridView1 انشاء نسخة من البيانات الموجودة في
-            foreach (var item in data)
+            using (var db = new DAL.DBDataContext())
             {
-                item.ProductID = product.ID;//بعد عملية الحفظ ليأخذ الرقم الجديد ID تغيير
-                if (string.IsNullOrEmpty(item.Barcode))
-                    item.Barcode = string.Empty;//اذا كان الباركود فارغ يعطيه نص فارغ
-                else
+                var category = db.ProductCategories.FirstOrDefault(x => x.Name == categoryName);
+                if (category == null)
                 {
+                    category = new DAL.ProductCategory
+                    {
+                        Name = categoryName,
+                        ParentID = 0,
+                        Number = "0"
+                    };
+                    db.ProductCategories.InsertOnSubmit(category);
+                    db.SubmitChanges();
+                }
 
+                categories.Add(category);
+                lkp_Category.DataSource = null;
+                lkp_Category.DisplayMember = nameof(DAL.ProductCategory.Name);
+                lkp_Category.ValueMember = nameof(DAL.ProductCategory.ID);
+                lkp_Category.DataSource = categories;
+                lkp_Category.SelectedValue = category.ID;
+            }
+        }
+
+        private void AddUnit()
+        {
+            string name = txt_NewUnit.Text.Trim();
+            if (name.Length == 0)
+            {
+                MessageBox.Show("اكتب اسم وحدة القياس أولاً.", "وحدات القياس",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                txt_NewUnit.Focus();
+                return;
+            }
+
+            using (var db = new DAL.DBDataContext())
+            {
+                if (db.UnitNames.Any(x => x.Name == name))
+                {
+                    MessageBox.Show("وحدة القياس موجودة بالفعل.", "وحدات القياس",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var unit = new DAL.UnitName { Name = name };
+                db.UnitNames.InsertOnSubmit(unit);
+                db.SubmitChanges();
+            }
+
+            txt_NewUnit.Clear();
+            RefreshData();
+            if (gridView1.CurrentCell != null)
+                gridView1.BeginEdit(true);
+        }
+
+        private void LoadImage()
+        {
+            using (var dialog = new OpenFileDialog())
+            {
+                dialog.Title = "اختيار صورة الصنف";
+                dialog.Filter = "ملفات الصور|*.jpg;*.jpeg;*.png;*.bmp;*.gif";
+                if (dialog.ShowDialog(this) != DialogResult.OK)
+                    return;
+
+                using (var source = Image.FromFile(dialog.FileName))
+                    pictureEdit1.Image = new Bitmap(source);
+            }
+        }
+
+        public override bool IsDataValide()
+        {
+            EnsureCategoryExists();
+
+            if (string.IsNullOrWhiteSpace(txt_Code.Text) ||
+                string.IsNullOrWhiteSpace(txt_Name.Text))
+            {
+                MessageBox.Show("يرجى إدخال كود الصنف واسمه.", "بيانات ناقصة",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (lkp_Category.SelectedValue == null ||
+                lkp_Type.SelectedValue == null ||
+                lkp_CostCalculationMethod.SelectedValue == null)
+            {
+                MessageBox.Show("يرجى تحديد الفئة ونوع الصنف وطريقة حساب التكلفة.",
+                    "بيانات ناقصة", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            try
+            {
+                gridView1.EndEdit();
+                var manager = BindingContext[unitRows] as CurrencyManager;
+                if (manager != null)
+                    manager.EndCurrentEdit();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("تعذر اعتماد بيانات وحدات القياس: " + ex.Message,
+                    "بيانات غير صحيحة", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (unitRows.Count == 0)
+            {
+                MessageBox.Show("الرجاء إضافة وحدة قياس واحدة على الأقل.",
+                    "بيانات ناقصة", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            var usedUnitIds = new HashSet<int>();
+            var usedBarcodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            for (int i = 0; i < unitRows.Count; i++)
+            {
+                var row = unitRows[i];
+                if (i == 0)
+                    row.Factor = 1;
+                else if (row.Factor <= 1)
+                {
+                    MessageBox.Show("يجب أن يكون معامل تحويل الوحدات الإضافية أكبر من 1.",
+                        "بيانات وحدات القياس", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    gridView1.CurrentCell = gridView1.Rows[i].Cells[nameof(DAL.ProductUnit.Factor)];
+                    return false;
+                }
+
+                if (row.UnitID <= 0 || !unitNames.Any(x => x.ID == row.UnitID))
+                {
+                    MessageBox.Show("يرجى اختيار وحدة قياس صحيحة لكل سطر.",
+                        "بيانات وحدات القياس", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false;
+                }
+
+                if (!usedUnitIds.Add(row.UnitID))
+                {
+                    MessageBox.Show("لا يمكن تكرار وحدة القياس داخل الصنف نفسه.",
+                        "بيانات وحدات القياس", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false;
+                }
+
+                string barcode = (row.Barcode ?? string.Empty).Trim();
+                row.Barcode = barcode;
+                if (barcode.Length > 0 && !usedBarcodes.Add(barcode))
+                {
+                    MessageBox.Show("الباركود مكرر داخل وحدات الصنف.",
+                        "بيانات وحدات القياس", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false;
                 }
             }
-            udb.SubmitChanges();
-            PartID = product.ID;     // لتسجيل حركات المستخدم
-            PartName = product.Name; // لتسجيل حركات المستخدم
-            base.Save();
-            this.Text = string.Format("بيانات صنف: {0}", product.Name);// تغيير عنوان الفورم
+
+            using (var db = new DAL.DBDataContext())
+            {
+                bool duplicateName = db.Products.Any(x =>
+                    x.ID != product.ID && x.Name.Trim() == txt_Name.Text.Trim());
+                bool duplicateCode = db.Products.Any(x =>
+                    x.ID != product.ID && x.Code.Trim() == txt_Code.Text.Trim());
+
+                if (duplicateName)
+                {
+                    MessageBox.Show("اسم الصنف مسجل بالفعل.", "بيانات مكررة",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txt_Name.Focus();
+                    return false;
+                }
+
+                if (duplicateCode)
+                {
+                    MessageBox.Show("كود الصنف مسجل بالفعل.", "بيانات مكررة",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txt_Code.Focus();
+                    return false;
+                }
+
+                foreach (var row in unitRows)
+                {
+                    if (!string.IsNullOrEmpty(row.Barcode) &&
+                        db.ProductUnits.Any(x => x.Barcode == row.Barcode &&
+                                                x.ProductID != product.ID))
+                    {
+                        MessageBox.Show("الباركود " + row.Barcode + " مسجل لصنف آخر.",
+                            "باركود مكرر", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         public override void SetData()
         {
-            product.Code = txt_Code.Text;
-            product.Name = txt_Name.Text;
-            product.Type = Convert.ToByte(lkp_Type.EditValue);
-            product.CostCalculationMethod = Convert.ToByte(lkp_CostCalculationMethod.EditValue);
+            product.Code = txt_Code.Text.Trim();
+            product.Name = txt_Name.Text.Trim();
+            product.Type = Convert.ToByte(lkp_Type.SelectedValue);
+            product.CostCalculationMethod = Convert.ToByte(lkp_CostCalculationMethod.SelectedValue);
             product.Descreption = memoEdit1.Text;
             product.IsActive = checkEdit1.Checked;
-            product.CategoryID = Convert.ToInt32(lkp_Category.EditValue);
+            product.CategoryID = Convert.ToInt32(lkp_Category.SelectedValue);
             product.Image = Class.Utils.GetByteFromImage(pictureEdit1.Image);
-
             base.SetData();
         }
 
-        /// <summary>
-        /// جلب بيانات الصنف
-        /// </summary>
         public override void GetData()
         {
-            txt_Code.Text = product.Code;
-            txt_Name.Text = product.Name;
-            lkp_Type.EditValue = product.Type;
-            lkp_CostCalculationMethod.EditValue = product.CostCalculationMethod;
-            memoEdit1.Text = product.Descreption;
-            checkEdit1.Checked = product.IsActive;
-            lkp_Category.EditValue = product.CategoryID;
-            if (product.Image != null)
-                pictureEdit1.Image = Class.Utils.GetImageFromByteArray(product.Image.ToArray());
-            else
-                pictureEdit1.Image = null;
-            gridControl1.DataSource = udb.ProductUnits.Where(x => x.ProductID == product.ID);//جلب الوحدات الخاصة بالعنصر
-            PartID = product.ID;     // لتسجيل حركات المستخدم
-            PartName = product.Name; // لتسجيل حركات المستخدم
+            if (product == null)
+                return;
+
+            BindProductControls();
+            gridView1.DataSource = unitRows;
+            PartID = product.ID;
+            PartName = product.Name;
             base.GetData();
+        }
+
+        public override void Save()
+        {
+            try
+            {
+                gridView1.EndEdit();
+                using (var db = new DAL.DBDataContext())
+                using (var transaction = db.Connection.BeginTransaction())
+                {
+                    db.Transaction = transaction;
+
+                    DAL.Product savedProduct;
+                    if (product.ID == 0)
+                    {
+                        savedProduct = product;
+                        db.Products.InsertOnSubmit(savedProduct);
+                    }
+                    else
+                    {
+                        savedProduct = db.Products.Single(x => x.ID == product.ID);
+                    }
+
+                    product = savedProduct;
+                    SetData();
+                    db.SubmitChanges();
+
+                    var existingUnits = db.ProductUnits
+                        .Where(x => x.ProductID == savedProduct.ID)
+                        .ToList();
+
+                    foreach (var oldUnit in existingUnits)
+                    {
+                        if (!unitRows.Any(x => x.ID == oldUnit.ID))
+                            db.ProductUnits.DeleteOnSubmit(oldUnit);
+                    }
+
+                    foreach (var row in unitRows)
+                    {
+                        if (row.ID > 0)
+                        {
+                            var tracked = existingUnits.SingleOrDefault(x => x.ID == row.ID);
+                            if (tracked == null)
+                                throw new InvalidOperationException("إحدى وحدات الصنف لم تعد موجودة في قاعدة البيانات.");
+
+                            tracked.UnitID = row.UnitID;
+                            tracked.Factor = row.Factor;
+                            tracked.SellPrice = row.SellPrice;
+                            tracked.BuyPrice = row.BuyPrice;
+                            tracked.SellDiscount = row.SellDiscount;
+                            tracked.Barcode = row.Barcode ?? string.Empty;
+                        }
+                        else
+                        {
+                            db.ProductUnits.InsertOnSubmit(new DAL.ProductUnit
+                            {
+                                ProductID = savedProduct.ID,
+                                UnitID = row.UnitID,
+                                Factor = row.Factor,
+                                SellPrice = row.SellPrice,
+                                BuyPrice = row.BuyPrice,
+                                SellDiscount = row.SellDiscount,
+                                Barcode = row.Barcode ?? string.Empty
+                            });
+                        }
+                    }
+
+                    db.SubmitChanges();
+                    transaction.Commit();
+                    product = savedProduct;
+                }
+
+                PartID = product.ID;
+                PartName = product.Name;
+                base.Save();
+                Text = "بيانات صنف: " + product.Name;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("تعذر حفظ الصنف ووحدات قياسه. لم يتم اعتماد أي جزء من العملية.\n" +
+                    ex.Message, "خطأ في الحفظ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public override void Delete()
+        {
+            if (!AskForDeletion())
+                return;
+
+            try
+            {
+                using (var db = new DAL.DBDataContext())
+                using (var transaction = db.Connection.BeginTransaction())
+                {
+                    db.Transaction = transaction;
+
+                    if (db.StoreLogs.Any(x => x.ProductID == product.ID))
+                    {
+                        transaction.Rollback();
+                        MessageBox.Show("لا يمكن حذف الصنف لأنه مستخدم في حركات المخزون. يمكنك إلغاء تنشيطه بدلاً من حذفه.",
+                            "تعذر الحذف", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    var units = db.ProductUnits.Where(x => x.ProductID == product.ID).ToList();
+                    db.ProductUnits.DeleteAllOnSubmit(units);
+                    db.SubmitChanges();
+
+                    var trackedProduct = db.Products.Single(x => x.ID == product.ID);
+                    db.Products.DeleteOnSubmit(trackedProduct);
+                    db.SubmitChanges();
+
+                    transaction.Commit();
+                }
+
+                base.Delete();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("تعذر حذف الصنف: " + ex.Message,
+                    "خطأ في الحذف", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public override void New()
+        {
+            using (var db = new DAL.DBDataContext())
+            {
+                if (!db.UnitNames.Any())
+                {
+                    db.UnitNames.InsertOnSubmit(new DAL.UnitName { Name = "قطعة" });
+                    db.SubmitChanges();
+                }
+
+                product = new DAL.Product
+                {
+                    Code = GetNewProductCode(),
+                    IsActive = true,
+                    Type = (byte)Master.ProductType.Inventory
+                };
+
+                var category = db.ProductCategories
+                    .Where(x => !db.ProductCategories.Any(w => w.ParentID == x.ID))
+                    .OrderBy(x => x.ID)
+                    .FirstOrDefault();
+
+                if (category != null)
+                    product.CategoryID = category.ID;
+            }
+
+            RefreshData();
+            unitRows = new BindingList<DAL.ProductUnit>();
+            var firstUnit = unitNames.FirstOrDefault();
+            if (firstUnit != null)
+            {
+                unitRows.Add(new DAL.ProductUnit
+                {
+                    Factor = 1,
+                    UnitID = firstUnit.ID,
+                    Barcode = GetNewBarcode()
+                });
+            }
+
+            base.New();
+            gridView1.DataSource = unitRows;
+            Text = "إضافة صنف جديد";
+            PartID = 0;
+            PartName = string.Empty;
+        }
+
+        private string GetNewProductCode()
+        {
+            using (var db = new DAL.DBDataContext())
+            {
+                string lastCode = db.Products.OrderByDescending(x => x.ID)
+                    .Select(x => x.Code ?? "0").FirstOrDefault();
+                return Master.GetNextNumberInString(lastCode);
+            }
+        }
+
+        private string GetNewBarcode()
+        {
+            using (var db = new DAL.DBDataContext())
+            {
+                string lastBarcode = db.ProductUnits.Where(x => x.Barcode != null)
+                    .Select(x => x.Barcode).OrderByDescending(x => x).FirstOrDefault();
+                return Master.GetNextNumberInString(lastBarcode);
+            }
+        }
+
+        private void BtnAddUnit_Click(object sender, EventArgs e)
+        {
+            AddUnit();
+        }
+
+        private void BtnLoadImage_Click(object sender, EventArgs e)
+        {
+            LoadImage();
+        }
+
+        private void BtnClearImage_Click(object sender, EventArgs e)
+        {
+            pictureEdit1.Image = null;
         }
     }
 }
