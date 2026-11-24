@@ -16,6 +16,7 @@ namespace SalesLinq.Forms
     {
         private static frm_Main _Instance;
         private readonly List<Form> _openForms = new List<Form>();
+        private FlowLayoutPanel quickActionsPanel;
 
         private static readonly Color Navy = Color.FromArgb(27, 45, 72);
         private static readonly Color NavyLight = Color.FromArgb(39, 61, 94);
@@ -90,8 +91,8 @@ namespace SalesLinq.Forms
         /// </summary>
         public void AddAccordionElement()
         {
-            BuildDashboard();
             BuildNavigation();
+            RefreshQuickActions();
             Lbl_UserName.Text = Session.User == null ? "غير مسجل" : Session.User.Name;
         }
 
@@ -305,7 +306,7 @@ namespace SalesLinq.Forms
                 TextAlign = ContentAlignment.MiddleRight
             };
 
-            var quickPanel = new FlowLayoutPanel
+            quickActionsPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
                 Height = 230,
@@ -314,7 +315,7 @@ namespace SalesLinq.Forms
                 Padding = new Padding(0, 4, 0, 8),
                 BackColor = PageBackground
             };
-            AddQuickAction(quickPanel, "فاتورة مبيعات", "frm_SalesInvoice", "إنشاء فاتورة جديدة");
+            AddQuickAction(quickActionsPanel, "فاتورة مبيعات", "frm_SalesInvoice", "إنشاء فاتورة جديدة");
             AddQuickAction(quickPanel, "فاتورة مشتريات", "frm_PurchaseInvoice", "تسجيل عملية شراء");
             AddQuickAction(quickPanel, "الأصناف", "frm_ProductList", "عرض وإدارة الأصناف");
             AddQuickAction(quickPanel, "العملاء", "frm_CustomerList", "قائمة العملاء");
@@ -331,10 +332,24 @@ namespace SalesLinq.Forms
 
             dashboardPanel.Controls.Add(openFormsPanel);
             dashboardPanel.Controls.Add(openTitle);
-            dashboardPanel.Controls.Add(quickPanel);
+            dashboardPanel.Controls.Add(quickActionsPanel);
             dashboardPanel.Controls.Add(quickTitle);
             dashboardPanel.Controls.Add(intro);
             dashboardPanel.ResumeLayout();
+        }
+
+        private void RefreshQuickActions()
+        {
+            if (quickActionsPanel == null) return;
+
+            foreach (Button button in quickActionsPanel.Controls.OfType<Button>())
+            {
+                string screenName = Convert.ToString(button.Tag);
+                button.Enabled = Session.User != null &&
+                    (Session.User.UserType == (byte)Master.UserType.Admin ||
+                     (Session.ScreenAccesses != null &&
+                      Session.ScreenAccesses.Any(x => x.ScreenName == screenName && x.CanShow)));
+            }
         }
 
         private void AddQuickAction(FlowLayoutPanel panel, string caption, string screenName, string description)
