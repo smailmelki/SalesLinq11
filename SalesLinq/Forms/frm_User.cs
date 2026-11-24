@@ -1,166 +1,278 @@
-﻿using System;
-using System.Data;
+using System;
 using System.Linq;
+using System.Windows.Forms;
 using SalesLinq.Class;
 using Liphsoft.Crypto.Argon2;
 
 namespace SalesLinq.Forms
 {
-    public partial class frm_User : frm_Master
+    public partial class frm_User : NativeMasterForm
     {
-        
-        DAL.User user;
-        bool UserIsAdmin = false; 
+        private DAL.User user;
+        private string originalPasswordHash;
+
         public frm_User()
         {
             InitializeComponent();
             RefreshData();
             New();
         }
+
         public frm_User(int id)
         {
             InitializeComponent();
             RefreshData();
+            LoadUser(id);
+        }
+
+        private void LoadUser(int id)
+        {
             using (var db = new DAL.DBDataContext())
             {
                 user = db.Users.SingleOrDefault(x => x.ID == id);
+                if (user == null)
+                    throw new InvalidOperationException("المستخدم المطلوب غير موجود.");
+
+                originalPasswordHash = user.Password;
                 GetData();
+                IsNew = false;
+                btn_Delete.Enabled = true;
             }
         }
+
         public override void RefreshData()
         {
+            cmb_UserType.DataSource = Master.UserTypeList.ToList();
+            cmb_UserType.DisplayMember = "Name";
+            cmb_UserType.ValueMember = "ID";
+
             using (var db = new DAL.DBDataContext())
             {
-                lkp_UserType.InitializeData(Master.UserTypeList);
-                lkp_UserType.EditValueChanged += Lkp_UserType_EditValueChanged;
-                lkp_SettingProfileID.InitializeData(db.UserSettingsProfiles.Select(x => new { x.ID, x.Name }).ToList());
-                lkp_ScreenProfileID.InitializeData(db.UserAccessProfileNames.Select(x => new { x.ID, x.Name }).ToList());
+                cmb_SettingProfile.DataSource = db.UserSettingsProfiles
+                    .OrderBy(x => x.Name)
+                    .Select(x => new ProfileOption { ID = x.ID, Name = x.Name })
+                    .ToList();
+                cmb_SettingProfile.DisplayMember = "Name";
+                cmb_SettingProfile.ValueMember = "ID";
 
+                cmb_ScreenProfile.DataSource = db.UserAccessProfileNames
+                    .OrderBy(x => x.Name)
+                    .Select(x => new ProfileOption { ID = x.ID, Name = x.Name })
+                    .ToList();
+                cmb_ScreenProfile.DisplayMember = "Name";
+                cmb_ScreenProfile.ValueMember = "ID";
             }
-            base.RefreshData();
+
+            UpdateProfileControls();
         }
 
-        private void Lkp_UserType_EditValueChanged(object sender, EventArgs e)
+        private void UpdateProfileControls()
         {
-            if (lkp_UserType.EditValue.ToString() == "1")
-            {
-                lkp_ScreenProfileID.Enabled = false;
-                UserIsAdmin = true;
-            }
-            else
-            {
-                lkp_ScreenProfileID.Enabled = true;
-                UserIsAdmin = false;
-            }
+            bool isAdmin = Convert.ToInt32(cmb_UserType.SelectedValue ?? 0) ==
+                           (int)Master.UserType.Admin;
+
+            cmb_ScreenProfile.Enabled = !isAdmin;
+            lbl_ScreenProfile.Enabled = !isAdmin;
         }
 
         public override void New()
         {
-            user = new DAL.User();
-            user.IsActive = true;
-            base.New();
+            user = new DAL.User { IsActive = true };
+            originalPasswordHash = null;
+
+            txt_Name.Clear();
+            txt_UserName.Clear();
+            txt_Password.Clear();
+            cmb_UserType.SelectedValue = (int)Master.UserType.User;
+            if (cmb_SettingProfile.Items.Count > 0)
+                cmb_SettingProfile.SelectedIndex = 0;
+            if (cmb_ScreenProfile.Items.Count > 0)
+                cmb_ScreenProfile.SelectedIndex = 0;
+            chk_IsActive.Checked = true;
+
+            IsNew = true;
+            PartID = 0;
+            PartName = string.Empty;
+            btn_Delete.Enabled = false;
+            UpdateProfileControls();
+            txt_Name.Focus();
         }
+
         public override void GetData()
         {
+            if (user == null) return;
+
             txt_Name.Text = user.Name;
             txt_UserName.Text = user.UserName;
-            txt_Passwoord.Text = user.Password;
-            lkp_UserType.EditValue = user.UserType;
-            lkp_SettingProfileID.EditValue = user.SettingsProfileID;
-            if (!UserIsAdmin)
-            {
-                lkp_ScreenProfileID.EditValue = user.ScreenProfileID;
-            }
-            toggleSwitch1.IsOn = user.IsActive;
-            PartID = user.ID;     // لتسجيل حركات المستخدم
-            PartName = user.Name; // لتسجيل حركات المستخدم
-            base.GetData();
+            // لا نعرض قيمة التجزئة المخزنة؛ ترك كلمة المرور فارغة يعني الإبقاء عليها.
+            txt_Password.Clear();
+            cmb_UserType.SelectedValue = (int)user.UserType;
+            cmb_SettingProfile.SelectedValue = user.SettingsProfileID;
+            if (user.ScreenProfileID > 0)
+                cmb_ScreenProfile.SelectedValue = user.ScreenProfileID;
+            chk_IsActive.Checked = user.IsActive;
+
+            PartID = user.ID;
+            PartName = user.Name;
+            UpdateProfileControls();
         }
-        public override void SetData()
-        {
-            //تشفير الرقم السري
-            if(user.Password!= txt_Passwoord.Text)
-            {
-                var hasher = new PasswordHasher();
-                string myhash = hasher.Hash(txt_Passwoord.Text);
-                txt_Passwoord.Text = myhash;
-            }
-            user.Name = txt_Name.Text;
-            user.Password = txt_Passwoord.Text;
-            user.UserName = txt_UserName.Text.Trim();
-            user.UserType =Convert.ToByte( lkp_UserType.EditValue);
-            user.SettingsProfileID = Convert.ToInt32(lkp_SettingProfileID.EditValue);
-            if (!UserIsAdmin)
-            {
-                user.ScreenProfileID = Convert.ToInt32(lkp_ScreenProfileID.EditValue);
-            }             
-            user.IsActive = toggleSwitch1.IsOn;
-            base.SetData();
-        }
-        public override void Save()
-        {
-            using (var db = new DAL.DBDataContext())
-            {
-                if (user.ID == 0)
-                {
-                    db.Users.InsertOnSubmit(user);
-                }
-                else
-                {
-                    db.Users.Attach(user);
-                }
-                SetData();
-                    db.SubmitChanges();
-                    PartID = user.ID;     // لتسجيل حركات المستخدم
-                    PartName = user.Name; // لتسجيل حركات المستخدم
-                    base.Save();                
-            }
-        }
-        /// <summary>
-        /// التحقق من البيانات المدخلة قبل الحفظ
-        /// </summary>
-        /// <returns></returns>
+
         public override bool IsDataValide()
         {
-            int NumberOfErrors = 0;
-            using (var db = new DAL.DBDataContext())
+            bool valid = true;
+            string name = txt_Name.Text.Trim();
+            string userName = txt_UserName.Text.Trim();
+            bool isNew = user == null || user.ID == 0;
+
+            if (string.IsNullOrWhiteSpace(name))
             {
-                if (db.Users.Where(x => x.UserName.Trim() == txt_UserName.Text.Trim() && x.ID != user.ID).Count() > 0)
-                {
-                    NumberOfErrors += 1;
-                    txt_UserName.ErrorText = "هذا المستخدم مسجل بالفعل";
-                }
-                if (db.Users.Where(x => x.Name.Trim() == txt_Name.Text.Trim() && x.ID != user.ID).Count() > 0)
-                {
-                    NumberOfErrors += 1;
-                    txt_Name.ErrorText = "هذا المستخدم مسجل بالفعل";
-                }
+                errorProvider.SetError(txt_Name, ErrorText);
+                valid = false;
             }
-            NumberOfErrors += txt_Name.IsTextValide() ? 0 : 1;                              // التحقق من أن النص غير فارغ 
-            NumberOfErrors += txt_Passwoord.IsTextValide() ? 0 : 1;                         // التحقق من أن النص غير فارغ 
-            NumberOfErrors += txt_UserName.IsTextValide() ? 0 : 1;                          // التحقق من أن النص غير فارغ 
-            NumberOfErrors += lkp_UserType.IsEditValueValideAndNotZero() ? 0 : 1;           // التحقق من أن النص رقمي و ليس صفر
-            if (!UserIsAdmin)
+            else errorProvider.SetError(txt_Name, string.Empty);
+
+            if (string.IsNullOrWhiteSpace(userName))
             {
-                NumberOfErrors += lkp_ScreenProfileID.IsEditValueValideAndNotZero() ? 0 : 1;    // التحقق من أن النص رقمي و ليس صفر
-                NumberOfErrors += lkp_SettingProfileID.IsEditValueValideAndNotZero() ? 0 : 1;   // التحقق من أن النص رقمي و ليس صفر
+                errorProvider.SetError(txt_UserName, ErrorText);
+                valid = false;
+            }
+            else errorProvider.SetError(txt_UserName, string.Empty);
+
+            if (isNew && string.IsNullOrWhiteSpace(txt_Password.Text))
+            {
+                errorProvider.SetError(txt_Password, "كلمة المرور مطلوبة للمستخدم الجديد.");
+                valid = false;
+            }
+            else errorProvider.SetError(txt_Password, string.Empty);
+
+            if (cmb_UserType.SelectedValue == null)
+            {
+                errorProvider.SetError(cmb_UserType, "يرجى تحديد نوع الدخول.");
+                valid = false;
             }
 
-            return (NumberOfErrors == 0);
+            if (cmb_SettingProfile.SelectedValue == null)
+            {
+                errorProvider.SetError(cmb_SettingProfile, "يرجى تحديد نموذج الإعدادات.");
+                valid = false;
+            }
+
+            bool isAdmin = Convert.ToInt32(cmb_UserType.SelectedValue ?? 0) ==
+                           (int)Master.UserType.Admin;
+            if (!isAdmin && cmb_ScreenProfile.SelectedValue == null)
+            {
+                errorProvider.SetError(cmb_ScreenProfile, "يرجى تحديد نموذج الوصول.");
+                valid = false;
+            }
+
+            if (!valid) return false;
+
+            using (var db = new DAL.DBDataContext())
+            {
+                if (db.Users.Any(x => x.UserName.Trim() == userName && x.ID != user.ID))
+                {
+                    errorProvider.SetError(txt_UserName, "اسم الدخول مستخدم بالفعل.");
+                    valid = false;
+                }
+
+                if (db.Users.Any(x => x.Name.Trim() == name && x.ID != user.ID))
+                {
+                    errorProvider.SetError(txt_Name, "اسم المستخدم مسجل بالفعل.");
+                    valid = false;
+                }
+            }
+
+            return valid;
+        }
+
+        public override void Save()
+        {
+            try
+            {
+                using (var db = new DAL.DBDataContext())
+                {
+                    DAL.User entity;
+                    if (user.ID == 0)
+                    {
+                        entity = new DAL.User();
+                        db.Users.InsertOnSubmit(entity);
+                    }
+                    else
+                    {
+                        entity = db.Users.SingleOrDefault(x => x.ID == user.ID);
+                        if (entity == null)
+                            throw new InvalidOperationException("تعذر العثور على المستخدم لتحديثه.");
+                    }
+
+                    entity.Name = txt_Name.Text.Trim();
+                    entity.UserName = txt_UserName.Text.Trim();
+                    entity.UserType = Convert.ToByte(cmb_UserType.SelectedValue);
+                    entity.SettingsProfileID = Convert.ToInt32(cmb_SettingProfile.SelectedValue);
+
+                    bool isAdmin = entity.UserType == (byte)Master.UserType.Admin;
+                    if (!isAdmin)
+                        entity.ScreenProfileID = Convert.ToInt32(cmb_ScreenProfile.SelectedValue);
+
+                    entity.IsActive = chk_IsActive.Checked;
+
+                    if (!string.IsNullOrWhiteSpace(txt_Password.Text))
+                        entity.Password = new PasswordHasher().Hash(txt_Password.Text);
+                    else if (entity.ID == 0)
+                        throw new InvalidOperationException("كلمة المرور مطلوبة للمستخدم الجديد.");
+
+                    db.SubmitChanges();
+
+                    user = entity;
+                    originalPasswordHash = entity.Password;
+                    PartID = entity.ID;
+                    PartName = entity.Name;
+                }
+
+                base.Save();
+                txt_Password.Clear();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("تعذر حفظ المستخدم.\n" + ex.Message,
+                    "خطأ في الحفظ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public override void Delete()
         {
-            if (AskForDeletion())
+            if (user == null || user.ID == 0 || !AskForDeletion())
+                return;
+
+            if (Session.User != null && Session.User.ID == user.ID)
+            {
+                MessageBox.Show("لا يمكن حذف حساب المستخدم الذي سجل الدخول حالياً.",
+                    "تعذر الحذف", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
             {
                 using (var db = new DAL.DBDataContext())
                 {
-                    db.Users.Attach(user);
-                    db.Users.DeleteOnSubmit(user);
+                    var entity = db.Users.SingleOrDefault(x => x.ID == user.ID);
+                    if (entity == null) return;
+                    db.Users.DeleteOnSubmit(entity);
                     db.SubmitChanges();
                 }
+
                 base.Delete();
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("تعذر حذف المستخدم. قد يكون مرتبطاً بسجلات أخرى.\n" + ex.Message,
+                    "تعذر الحذف", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private sealed class ProfileOption
+        {
+            public int ID { get; set; }
+            public string Name { get; set; }
         }
     }
 }
