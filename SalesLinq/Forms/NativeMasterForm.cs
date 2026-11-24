@@ -23,6 +23,8 @@ namespace SalesLinq.Forms
 
         public static string ErrorText => "هذا الحقل مطلوب";
 
+        protected virtual bool AuthorizeNewAction => true;
+
         public NativeMasterForm()
         {
             RightToLeft = RightToLeft.Yes;
@@ -64,7 +66,7 @@ namespace SalesLinq.Forms
 
             btn_New.Click += (s, e) =>
             {
-                if (CheckActionAuthorization(Name, Master.Actions.Add))
+                if (!AuthorizeNewAction || CheckActionAuthorization(Name, Master.Actions.Add))
                     New();
             };
 
