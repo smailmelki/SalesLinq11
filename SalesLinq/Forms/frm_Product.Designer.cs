@@ -163,7 +163,6 @@ namespace SalesLinq.Forms
             this.lbl_Units.Padding = new System.Windows.Forms.Padding(8, 6, 12, 0);
             this.txt_NewUnit.Width = 170;
             this.txt_NewUnit.Margin = new System.Windows.Forms.Padding(4);
-            this.txt_NewUnit.PlaceholderText = "اسم وحدة جديدة";
             this.btn_AddUnit.Text = "إضافة وحدة";
             this.btn_AddUnit.AutoSize = true;
             this.btn_AddUnit.Click += new System.EventHandler(this.BtnAddUnit_Click);
@@ -187,6 +186,7 @@ namespace SalesLinq.Forms
             this.ClientSize = new System.Drawing.Size(1100, 760);
             this.MinimumSize = new System.Drawing.Size(900, 650);
             this.Controls.Add(this.mainLayout);
+            this.toolStrip.BringToFront();
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Name = "frm_Product";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
