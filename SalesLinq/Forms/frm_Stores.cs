@@ -50,7 +50,6 @@ namespace SalesLinq.Forms
                             store.DiscountAllowedAccountID = Session.Defualts.DiscountAllowedAccountID;
                             store.DiscountReceivedAccountID = Session.Defualts.DiscountReceivedAccountID;
 
-                            db.Stores.InsertOnSubmit(store);
                             db.Accounts.InsertOnSubmit(salesAccount);
                             db.Accounts.InsertOnSubmit(salesReturnAccount);
                             db.Accounts.InsertOnSubmit(inventoryAccount);
@@ -79,6 +78,9 @@ namespace SalesLinq.Forms
                         store.SalesReturnAccountID = salesReturnAccount.ID;
                         store.InventoryAccountID = inventoryAccount.ID;
                         store.CostOfSoldGoodsAccountID = costOfGoodsAccount.ID;
+
+                        if (store.ID == 0)
+                            db.Stores.InsertOnSubmit(store);
 
                         db.SubmitChanges();
                         transaction.Commit();
