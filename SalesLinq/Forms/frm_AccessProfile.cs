@@ -1,261 +1,329 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Data;
+using System.ComponentModel;
 using System.Linq;
-using DevExpress.XtraEditors.Repository;
-using DevExpress.LookAndFeel;
-using DevExpress.XtraEditors;
 using System.Windows.Forms;
+using SalesLinq.Class;
 
 namespace SalesLinq.Forms
 {
-    public partial class frm_AccessProfile : frm_Master
+    public partial class frm_AccessProfile : NativeMasterForm
     {
-        DAL.UserAccessProfileName profile;
+        private DAL.UserAccessProfileName profile;
+        private BindingList<ScreensAccessProfile> screenPermissions;
+
         public frm_AccessProfile()
         {
             InitializeComponent();
             New();
-            GetData();
         }
+
         public frm_AccessProfile(int id)
         {
             InitializeComponent();
-            using (var db=new DAL.DBDataContext())
+            using (var db = new DAL.DBDataContext())
             {
                 profile = db.UserAccessProfileNames.SingleOrDefault(x => x.ID == id);
             }
-            if (profile != null)
-            {
-                textEdit1.Text = profile.Name;
-                PartID = profile.ID;     // لتسجيل حركات المستخدم
-                PartName = profile.Name; // لتسجيل حركات المستخدم
-                GetData();
-            }
+
+            if (profile == null)
+                throw new InvalidOperationException("نموذج الصلاحيات المطلوب غير موجود.");
+
+            txt_Name.Text = profile.Name;
+            LoadPermissions();
+            IsNew = false;
+            btn_Delete.Enabled = true;
+            PartID = profile.ID;
+            PartName = profile.Name;
         }
 
         public override void New()
         {
             profile = new DAL.UserAccessProfileName();
-            textEdit1.Text = profile.Name;
+            txt_Name.Clear();
+            LoadPermissions();
+            IsNew = true;
+            PartID = 0;
+            PartName = string.Empty;
             btn_Delete.Enabled = false;
-            treeList1.CustomNodeCellEdit += TreeList1_CustomNodeCellEdit;
+            txt_Name.Focus();
         }
-        /// <summary>
-        /// اخفاء خانة الاختيار في الخصائص الغير موجودة
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TreeList1_CustomNodeCellEdit(object sender, DevExpress.XtraTreeList.GetCustomNodeCellEditEventArgs e)
-        {
-            if (e.Node.Id >= 0)
-            {
-                var row = treeList1.GetRow(e.Node.Id) as Class.ScreensAccessProfile;
-                if(row != null)
-                {
-                    if (e.Column.FieldName == nameof(ins.CanAdd) && row.Actions.Contains(Class.Master.Actions.Add) == false)
-                    {
-                        e.RepositoryItem = new DevExpress.XtraEditors.Repository.RepositoryItem();//اخفاء خانة الاختيار في الخصائص الغير موجودة
-                    }
-                    else if (e.Column.FieldName == nameof(ins.CanDelete) && row.Actions.Contains(Class.Master.Actions.Delete) == false)
-                    {
-                        e.RepositoryItem = new DevExpress.XtraEditors.Repository.RepositoryItem();//اخفاء خانة الاختيار في الخصائص الغير موجودة
-                    }
-                    else if (e.Column.FieldName == nameof(ins.CanEdit) && row.Actions.Contains(Class.Master.Actions.Edit) == false)
-                    {
-                        e.RepositoryItem = new DevExpress.XtraEditors.Repository.RepositoryItem();//اخفاء خانة الاختيار في الخصائص الغير موجودة
-                    }
-                    else if (e.Column.FieldName == nameof(ins.CanOpen) && row.Actions.Contains(Class.Master.Actions.Open) == false)
-                    {
-                        e.RepositoryItem = new DevExpress.XtraEditors.Repository.RepositoryItem();//اخفاء خانة الاختيار في الخصائص الغير موجودة
-                    }
-                    else if (e.Column.FieldName == nameof(ins.CanPrint) && row.Actions.Contains(Class.Master.Actions.Print) == false)
-                    {
-                        e.RepositoryItem = new DevExpress.XtraEditors.Repository.RepositoryItem();//اخفاء خانة الاختيار في الخصائص الغير موجودة
-                    }
-                    else if (e.Column.FieldName == nameof(ins.CanShow) && row.Actions.Contains(Class.Master.Actions.Show) == false)
-                    {
-                        e.RepositoryItem = new DevExpress.XtraEditors.Repository.RepositoryItem();//اخفاء خانة الاختيار في الخصائص الغير موجودة
-                    }
-                }
-            }
-        }
-        // انستانس من اجل أسماء الشاشات
-        Class.ScreensAccessProfile ins;
-        /// <summary>
-        /// تعبئة treeList1 بالبيانات
-        /// </summary>
-        public override void GetData()
-        {
-            List<Class.ScreensAccessProfile> data;
-            using (DAL.DBDataContext db = new DAL.DBDataContext())
-            {
-                data = (from s in Class.Screens.GetScreens
-                        from d in db.UserAccessProfileDetails
-                        .Where(x => x.ProfileID == profile.ID && x.ScreenID == s.ScreenID).DefaultIfEmpty()
-                        select new Class.ScreensAccessProfile(s.ScreenName)
-                        {
-                            CanAdd = (d == null) ? true : d.CanAdd,
-                            CanDelete = (d == null) ? true : d.CanDelete,
-                            CanEdit = (d == null) ? true : d.CanEdit,
-                            CanOpen = (d == null) ? true : d.CanOpen,
-                            CanPrint = (d == null) ? true : d.CanPrint,
-                            CanShow = (d == null) ? true : d.CanShow,
-                            Actions = s.Actions,
-                            ScreenName = s.ScreenName,
-                            ScreenCaption = s.ScreenCaption,
-                            ScreenID = s.ScreenID,
-                            ParentScreenID = s.ParentScreenID
-                        }).ToList();
-            }
-            //treeList1 جلب كل الشاشات ووضعها في 
-            treeList1.DataSource = data;
-            //العمود الأب
-            treeList1.KeyFieldName = nameof(ins.ScreenID);
-            //العمود الابن
-            treeList1.ParentFieldName = nameof(ins.ParentScreenID);
-            treeList1.Columns[nameof(ins.ScreenName)].Visible = false;
-            treeList1.Columns[nameof(ins.ScreenName)].OptionsColumn.AllowEdit = false;
-            treeList1.Columns[nameof(ins.ScreenCaption)].OptionsColumn.AllowEdit = false;
-            treeList1.BestFitColumns();
-        }
-        /// <summary>
-        /// التحقق من المدخلات في الاعدادات
-        /// </summary>
-        /// <returns></returns>
-        public override bool IsDataValide()
-        {
-            int flag = 0;
-            if (textEdit1.Text.Trim() == string.Empty)
-            {
-                flag++;
-                textEdit1.ErrorText = ErrorText;
-            }
-            else
-            {
-                using (var db =new DAL.DBDataContext())
-                {
-                    if (db.UserAccessProfileNames.Where(x => x.Name == textEdit1.Text.Trim() && x.ID != profile.ID).Any())
-                    {
-                        flag++;
-                        textEdit1.ErrorText = "هذا الاسم مستخدم";
-                    }
-                }
-            }
-            return (flag == 0);
-        }
-        public override void Save()
-        {
-            var data = treeList1.DataSource as List<Class.ScreensAccessProfile>;
-            if (data == null)
-                throw new InvalidOperationException("تعذر قراءة صلاحيات الشاشة.");
 
+        private void LoadPermissions()
+        {
             using (var db = new DAL.DBDataContext())
             {
-                db.Connection.Open();
-                using (var transaction = db.Connection.BeginTransaction())
-                {
-                    db.Transaction = transaction;
-                    try
+                var saved = db.UserAccessProfileDetails
+                    .Where(x => x.ProfileID == profile.ID)
+                    .ToList()
+                    .ToDictionary(x => x.ScreenID);
+
+                var rows = Screens.GetScreens
+                    .OrderBy(x => x.ScreenID)
+                    .Select(screen =>
                     {
-                        if (profile.ID == 0)
-                            db.UserAccessProfileNames.InsertOnSubmit(profile);
-                        else
-                            db.UserAccessProfileNames.Attach(profile);
-
-                        profile.Name = textEdit1.Text.Trim();
-                        db.SubmitChanges();
-
-                        db.UserAccessProfileDetails.DeleteAllOnSubmit(
-                            db.UserAccessProfileDetails.Where(x => x.ProfileID == profile.ID));
-
-                        var dbData = data.Select(s => new DAL.UserAccessProfileDetail
+                        DAL.UserAccessProfileDetail detail;
+                        bool exists = saved.TryGetValue(screen.ScreenID, out detail);
+                        return new ScreensAccessProfile(screen.ScreenName)
                         {
-                            CanAdd = s.CanAdd,
-                            CanDelete = s.CanDelete,
-                            CanEdit = s.CanEdit,
-                            CanOpen = s.CanOpen,
-                            CanPrint = s.CanPrint,
-                            CanShow = s.CanShow,
-                            ProfileID = profile.ID,
-                            ScreenID = s.ScreenID
-                        }).ToList();
+                            ScreenID = screen.ScreenID,
+                            ParentScreenID = screen.ParentScreenID,
+                            ScreenName = screen.ScreenName,
+                            ScreenCaption = screen.ScreenCaption,
+                            Actions = screen.Actions,
+                            CanShow = exists ? detail.CanShow : true,
+                            CanOpen = exists ? detail.CanOpen : true,
+                            CanAdd = exists ? detail.CanAdd : true,
+                            CanEdit = exists ? detail.CanEdit : true,
+                            CanDelete = exists ? detail.CanDelete : true,
+                            CanPrint = exists ? detail.CanPrint : true
+                        };
+                    }).ToList();
 
-                        db.UserAccessProfileDetails.InsertAllOnSubmit(dbData);
-                        db.SubmitChanges();
-                        transaction.Commit();
-                    }
-                    catch
+                screenPermissions = new BindingList<ScreensAccessProfile>(rows);
+                gridPermissions.DataSource = screenPermissions;
+            }
+
+            FormatPermissionGrid();
+        }
+
+        private void FormatPermissionGrid()
+        {
+            if (gridPermissions.Columns.Count == 0) return;
+
+            string[] permissionColumns =
+            {
+                nameof(ScreensAccessProfile.CanShow),
+                nameof(ScreensAccessProfile.CanOpen),
+                nameof(ScreensAccessProfile.CanAdd),
+                nameof(ScreensAccessProfile.CanEdit),
+                nameof(ScreensAccessProfile.CanDelete),
+                nameof(ScreensAccessProfile.CanPrint)
+            };
+
+            foreach (string column in permissionColumns)
+            {
+                gridPermissions.Columns[column].HeaderText = GetPermissionCaption(column);
+                gridPermissions.Columns[column].Width = 65;
+                gridPermissions.Columns[column].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            }
+
+            gridPermissions.Columns[nameof(ScreensAccessProfile.ScreenName)].Visible = false;
+            gridPermissions.Columns[nameof(ScreensAccessProfile.ScreenID)].Visible = false;
+            gridPermissions.Columns[nameof(ScreensAccessProfile.ParentScreenID)].Visible = false;
+            gridPermissions.Columns[nameof(ScreensAccessProfile.Actions)].Visible = false;
+
+            var captionColumn = gridPermissions.Columns[nameof(ScreensAccessProfile.ScreenCaption)];
+            captionColumn.HeaderText = "الشاشة";
+            captionColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            captionColumn.ReadOnly = true;
+            captionColumn.DisplayIndex = 0;
+
+            foreach (DataGridViewRow row in gridPermissions.Rows)
+            {
+                var item = row.DataBoundItem as ScreensAccessProfile;
+                if (item == null) continue;
+
+                int depth = GetDepth(item);
+                row.Cells[nameof(ScreensAccessProfile.ScreenCaption)].Value =
+                    new string('　', depth * 2) + item.ScreenCaption;
+
+                foreach (string column in permissionColumns)
+                {
+                    Master.Actions action = GetAction(column);
+                    if (!item.Actions.Contains(action))
                     {
-                        transaction.Rollback();
-                        throw;
+                        row.Cells[column].ReadOnly = true;
+                        row.Cells[column].Value = false;
+                        row.Cells[column].Style.BackColor = System.Drawing.SystemColors.Control;
                     }
                 }
             }
-
-            PartID = profile.ID;
-            PartName = profile.Name;
-            base.Save();
         }
-        RepositoryItemCheckEdit repoCheck;
-        private void Frm_AccessProfile_Load(object sender, EventArgs e)
+
+        private int GetDepth(ScreensAccessProfile item)
         {
-            textEdit1.Text = profile.Name;
-            treeList1.CustomNodeCellEdit += TreeList1_CustomNodeCellEdit;
-            //العمود الأب
-            treeList1.KeyFieldName = nameof(ins.ScreenID);
-            //العمود الابن
-            treeList1.ParentFieldName = nameof(ins.ParentScreenID);
-            treeList1.Columns[nameof(ins.ScreenName)].Visible = false;
-            treeList1.Columns[nameof(ins.ScreenName)].OptionsColumn.AllowEdit = false;
-            treeList1.Columns[nameof(ins.ScreenCaption)].OptionsColumn.AllowEdit = false;
-            //تغيير اسماء الأعمدة
-            treeList1.Columns[nameof(ins.CanAdd)].Caption = "اضافة";
-            treeList1.Columns[nameof(ins.CanDelete)].Caption = "حذف";
-            treeList1.Columns[nameof(ins.CanEdit)].Caption = "تعديل";
-            treeList1.Columns[nameof(ins.CanOpen)].Caption = "فتح";
-            treeList1.Columns[nameof(ins.CanPrint)].Caption = "طباعة";
-            treeList1.Columns[nameof(ins.CanShow)].Caption = "عرض";
-
-            treeList1.BestFitColumns();
-            //تغيير شكل اداة الاختيار
-            repoCheck = new RepositoryItemCheckEdit();
-            repoCheck.CheckBoxOptions.Style = DevExpress.XtraEditors.Controls.CheckBoxStyle.SvgRadio2;
-            repoCheck.CheckBoxOptions.SvgColorChecked = DXSkinColors.ForeColors.Information;
-            repoCheck.CheckBoxOptions.SvgColorUnchecked = DXSkinColors.ForeColors.DisabledText;
-            treeList1.Columns[nameof(ins.CanAdd)].ColumnEdit =
-            treeList1.Columns[nameof(ins.CanDelete)].ColumnEdit =
-            treeList1.Columns[nameof(ins.CanEdit)].ColumnEdit =
-            treeList1.Columns[nameof(ins.CanOpen)].ColumnEdit =
-            treeList1.Columns[nameof(ins.CanPrint)].ColumnEdit =
-            treeList1.Columns[nameof(ins.CanShow)].ColumnEdit = repoCheck;
-            //تغيير عرض الأعمدة
-            treeList1.Columns[nameof(ins.CanAdd)].Width =
-            treeList1.Columns[nameof(ins.CanDelete)].Width =
-            treeList1.Columns[nameof(ins.CanEdit)].Width =
-            treeList1.Columns[nameof(ins.CanOpen)].Width =
-            treeList1.Columns[nameof(ins.CanPrint)].Width =
-            treeList1.Columns[nameof(ins.CanShow)].Width = 25;
+            int depth = 0;
+            int parentId = item.ParentScreenID;
+            while (parentId != 0 && depth < 20)
+            {
+                var parent = screenPermissions.FirstOrDefault(x => x.ScreenID == parentId);
+                if (parent == null) break;
+                depth++;
+                parentId = parent.ParentScreenID;
+            }
+            return depth;
         }
+
+        private static string GetPermissionCaption(string property)
+        {
+            switch (property)
+            {
+                case nameof(ScreensAccessProfile.CanShow): return "عرض";
+                case nameof(ScreensAccessProfile.CanOpen): return "فتح";
+                case nameof(ScreensAccessProfile.CanAdd): return "إضافة";
+                case nameof(ScreensAccessProfile.CanEdit): return "تعديل";
+                case nameof(ScreensAccessProfile.CanDelete): return "حذف";
+                case nameof(ScreensAccessProfile.CanPrint): return "طباعة";
+                default: return property;
+            }
+        }
+
+        private static Master.Actions GetAction(string property)
+        {
+            switch (property)
+            {
+                case nameof(ScreensAccessProfile.CanShow): return Master.Actions.Show;
+                case nameof(ScreensAccessProfile.CanOpen): return Master.Actions.Open;
+                case nameof(ScreensAccessProfile.CanAdd): return Master.Actions.Add;
+                case nameof(ScreensAccessProfile.CanEdit): return Master.Actions.Edit;
+                case nameof(ScreensAccessProfile.CanDelete): return Master.Actions.Delete;
+                case nameof(ScreensAccessProfile.CanPrint): return Master.Actions.Print;
+                default: throw new ArgumentOutOfRangeException(nameof(property));
+            }
+        }
+
+        public override bool IsDataValide()
+        {
+            string name = txt_Name.Text.Trim();
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                errorProvider.SetError(txt_Name, ErrorText);
+                return false;
+            }
+
+            errorProvider.SetError(txt_Name, string.Empty);
+            using (var db = new DAL.DBDataContext())
+            {
+                bool duplicate = db.UserAccessProfileNames.Any(
+                    x => x.Name == name && x.ID != profile.ID);
+                if (duplicate)
+                {
+                    errorProvider.SetError(txt_Name, "هذا الاسم مستخدم بالفعل.");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public override void Save()
+        {
+            try
+            {
+                gridPermissions.EndEdit();
+                Validate();
+
+                using (var db = new DAL.DBDataContext())
+                {
+                    db.Connection.Open();
+                    using (var transaction = db.Connection.BeginTransaction())
+                    {
+                        db.Transaction = transaction;
+                        try
+                        {
+                            DAL.UserAccessProfileName entity;
+                            if (profile.ID == 0)
+                            {
+                                entity = new DAL.UserAccessProfileName();
+                                db.UserAccessProfileNames.InsertOnSubmit(entity);
+                            }
+                            else
+                            {
+                                entity = db.UserAccessProfileNames.Single(
+                                    x => x.ID == profile.ID);
+                            }
+
+                            entity.Name = txt_Name.Text.Trim();
+                            db.SubmitChanges();
+
+                            db.UserAccessProfileDetails.DeleteAllOnSubmit(
+                                db.UserAccessProfileDetails.Where(x => x.ProfileID == entity.ID));
+
+                            var details = screenPermissions.Select(x =>
+                                new DAL.UserAccessProfileDetail
+                                {
+                                    ProfileID = entity.ID,
+                                    ScreenID = x.ScreenID,
+                                    CanShow = x.Actions.Contains(Master.Actions.Show) && x.CanShow,
+                                    CanOpen = x.Actions.Contains(Master.Actions.Open) && x.CanOpen,
+                                    CanAdd = x.Actions.Contains(Master.Actions.Add) && x.CanAdd,
+                                    CanEdit = x.Actions.Contains(Master.Actions.Edit) && x.CanEdit,
+                                    CanDelete = x.Actions.Contains(Master.Actions.Delete) && x.CanDelete,
+                                    CanPrint = x.Actions.Contains(Master.Actions.Print) && x.CanPrint
+                                }).ToList();
+
+                            db.UserAccessProfileDetails.InsertAllOnSubmit(details);
+                            db.SubmitChanges();
+                            transaction.Commit();
+
+                            profile = entity;
+                            PartID = entity.ID;
+                            PartName = entity.Name;
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
+
+                base.Save();
+                txt_Name.Text = profile.Name;
+                IsNew = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("تعذر حفظ نموذج الصلاحيات.\n" + ex.Message,
+                    "خطأ في الحفظ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         public override void Delete()
         {
-            if (AskForDeletion())
+            if (profile == null || profile.ID == 0 || !AskForDeletion())
+                return;
+
+            try
             {
                 using (var db = new DAL.DBDataContext())
                 {
-                    //التأكد من أنه غير مستخدم قبل حذفه
-                    if (db.Users.Where(x => x.ScreenProfileID == profile.ID).Any())
+                    if (db.Users.Any(x => x.ScreenProfileID == profile.ID))
                     {
-                        XtraMessageBox.Show(text: "عفوا لا يمكن حذف صلاحية الوصول حيث أنها مرتبطة بأحد المستخدمين"
-                            , caption: "", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Error);
+                        MessageBox.Show("لا يمكن حذف نموذج الصلاحيات لأنه مرتبط بمستخدم.",
+                            "تعذر الحذف", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
-                    db.UserAccessProfileNames.Attach(profile);
-                    db.UserAccessProfileNames.DeleteOnSubmit(profile);
-                    db.UserAccessProfileDetails.DeleteAllOnSubmit(db.UserAccessProfileDetails.Where(x => x.ProfileID == profile.ID));
-                    db.SubmitChanges();
+
+                    db.Connection.Open();
+                    using (var transaction = db.Connection.BeginTransaction())
+                    {
+                        db.Transaction = transaction;
+                        try
+                        {
+                            db.UserAccessProfileDetails.DeleteAllOnSubmit(
+                                db.UserAccessProfileDetails.Where(x => x.ProfileID == profile.ID));
+                            var entity = db.UserAccessProfileNames.Single(
+                                x => x.ID == profile.ID);
+                            db.UserAccessProfileNames.DeleteOnSubmit(entity);
+                            db.SubmitChanges();
+                            transaction.Commit();
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
                 }
+
                 base.Delete();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("تعذر حذف نموذج الصلاحيات.\n" + ex.Message,
+                    "تعذر الحذف", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
