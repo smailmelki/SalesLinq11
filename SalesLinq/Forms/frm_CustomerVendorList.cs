@@ -85,7 +85,7 @@ namespace SalesLinq.Forms
 
         public override void New()
         {
-            frm_Main.OpenForm(new frm_CustomerVendor(IsCustomer), true);
+            frm_Main.OpenForm(new frm_CustomerVendor(IsCustomer));
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
