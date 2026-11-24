@@ -178,7 +178,7 @@ namespace SalesLinq.Forms
             navFlow.AutoSize = true;
             navFlow.BackColor = System.Drawing.Color.FromArgb(27, 45, 72);
             navFlow.Padding = new System.Windows.Forms.Padding(0);
-            navFlow.SizeChanged += (s, e) => navFlow.Width = navigationScroll.ClientSize.Width - 8;
+            navFlow.SizeChanged += (s, e) => navFlow.Width = System.Math.Max(150, navigationScroll.ClientSize.Width - 8);
 
             sidebarPanel.Controls.Add(navigationScroll);
             sidebarPanel.Controls.Add(txtNavigationSearch);
