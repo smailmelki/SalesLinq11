@@ -98,6 +98,8 @@ namespace SalesLinq.Forms
         private void BuildNavigation()
         {
             navFlow.SuspendLayout();
+            foreach (Control control in navFlow.Controls.Cast<Control>().ToList())
+                control.Dispose();
             navFlow.Controls.Clear();
 
             if (Session.User == null)
@@ -388,6 +390,8 @@ namespace SalesLinq.Forms
             if (openFormsPanel == null || openFormsPanel.IsDisposed) return;
 
             openFormsPanel.SuspendLayout();
+            foreach (Control control in openFormsPanel.Controls.Cast<Control>().ToList())
+                control.Dispose();
             openFormsPanel.Controls.Clear();
             var alive = _openForms.Where(x => x != null && !x.IsDisposed).ToList();
             _openForms.Clear();
