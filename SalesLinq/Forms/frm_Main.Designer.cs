@@ -1,241 +1,248 @@
-﻿namespace SalesLinq.Forms
+namespace SalesLinq.Forms
 {
     partial class frm_Main
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.Panel headerPanel;
+        private System.Windows.Forms.Panel sidebarPanel;
+        private System.Windows.Forms.Panel brandPanel;
+        private System.Windows.Forms.Panel workspacePanel;
+        private System.Windows.Forms.Panel navigationScroll;
+        private System.Windows.Forms.FlowLayoutPanel navFlow;
+        private System.Windows.Forms.TabControl workspaceTabs;
+        private System.Windows.Forms.TabPage dashboardTab;
+        private System.Windows.Forms.Panel dashboardPanel;
+        private System.Windows.Forms.FlowLayoutPanel openFormsPanel;
+        private System.Windows.Forms.PictureBox peLogo;
+        private System.Windows.Forms.Label lblBrandName;
+        private System.Windows.Forms.Label lblBrandCaption;
+        private System.Windows.Forms.Label lblAppTitle;
+        public System.Windows.Forms.Label Lbl_UserName;
+        private System.Windows.Forms.Button btnSignOut;
+        private System.Windows.Forms.Button btnCloseCurrent;
+        private System.Windows.Forms.TextBox txtNavigationSearch;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-            {
+            if (disposing && components != null)
                 components.Dispose();
-            }
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.fluentDesignFormContainer1 = new DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormContainer();
-            this.peLogo = new DevExpress.XtraEditors.PictureEdit();
-            this.fluentFormDefaultManager1 = new DevExpress.XtraBars.FluentDesignSystem.FluentFormDefaultManager(this.components);
-            this.skinDropDownButtonItem1 = new DevExpress.XtraBars.SkinDropDownButtonItem();
-            this.skinPaletteDropDownButtonItem1 = new DevExpress.XtraBars.SkinPaletteDropDownButtonItem();
-            this.skinBarSubItem1 = new DevExpress.XtraBars.SkinBarSubItem();
-            this.barToolbarsListItem1 = new DevExpress.XtraBars.BarToolbarsListItem();
-            this.skinDropDownButtonItem2 = new DevExpress.XtraBars.SkinDropDownButtonItem();
-            this.skinPaletteDropDownButtonItem2 = new DevExpress.XtraBars.SkinPaletteDropDownButtonItem();
-            this.btn_SignOut = new DevExpress.XtraBars.BarButtonItem();
-            this.Lbl_UserName = new DevExpress.XtraBars.BarStaticItem();
-            this.accordionControl1 = new DevExpress.XtraBars.Navigation.AccordionControl();
-            this.accordionControlElement2 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            this.fluentDesignFormControl1 = new DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormControl();
-            this.accordionControlElement12 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            this.accordionControlElement13 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            this.fluentDesignFormContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.peLogo.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.fluentFormDefaultManager1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.accordionControl1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.fluentDesignFormControl1)).BeginInit();
-            this.SuspendLayout();
-            // 
-            // fluentDesignFormContainer1
-            // 
-            this.fluentDesignFormContainer1.Controls.Add(this.peLogo);
-            this.fluentDesignFormContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fluentDesignFormContainer1.Location = new System.Drawing.Point(321, 31);
-            this.fluentDesignFormContainer1.Margin = new System.Windows.Forms.Padding(4);
-            this.fluentDesignFormContainer1.Name = "fluentDesignFormContainer1";
-            this.fluentDesignFormContainer1.Size = new System.Drawing.Size(928, 683);
-            this.fluentDesignFormContainer1.TabIndex = 0;
-            // 
-            // peLogo
-            // 
-            this.peLogo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.peLogo.Location = new System.Drawing.Point(0, 0);
-            this.peLogo.MenuManager = this.fluentFormDefaultManager1;
-            this.peLogo.Name = "peLogo";
-            this.peLogo.Properties.ShowCameraMenuItem = DevExpress.XtraEditors.Controls.CameraMenuItemVisibility.Auto;
-            this.peLogo.Size = new System.Drawing.Size(928, 683);
-            this.peLogo.TabIndex = 0;
-            // 
-            // fluentFormDefaultManager1
-            // 
-            this.fluentFormDefaultManager1.Form = this;
-            this.fluentFormDefaultManager1.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
-            this.skinDropDownButtonItem1,
-            this.skinPaletteDropDownButtonItem1,
-            this.skinBarSubItem1,
-            this.barToolbarsListItem1,
-            this.skinDropDownButtonItem2,
-            this.skinPaletteDropDownButtonItem2,
-            this.btn_SignOut,
-            this.Lbl_UserName});
-            this.fluentFormDefaultManager1.MaxItemId = 8;
-            // 
-            // skinDropDownButtonItem1
-            // 
-            this.skinDropDownButtonItem1.Id = 0;
-            this.skinDropDownButtonItem1.Name = "skinDropDownButtonItem1";
-            // 
-            // skinPaletteDropDownButtonItem1
-            // 
-            this.skinPaletteDropDownButtonItem1.Id = 1;
-            this.skinPaletteDropDownButtonItem1.Name = "skinPaletteDropDownButtonItem1";
-            // 
-            // skinBarSubItem1
-            // 
-            this.skinBarSubItem1.Caption = "skinBarSubItem1";
-            this.skinBarSubItem1.Id = 2;
-            this.skinBarSubItem1.Name = "skinBarSubItem1";
-            // 
-            // barToolbarsListItem1
-            // 
-            this.barToolbarsListItem1.Caption = "barToolbarsListItem1";
-            this.barToolbarsListItem1.Id = 3;
-            this.barToolbarsListItem1.Name = "barToolbarsListItem1";
-            // 
-            // skinDropDownButtonItem2
-            // 
-            this.skinDropDownButtonItem2.Id = 4;
-            this.skinDropDownButtonItem2.Name = "skinDropDownButtonItem2";
-            // 
-            // skinPaletteDropDownButtonItem2
-            // 
-            this.skinPaletteDropDownButtonItem2.Id = 5;
-            this.skinPaletteDropDownButtonItem2.Name = "skinPaletteDropDownButtonItem2";
-            // 
-            // btn_SignOut
-            // 
-            this.btn_SignOut.Alignment = DevExpress.XtraBars.BarItemLinkAlignment.Right;
-            this.btn_SignOut.Caption = "SignOut";
-            this.btn_SignOut.Id = 6;
-            this.btn_SignOut.Name = "btn_SignOut";
-            this.btn_SignOut.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.Btn_SignOut_ItemClick);
-            // 
-            // Lbl_UserName
-            // 
-            this.Lbl_UserName.Alignment = DevExpress.XtraBars.BarItemLinkAlignment.Right;
-            this.Lbl_UserName.Caption = "...................";
-            this.Lbl_UserName.Id = 7;
-            this.Lbl_UserName.Name = "Lbl_UserName";
-            // 
-            // accordionControl1
-            // 
-            this.accordionControl1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.accordionControl1.Location = new System.Drawing.Point(0, 31);
-            this.accordionControl1.Margin = new System.Windows.Forms.Padding(4);
-            this.accordionControl1.Name = "accordionControl1";
-            this.accordionControl1.ScrollBarMode = DevExpress.XtraBars.Navigation.ScrollBarMode.Touch;
-            this.accordionControl1.Size = new System.Drawing.Size(321, 683);
-            this.accordionControl1.TabIndex = 1;
-            this.accordionControl1.ViewType = DevExpress.XtraBars.Navigation.AccordionControlViewType.HamburgerMenu;
-            // 
-            // accordionControlElement2
-            // 
-            this.accordionControlElement2.Name = "accordionControlElement2";
-            this.accordionControlElement2.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
-            this.accordionControlElement2.Tag = "frm_Drawer";
-            this.accordionControlElement2.Text = "اضافة خزنة";
-            // 
-            // fluentDesignFormControl1
-            // 
-            this.fluentDesignFormControl1.FluentDesignForm = this;
-            this.fluentDesignFormControl1.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
-            this.skinDropDownButtonItem1,
-            this.skinPaletteDropDownButtonItem1,
-            this.skinBarSubItem1,
-            this.barToolbarsListItem1,
-            this.skinDropDownButtonItem2,
-            this.skinPaletteDropDownButtonItem2,
-            this.btn_SignOut,
-            this.Lbl_UserName});
-            this.fluentDesignFormControl1.Location = new System.Drawing.Point(0, 0);
-            this.fluentDesignFormControl1.Manager = this.fluentFormDefaultManager1;
-            this.fluentDesignFormControl1.Margin = new System.Windows.Forms.Padding(4);
-            this.fluentDesignFormControl1.Name = "fluentDesignFormControl1";
-            this.fluentDesignFormControl1.Size = new System.Drawing.Size(1249, 31);
-            this.fluentDesignFormControl1.TabIndex = 2;
-            this.fluentDesignFormControl1.TabStop = false;
-            this.fluentDesignFormControl1.TitleItemLinks.Add(this.skinBarSubItem1);
-            this.fluentDesignFormControl1.TitleItemLinks.Add(this.skinDropDownButtonItem2);
-            this.fluentDesignFormControl1.TitleItemLinks.Add(this.skinPaletteDropDownButtonItem2);
-            this.fluentDesignFormControl1.TitleItemLinks.Add(this.btn_SignOut);
-            this.fluentDesignFormControl1.TitleItemLinks.Add(this.Lbl_UserName);
-            // 
-            // accordionControlElement12
-            // 
-            this.accordionControlElement12.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] {
-            this.accordionControlElement13,
-            this.accordionControlElement2});
-            this.accordionControlElement12.Name = "accordionControlElement12";
-            this.accordionControlElement12.Text = "الخزن";
-            // 
-            // accordionControlElement13
-            // 
-            this.accordionControlElement13.Name = "accordionControlElement13";
-            this.accordionControlElement13.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
-            this.accordionControlElement13.Tag = "frm_DrawerList";
-            this.accordionControlElement13.Text = "قائمة الخزن";
-            // 
-            // frm_Main
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1249, 714);
-            this.ControlContainer = this.fluentDesignFormContainer1;
-            this.Controls.Add(this.fluentDesignFormContainer1);
-            this.Controls.Add(this.accordionControl1);
-            this.Controls.Add(this.fluentDesignFormControl1);
-            this.FluentDesignFormControl = this.fluentDesignFormControl1;
-            this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "frm_Main";
-            this.NavigationControl = this.accordionControl1;
-            this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.RightToLeftLayout = true;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "الصفحة الرئيسية";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Frm_Main_FormClosing);
-            this.Load += new System.EventHandler(this.Frm_Main_Load);
-            this.fluentDesignFormContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.peLogo.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.fluentFormDefaultManager1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.accordionControl1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.fluentDesignFormControl1)).EndInit();
-            this.ResumeLayout(false);
+            components = new System.ComponentModel.Container();
+            headerPanel = new System.Windows.Forms.Panel();
+            lblAppTitle = new System.Windows.Forms.Label();
+            Lbl_UserName = new System.Windows.Forms.Label();
+            btnCloseCurrent = new System.Windows.Forms.Button();
+            btnSignOut = new System.Windows.Forms.Button();
+            sidebarPanel = new System.Windows.Forms.Panel();
+            brandPanel = new System.Windows.Forms.Panel();
+            peLogo = new System.Windows.Forms.PictureBox();
+            lblBrandName = new System.Windows.Forms.Label();
+            lblBrandCaption = new System.Windows.Forms.Label();
+            txtNavigationSearch = new System.Windows.Forms.TextBox();
+            navigationScroll = new System.Windows.Forms.Panel();
+            navFlow = new System.Windows.Forms.FlowLayoutPanel();
+            workspacePanel = new System.Windows.Forms.Panel();
+            workspaceTabs = new System.Windows.Forms.TabControl();
+            dashboardTab = new System.Windows.Forms.TabPage();
+            dashboardPanel = new System.Windows.Forms.Panel();
+            openFormsPanel = new System.Windows.Forms.FlowLayoutPanel();
 
+            headerPanel.SuspendLayout();
+            sidebarPanel.SuspendLayout();
+            brandPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)peLogo).BeginInit();
+            navigationScroll.SuspendLayout();
+            workspacePanel.SuspendLayout();
+            workspaceTabs.SuspendLayout();
+            dashboardTab.SuspendLayout();
+            dashboardPanel.SuspendLayout();
+            SuspendLayout();
+
+            // Header
+            headerPanel.BackColor = System.Drawing.Color.White;
+            headerPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            headerPanel.Height = 72;
+            headerPanel.Padding = new System.Windows.Forms.Padding(22, 10, 22, 10);
+            headerPanel.Controls.Add(btnSignOut);
+            headerPanel.Controls.Add(btnCloseCurrent);
+            headerPanel.Controls.Add(Lbl_UserName);
+            headerPanel.Controls.Add(lblAppTitle);
+
+            lblAppTitle.Dock = System.Windows.Forms.DockStyle.Right;
+            lblAppTitle.Width = 330;
+            lblAppTitle.Text = "SalesLinq  |  إدارة المبيعات والمخزون";
+            lblAppTitle.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+            lblAppTitle.ForeColor = System.Drawing.Color.FromArgb(27, 45, 72);
+            lblAppTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+
+            Lbl_UserName.Dock = System.Windows.Forms.DockStyle.Right;
+            Lbl_UserName.Width = 190;
+            Lbl_UserName.Text = "غير مسجل";
+            Lbl_UserName.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            Lbl_UserName.ForeColor = System.Drawing.Color.FromArgb(70, 87, 108);
+            Lbl_UserName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
+            btnSignOut.Dock = System.Windows.Forms.DockStyle.Left;
+            btnSignOut.Width = 112;
+            btnSignOut.Text = "تسجيل الخروج";
+            btnSignOut.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            btnSignOut.ForeColor = System.Drawing.Color.White;
+            btnSignOut.BackColor = System.Drawing.Color.FromArgb(18, 145, 139);
+            btnSignOut.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnSignOut.FlatAppearance.BorderSize = 0;
+            btnSignOut.Cursor = System.Windows.Forms.Cursors.Hand;
+            btnSignOut.Click += new System.EventHandler(Btn_SignOut_Click);
+
+            btnCloseCurrent.Dock = System.Windows.Forms.DockStyle.Left;
+            btnCloseCurrent.Width = 112;
+            btnCloseCurrent.Text = "إغلاق النافذة";
+            btnCloseCurrent.Font = new System.Drawing.Font("Segoe UI", 9F);
+            btnCloseCurrent.ForeColor = System.Drawing.Color.FromArgb(38, 52, 72);
+            btnCloseCurrent.BackColor = System.Drawing.Color.FromArgb(238, 242, 247);
+            btnCloseCurrent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnCloseCurrent.FlatAppearance.BorderSize = 0;
+            btnCloseCurrent.Cursor = System.Windows.Forms.Cursors.Hand;
+            btnCloseCurrent.Margin = new System.Windows.Forms.Padding(8, 0, 0, 0);
+            btnCloseCurrent.Click += new System.EventHandler(Btn_CloseCurrent_Click);
+
+            // Sidebar
+            sidebarPanel.BackColor = System.Drawing.Color.FromArgb(27, 45, 72);
+            sidebarPanel.Dock = System.Windows.Forms.DockStyle.Right;
+            sidebarPanel.Width = 285;
+            sidebarPanel.Padding = new System.Windows.Forms.Padding(0);
+
+            brandPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            brandPanel.Height = 104;
+            brandPanel.BackColor = System.Drawing.Color.FromArgb(22, 37, 60);
+            brandPanel.Padding = new System.Windows.Forms.Padding(14);
+            brandPanel.Controls.Add(lblBrandCaption);
+            brandPanel.Controls.Add(lblBrandName);
+            brandPanel.Controls.Add(peLogo);
+
+            peLogo.Dock = System.Windows.Forms.DockStyle.Right;
+            peLogo.Width = 64;
+            peLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            peLogo.BackColor = System.Drawing.Color.Transparent;
+
+            lblBrandName.Dock = System.Windows.Forms.DockStyle.Top;
+            lblBrandName.Height = 39;
+            lblBrandName.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            lblBrandName.ForeColor = System.Drawing.Color.White;
+            lblBrandName.Text = "SalesLinq";
+            lblBrandName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+
+            lblBrandCaption.Dock = System.Windows.Forms.DockStyle.Bottom;
+            lblBrandCaption.Height = 28;
+            lblBrandCaption.Font = new System.Drawing.Font("Segoe UI", 8F);
+            lblBrandCaption.ForeColor = System.Drawing.Color.FromArgb(184, 199, 218);
+            lblBrandCaption.Text = "نظام إدارة الأعمال";
+            lblBrandCaption.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+
+            txtNavigationSearch.Dock = System.Windows.Forms.DockStyle.Top;
+            txtNavigationSearch.Height = 38;
+            txtNavigationSearch.Margin = new System.Windows.Forms.Padding(12);
+            txtNavigationSearch.Font = new System.Drawing.Font("Segoe UI", 9F);
+            txtNavigationSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            txtNavigationSearch.Text = "بحث في القوائم";
+            txtNavigationSearch.ForeColor = System.Drawing.Color.Gray;
+            txtNavigationSearch.Enter += (s, e) =>
+            {
+                if (txtNavigationSearch.Text == "بحث في القوائم")
+                {
+                    txtNavigationSearch.Clear();
+                    txtNavigationSearch.ForeColor = System.Drawing.Color.FromArgb(38, 52, 72);
+                }
+            };
+            txtNavigationSearch.Leave += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(txtNavigationSearch.Text))
+                {
+                    txtNavigationSearch.Text = "بحث في القوائم";
+                    txtNavigationSearch.ForeColor = System.Drawing.Color.Gray;
+                }
+            };
+            txtNavigationSearch.TextChanged += new System.EventHandler(TxtNavigationSearch_TextChanged);
+
+            navigationScroll.Dock = System.Windows.Forms.DockStyle.Fill;
+            navigationScroll.AutoScroll = true;
+            navigationScroll.Padding = new System.Windows.Forms.Padding(8, 8, 8, 12);
+            navigationScroll.Controls.Add(navFlow);
+
+            navFlow.Dock = System.Windows.Forms.DockStyle.Top;
+            navFlow.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            navFlow.WrapContents = false;
+            navFlow.AutoSize = true;
+            navFlow.BackColor = System.Drawing.Color.FromArgb(27, 45, 72);
+            navFlow.Padding = new System.Windows.Forms.Padding(0);
+            navFlow.SizeChanged += (s, e) => navFlow.Width = navigationScroll.ClientSize.Width - 8;
+
+            sidebarPanel.Controls.Add(navigationScroll);
+            sidebarPanel.Controls.Add(txtNavigationSearch);
+            sidebarPanel.Controls.Add(brandPanel);
+
+            // Workspace
+            workspacePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            workspacePanel.BackColor = System.Drawing.Color.FromArgb(244, 247, 251);
+            workspacePanel.Padding = new System.Windows.Forms.Padding(22);
+
+            workspaceTabs.Dock = System.Windows.Forms.DockStyle.Fill;
+            workspaceTabs.Font = new System.Drawing.Font("Segoe UI", 9F);
+            workspaceTabs.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            workspaceTabs.RightToLeftLayout = true;
+            workspaceTabs.Controls.Add(dashboardTab);
+
+            dashboardTab.Text = "الرئيسية";
+            dashboardTab.BackColor = System.Drawing.Color.FromArgb(244, 247, 251);
+            dashboardTab.Padding = new System.Windows.Forms.Padding(16);
+            dashboardTab.Controls.Add(dashboardPanel);
+
+            dashboardPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            dashboardPanel.AutoScroll = true;
+            dashboardPanel.BackColor = System.Drawing.Color.FromArgb(244, 247, 251);
+            dashboardPanel.Padding = new System.Windows.Forms.Padding(8);
+            dashboardPanel.Controls.Add(openFormsPanel);
+
+            openFormsPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            openFormsPanel.Height = 150;
+            openFormsPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            openFormsPanel.WrapContents = true;
+            openFormsPanel.AutoScroll = true;
+            openFormsPanel.BackColor = System.Drawing.Color.FromArgb(244, 247, 251);
+            openFormsPanel.Padding = new System.Windows.Forms.Padding(0, 4, 0, 4);
+
+            workspacePanel.Controls.Add(workspaceTabs);
+
+            // Main form
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BackColor = System.Drawing.Color.FromArgb(244, 247, 251);
+            ClientSize = new System.Drawing.Size(1440, 900);
+            Controls.Add(workspacePanel);
+            Controls.Add(sidebarPanel);
+            Controls.Add(headerPanel);
+            Font = new System.Drawing.Font("Segoe UI", 9F);
+            MinimumSize = new System.Drawing.Size(1100, 700);
+            Name = "frm_Main";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "SalesLinq - نظام إدارة الأعمال";
+            RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            RightToLeftLayout = true;
+
+            dashboardPanel.ResumeLayout(false);
+            dashboardTab.ResumeLayout(false);
+            workspaceTabs.ResumeLayout(false);
+            workspacePanel.ResumeLayout(false);
+            navigationScroll.ResumeLayout(false);
+            brandPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)peLogo).EndInit();
+            sidebarPanel.ResumeLayout(false);
+            sidebarPanel.PerformLayout();
+            headerPanel.ResumeLayout(false);
+            ResumeLayout(false);
         }
-
-        #endregion
-        private DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormContainer fluentDesignFormContainer1;
-        private DevExpress.XtraBars.Navigation.AccordionControl accordionControl1;
-        private DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormControl fluentDesignFormControl1;
-        private DevExpress.XtraBars.FluentDesignSystem.FluentFormDefaultManager fluentFormDefaultManager1;
-        private DevExpress.XtraBars.Navigation.AccordionControlElement accordionControlElement2;
-        private DevExpress.XtraBars.Navigation.AccordionControlElement accordionControlElement12;
-        private DevExpress.XtraBars.Navigation.AccordionControlElement accordionControlElement13;
-        private DevExpress.XtraBars.SkinDropDownButtonItem skinDropDownButtonItem1;
-        private DevExpress.XtraBars.SkinPaletteDropDownButtonItem skinPaletteDropDownButtonItem1;
-        private DevExpress.XtraBars.SkinBarSubItem skinBarSubItem1;
-        private DevExpress.XtraBars.BarToolbarsListItem barToolbarsListItem1;
-        private DevExpress.XtraBars.SkinDropDownButtonItem skinDropDownButtonItem2;
-        private DevExpress.XtraBars.SkinPaletteDropDownButtonItem skinPaletteDropDownButtonItem2;
-        private DevExpress.XtraBars.BarButtonItem btn_SignOut;
-        public DevExpress.XtraBars.BarStaticItem Lbl_UserName;
-        private DevExpress.XtraEditors.PictureEdit peLogo;
     }
 }
