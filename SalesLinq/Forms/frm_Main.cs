@@ -1,5 +1,4 @@
 using SalesLinq.Class;
-using SalesLinq.Properties;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
