@@ -210,7 +210,10 @@ namespace SalesLinq.Forms
             catch (Exception ex)
             {
                 if (originalId == 0 && CusVnd != null)
+                {
                     CusVnd.ID = 0;
+                    CusVnd.AccountID = 0;
+                }
 
                 MessageBox.Show("تعذر حفظ بيانات " + (IsCustomer ? "العميل" : "المورد") +
                     " وحسابه المحاسبي.\n" + ex.Message,
