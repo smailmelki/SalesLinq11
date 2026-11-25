@@ -15,6 +15,7 @@ namespace SalesLinq.Forms
     public partial class frm_InvoiceList : NativeMasterListForm
     {
         private readonly Master.InvoiceType Type;
+        public Master.InvoiceType InvoiceType { get { return Type; } }
         private readonly DateTimePicker fromDate = new DateTimePicker();
         private readonly DateTimePicker toDate = new DateTimePicker();
         private readonly ComboBox partType = new ComboBox();
