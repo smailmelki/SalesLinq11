@@ -38,21 +38,24 @@ namespace SalesLinq.Forms
         {
             if (e.RowHandle < 0) return;
 
-            var remains = Convert.ToDouble(gridView1.GetRowCellValue(e.RowHandle, "Remaing"));//المتبقي
-            if (e.Column.FieldName== "PayStatus")
-            {
-                if (remains == 0)//اذا كان المتبقي يساوي الصفر
-                    e.Appearance.BackColor = DevExpress.LookAndFeel.DXSkinColors.FillColors.Success;// DevExpress استعمال لون الثيم الخاص بال 
-                else if (remains > 0)//اذا كان المتبقي أكبر الصفر
-                {
-                    var net = Convert.ToDouble(gridView1.GetRowCellValue(e.RowHandle, "Net"));//الصافي
-                    if (remains < net)
-                        e.Appearance.BackColor = DevExpress.LookAndFeel.DXSkinColors.FillColors.Warning;// DevExpress استعمال لون الثيم الخاص بال 
-                    else //اذا كان المتبقي أصغر الصفر
-                        e.Appearance.BackColor = DevExpress.LookAndFeel.DXSkinColors.FillColors.Danger;// DevExpress استعمال لون الثيم الخاص بال 
-                }
+            if (e.Column.FieldName != "PayStatus") return;
 
-            }
+            // قد تحتوي صفوف العرض أو البيانات المسترجعة على قيمة فارغة؛ لا تفشل عملية الرسم بسببها.
+            var remainsValue = gridView1.GetRowCellValue(e.RowHandle, "Remaing");
+            var netValue = gridView1.GetRowCellValue(e.RowHandle, "Net");
+            if (remainsValue == null || remainsValue == DBNull.Value ||
+                netValue == null || netValue == DBNull.Value) return;
+
+            double remains, net;
+            if (!double.TryParse(Convert.ToString(remainsValue), out remains) ||
+                !double.TryParse(Convert.ToString(netValue), out net)) return;
+
+            if (remains == 0)
+                e.Appearance.BackColor = DevExpress.LookAndFeel.DXSkinColors.FillColors.Success;
+            else if (remains > 0)
+                e.Appearance.BackColor = remains < net
+                    ? DevExpress.LookAndFeel.DXSkinColors.FillColors.Warning
+                    : DevExpress.LookAndFeel.DXSkinColors.FillColors.Danger;
         }
 
         /// <summary>
@@ -98,17 +101,27 @@ namespace SalesLinq.Forms
         private List<int> GetSelectedInvoicesIDs()
         {
 
-            var handels = gridView1.GetSelectedRows();
-            List<int> ids = new List<int>();
-            foreach (var handel in handels)
+            var handles = gridView1.GetSelectedRows();
+            var ids = new List<int>();
+
+            foreach (var handle in handles)
             {
-                ids.Add(Convert.ToInt32(gridView1.GetRowCellValue(handel, "ID")));
+                if (!gridView1.IsDataRow(handle)) continue;
+
+                var value = gridView1.GetRowCellValue(handle, "ID");
+                if (value == null || value == DBNull.Value) continue;
+
+                int id;
+                if (int.TryParse(Convert.ToString(value), out id) && id > 0 && !ids.Contains(id))
+                    ids.Add(id);
             }
+
             if (ids.Count == 0)
             {
-                XtraMessageBox.Show(text: "الرجاء اختيار فاتورة واحدةعلى الأقل");
+                XtraMessageBox.Show("حدد فاتورة واحدة على الأقل من صفوف البيانات.");
                 return null;
             }
+
             return ids;
         }
         /// <summary>
