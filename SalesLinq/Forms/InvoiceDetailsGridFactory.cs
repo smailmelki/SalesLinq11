@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace SalesLinq.Forms
 {
@@ -55,6 +56,57 @@ namespace SalesLinq.Forms
             Hidden(grid, "InvoiceID");
             Hidden(grid, "sourceRowID");
             return grid;
+        }
+
+        /// <summary>
+        /// ربط الجدول بكيانات تفاصيل الفاتورة وقوائم الأصناف والوحدات والمخازن.
+        /// تبقى الكيانات نفسها مصدر البيانات حتى لا ينفصل تعديل المستخدم عن كيان LINQ to SQL.
+        /// </summary>
+        internal static void Bind(
+            DataGridView grid,
+            IList<DAL.InvoiceDetail> details,
+            object products,
+            object units,
+            object stores)
+        {
+            if (grid == null) throw new ArgumentNullException(nameof(grid));
+            if (details == null) throw new ArgumentNullException(nameof(details));
+
+            var source = new BindingSource { DataSource = details };
+            grid.DataSource = source;
+
+            ReplaceWithLookup(grid, "ItemID", products, "Name", "ID");
+            ReplaceWithLookup(grid, "ItemUnitID", units, "Name", "ID");
+            ReplaceWithLookup(grid, "StoreID", stores, "Name", "ID");
+            grid.DataError += (sender, e) => { e.ThrowException = false; };
+        }
+
+        private static void ReplaceWithLookup(
+            DataGridView grid, string field, object source, string displayMember, string valueMember)
+        {
+            if (!grid.Columns.Contains(field) || source == null) return;
+
+            int index = grid.Columns[field].Index;
+            int width = grid.Columns[field].Width;
+            string header = grid.Columns[field].HeaderText;
+            bool readOnly = grid.Columns[field].ReadOnly;
+            grid.Columns.Remove(field);
+
+            var lookup = new DataGridViewComboBoxColumn
+            {
+                Name = field,
+                DataPropertyName = field,
+                HeaderText = header,
+                DataSource = source,
+                DisplayMember = displayMember,
+                ValueMember = valueMember,
+                Width = width,
+                ReadOnly = readOnly,
+                FlatStyle = FlatStyle.Flat,
+                DisplayStyle = DataGridViewComboBoxDisplayStyle.ComboBox,
+                SortMode = DataGridViewColumnSortMode.NotSortable
+            };
+            grid.Columns.Insert(index, lookup);
         }
 
         internal static void AddReturnColumns(DataGridView grid)
