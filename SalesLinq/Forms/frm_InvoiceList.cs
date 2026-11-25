@@ -166,7 +166,7 @@ namespace SalesLinq.Forms
                 Font = new Font("Segoe UI", 8.5F, FontStyle.Bold)
             };
             control.SetBounds(x, y + 25, width, 30);
-            control.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            control.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             control.Font = new Font("Segoe UI", 9F);
             control.RightToLeft = RightToLeft.Yes;
             // Parent is assigned by the caller after this helper returns.
