@@ -79,6 +79,7 @@ namespace SalesLinq.Forms
             gridView1.SelectionChanged += Grid_SelectionChanged;
             gridView1.ContextMenuStrip = CreateContextMenu();
             listPrint.DefaultPageSettings.Landscape = true;
+            listPrint.BeginPrint += (s, e) => printRow = 0;
             listPrint.PrintPage += PrintListPage;
 
             contentSplit.Dock = DockStyle.Fill;
@@ -328,6 +329,19 @@ namespace SalesLinq.Forms
             if (e.RowIndex < 0) return;
             var columnName = gridView1.Columns[e.ColumnIndex].Name;
 
+            if (columnName == "PayStatus")
+            {
+                var status = Convert.ToString(e.Value);
+                e.CellStyle.ForeColor = Color.FromArgb(38, 52, 72);
+                e.CellStyle.BackColor = status == "مسددة" ? Color.FromArgb(218, 240, 226) :
+                    status == "مسددة جزئياً" ? Color.FromArgb(255, 242, 204) : Color.FromArgb(255, 224, 224);
+                return;
+            }
+            if (columnName == "PostedToStore")
+            {
+                e.Value = Convert.ToBoolean(e.Value) ? "نعم" : "لا";
+                e.FormattingApplied = true;
+            }
             if (columnName == "PartType")
             {
                 int value;
