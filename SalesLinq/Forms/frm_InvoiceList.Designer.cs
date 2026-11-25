@@ -359,7 +359,7 @@
             // 
             // lyc_Branch
             // 
-            this.lyc_Branch.Control = this.lkp_Drawer;
+            this.lyc_Branch.Control = this.lkp_Branch;
             this.lyc_Branch.Location = new System.Drawing.Point(0, 120);
             this.lyc_Branch.Name = "lyc_Branch";
             this.lyc_Branch.Size = new System.Drawing.Size(294, 30);
@@ -368,7 +368,7 @@
             // 
             // lyc_Drawer
             // 
-            this.lyc_Drawer.Control = this.lkp_Branch;
+            this.lyc_Drawer.Control = this.lkp_Drawer;
             this.lyc_Drawer.Location = new System.Drawing.Point(0, 150);
             this.lyc_Drawer.Name = "lyc_Drawer";
             this.lyc_Drawer.Size = new System.Drawing.Size(294, 30);
