@@ -2013,7 +2013,9 @@ namespace SalesLinq.Forms
             PartName = Invoice.Code + " - " + glkp_PartID.Text;     // تسجيل حركة المستخدم
             base.Save();
             // تحديث البيانات في شاشة قائمة الفواتير
-            var forms = Application.OpenForms.Cast<Form>().Where(x => x.Name == this.Name + "List");// يبحث عن الفورم باسمها
+            var forms = Application.OpenForms.Cast<Form>().Where(x =>
+                x.Name == this.Name + "List" ||
+                (x is frm_InvoiceList && ((frm_InvoiceList)x).InvoiceType == Type));// تحديث القائمة القديمة أو القائمة المنقولة حسب نوع الفاتورة
             foreach (var frm in forms)
             {
                 if (frm == null) continue;
