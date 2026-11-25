@@ -1,399 +1,496 @@
-﻿using DevExpress.Utils;
-using DevExpress.XtraEditors;
-using DevExpress.XtraEditors.Repository;
-using DevExpress.XtraGrid.Views.Grid;
 using SalesLinq.Class;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace SalesLinq.Forms
 {
-    public partial class frm_InvoiceList : frm_MasterList
+    /// <summary>
+    /// قائمة الفواتير بعناصر WinForms القياسية. تبقى عمليات الحفظ والحذف والطباعة
+    /// في شاشة الفاتورة الحالية حفاظاً على قواعد المحاسبة والمخزون.
+    /// </summary>
+    public partial class frm_InvoiceList : NativeMasterListForm
     {
-        Master.InvoiceType Type;//نوع الفاتورة
-        RepositoryItemLookUpEdit repoPartType;
-        RepositoryItemLookUpEdit repoPart;
-        RepositoryItemLookUpEdit repoBranch;
-        RepositoryItemLookUpEdit repoDrawer;
-        public frm_InvoiceList(Master.InvoiceType _Type)
+        private readonly Master.InvoiceType Type;
+        private readonly DateTimePicker fromDate = new DateTimePicker();
+        private readonly DateTimePicker toDate = new DateTimePicker();
+        private readonly ComboBox partType = new ComboBox();
+        private readonly ComboBox part = new ComboBox();
+        private readonly ComboBox branch = new ComboBox();
+        private readonly ComboBox drawer = new ComboBox();
+        private readonly Button applyFilters = new Button();
+        private readonly Button clearFilters = new Button();
+        private readonly Button toggleFilters = new Button();
+        private readonly Label filterStatus = new Label();
+        private readonly Panel filterPanel = new Panel();
+        private readonly DataGridView detailsGrid = new DataGridView();
+        private readonly SplitContainer contentSplit = new SplitContainer();
+        private readonly Dictionary<int, string> partNames = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> branchNames = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> drawerNames = new Dictionary<int, string>();
+
+        public frm_InvoiceList(Master.InvoiceType type)
         {
             InitializeComponent();
-            dateEdit1.DateTime = dateEdit2.DateTime = DateTime.Now;
-            lkp_PartType.EditValueChanged += Lkp_PartType_EditValueChanged;
-            gridView1.AddButtonToGroupHeader(Properties.Resources.editfilter, OpenFilter);//اضافة زر للغريد فيو واضافة الحدث له
-            //flyoutPanel1.Options.CloseOnOuterClick = true;// اغلاق النافذة عند الضغط خارجها
-            Type = _Type;
-            gridControl1.ViewRegistered += GridControl1_ViewRegistered;//حدث فتح الفاتورة في قائمة الفواتير من علامة + لتغيير أسماء الأعمدة
-            gridView1.OptionsDetail.ShowDetailTabs = false;//لاخفاء تاب العنوان
-
-            gridView1.PopupMenuShowing += GridView1_PopupMenuShowing;//حدث الظغط بزر الفأرة الأيمن لعرض القائمة
-            gridView1.OptionsSelection.MultiSelect = true;// السماح بالتحديد المتعدد للأسطر
-            gridView1.OptionsSelection.MultiSelectMode = GridMultiSelectMode.CheckBoxRowSelect;
-            gridView1.RowCellStyle += GridView1_RowCellStyle;
-
+            Type = type;
+            Text = GetTitle(type);
+            Name = GetScreenName(type);
+            ConfigureControls();
+            LoadFilterData();
+            Load += InvoiceList_Load;
         }
 
-        private void GridView1_RowCellStyle(object sender, RowCellStyleEventArgs e)
+        private static string GetTitle(Master.InvoiceType type)
         {
-            if (e.RowHandle < 0) return;
-
-            if (e.Column.FieldName != "PayStatus") return;
-
-            // قد تحتوي صفوف العرض أو البيانات المسترجعة على قيمة فارغة؛ لا تفشل عملية الرسم بسببها.
-            var remainsValue = gridView1.GetRowCellValue(e.RowHandle, "Remaing");
-            var netValue = gridView1.GetRowCellValue(e.RowHandle, "Net");
-            if (remainsValue == null || remainsValue == DBNull.Value ||
-                netValue == null || netValue == DBNull.Value) return;
-
-            double remains, net;
-            if (!double.TryParse(Convert.ToString(remainsValue), out remains) ||
-                !double.TryParse(Convert.ToString(netValue), out net)) return;
-
-            if (remains == 0)
-                e.Appearance.BackColor = DevExpress.LookAndFeel.DXSkinColors.FillColors.Success;
-            else if (remains > 0)
-                e.Appearance.BackColor = remains < net
-                    ? DevExpress.LookAndFeel.DXSkinColors.FillColors.Warning
-                    : DevExpress.LookAndFeel.DXSkinColors.FillColors.Danger;
-        }
-
-        /// <summary>
-        /// دالة لعرض القائمة في حالة ان المسنخدم ضغط على خلية من السطر  
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GridView1_PopupMenuShowing(object sender, PopupMenuShowingEventArgs e)
-        {
-            if (e.HitInfo.InRow || e.HitInfo.InRowCell)//التأكد من ان المسنخدم ضغط على خلية من السطر
+            switch (type)
             {
-                var dxButtonPrint = new DevExpress.Utils.Menu.DXMenuItem() { Caption = "Print" };//زر خاص بالقامة المنبثقة
-                dxButtonPrint.ImageOptions.SvgImage = Properties.Resources.print;               //اضافة صورة لزر الطباعة في القائمة
-                dxButtonPrint.Click += DxButtonPrint_Click;                                     //اضافة حدث للضغط على الزر
-                e.Menu.Items.Add(dxButtonPrint);                                                //اضافة الزر للقائمة
-
-                var dxButtonDelete = new DevExpress.Utils.Menu.DXMenuItem() { Caption = "حذف"}; //زر خاص بالقامة المنبثقة
-                dxButtonDelete.ImageOptions.SvgImage = Properties.Resources.actions_trash;      //اضافة صورة لزر الطباعة في القائمة
-                dxButtonDelete.Click += DxButtonDelete_Click;                                   //اضافة حدث للضغط على الزر
-                e.Menu.Items.Add(dxButtonDelete);                                               //اضافة الزر للقائمة
+                case Master.InvoiceType.Purchase: return "فواتير المشتريات";
+                case Master.InvoiceType.Sales: return "فواتير المبيعات";
+                case Master.InvoiceType.PurchaseReturn: return "فواتير مردود المشتريات";
+                case Master.InvoiceType.SalesReturn: return "فواتير مردود المبيعات";
+                default: throw new ArgumentOutOfRangeException(nameof(type));
             }
         }
 
-        public override void Delete()
+        private static string GetScreenName(Master.InvoiceType type)
         {
-            DxButtonDelete_Click(null, null);
-        }
-
-        private void DxButtonDelete_Click(object sender, EventArgs e)
-        {
-            List<int> ids = GetSelectedInvoicesIDs();
-            if (ids != null)
-                frm_Invoice.Delete(ids, this.Type, this.Name);
-        }
-
-        private void DxButtonPrint_Click(object sender, EventArgs e)
-        {
-            List<int> ids = GetSelectedInvoicesIDs();
-            if (ids != null)
-                frm_Invoice.Print(ids, this.Type, this.Name);
-        }
-
-        private List<int> GetSelectedInvoicesIDs()
-        {
-
-            var handles = gridView1.GetSelectedRows();
-            var ids = new List<int>();
-
-            foreach (var handle in handles)
+            switch (type)
             {
-                if (!gridView1.IsDataRow(handle)) continue;
+                case Master.InvoiceType.Purchase: return Screens.ViewPurchaseInvoice.ScreenName;
+                case Master.InvoiceType.Sales: return Screens.ViewSalesInvoice.ScreenName;
+                case Master.InvoiceType.PurchaseReturn: return Screens.ViewPurchaseReturnInvoice.ScreenName;
+                case Master.InvoiceType.SalesReturn: return Screens.ViewSalesReturnInvoice.ScreenName;
+                default: throw new ArgumentOutOfRangeException(nameof(type));
+            }
+        }
 
-                var value = gridView1.GetRowCellValue(handle, "ID");
-                if (value == null || value == DBNull.Value) continue;
+        private void ConfigureControls()
+        {
+            gridView1.MultiSelect = true;
+            gridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            gridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            gridView1.Columns.Clear();
+            gridView1.CellFormatting += Grid_CellFormatting;
+            gridView1.SelectionChanged += Grid_SelectionChanged;
+            gridView1.ContextMenuStrip = CreateContextMenu();
 
+            contentSplit.Dock = DockStyle.Fill;
+            contentSplit.Orientation = Orientation.Horizontal;
+            contentSplit.SplitterDistance = 300;
+            contentSplit.Panel1.Controls.Add(gridView1);
+            contentSplit.Panel2.Controls.Add(detailsGrid);
+            detailsGrid.Dock = DockStyle.Fill;
+            detailsGrid.ReadOnly = true;
+            detailsGrid.AllowUserToAddRows = false;
+            detailsGrid.AllowUserToDeleteRows = false;
+            detailsGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            detailsGrid.RowHeadersVisible = false;
+            detailsGrid.RightToLeft = RightToLeft.Yes;
+            detailsGrid.BackgroundColor = SystemColors.Window;
+            detailsGrid.BorderStyle = BorderStyle.None;
+            detailsGrid.EnableHeadersVisualStyles = false;
+            detailsGrid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(232, 238, 246);
+            detailsGrid.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(38, 52, 72);
+            detailsGrid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            detailsGrid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+
+            filterPanel.Dock = DockStyle.Top;
+            filterPanel.Height = 118;
+            filterPanel.Padding = new Padding(8);
+            filterPanel.BackColor = Color.White;
+            Controls.Add(contentSplit);
+            Controls.Add(filterPanel);
+            filterPanel.BringToFront();
+
+            ConfigureFilterControl(fromDate, "من تاريخ", 8, 8, 150);
+            ConfigureFilterControl(toDate, "حتى تاريخ", 170, 8, 150);
+            ConfigureFilterControl(partType, "نوع الطرف", 332, 8, 150);
+            ConfigureFilterControl(part, "الطرف", 494, 8, 190);
+            ConfigureFilterControl(branch, "الفرع", 696, 8, 150);
+            ConfigureFilterControl(drawer, "الخزنة", 858, 8, 150);
+
+            applyFilters.Text = "تطبيق";
+            applyFilters.SetBounds(8, 68, 85, 30);
+            applyFilters.Click += (s, e) => RefreshData();
+            clearFilters.Text = "مسح";
+            clearFilters.SetBounds(100, 68, 85, 30);
+            clearFilters.Click += (s, e) => ClearFilters();
+            toggleFilters.Text = "إخفاء الفلاتر";
+            toggleFilters.SetBounds(192, 68, 120, 30);
+            toggleFilters.Click += (s, e) => filterPanel.Visible = !filterPanel.Visible;
+            filterStatus.AutoSize = false;
+            filterStatus.SetBounds(325, 68, 650, 30);
+            filterStatus.TextAlign = ContentAlignment.MiddleRight;
+            filterPanel.Controls.AddRange(new Control[] { applyFilters, clearFilters, toggleFilters, filterStatus });
+
+            fromDate.Format = DateTimePickerFormat.Custom;
+            fromDate.CustomFormat = "yyyy/MM/dd";
+            toDate.Format = DateTimePickerFormat.Custom;
+            toDate.CustomFormat = "yyyy/MM/dd";
+            fromDate.ShowCheckBox = toDate.ShowCheckBox = true;
+            fromDate.Checked = toDate.Checked = false;
+            partType.DropDownStyle = part.DropDownStyle = branch.DropDownStyle = drawer.DropDownStyle = ComboBoxStyle.DropDownList;
+            part.DropDownStyle = ComboBoxStyle.DropDownList;
+        }
+
+        private static void ConfigureFilterControl(Control control, string caption, int x, int y, int width)
+        {
+            var label = new Label
+            {
+                Text = caption,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleRight,
+                Bounds = new Rectangle(x, y, width, 22),
+                ForeColor = Color.FromArgb(38, 52, 72),
+                Font = new Font("Segoe UI", 8.5F, FontStyle.Bold)
+            };
+            control.SetBounds(x, y + 25, width, 30);
+            control.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            control.Font = new Font("Segoe UI", 9F);
+            control.RightToLeft = RightToLeft.Yes;
+            // Parent is assigned by the caller after this helper returns.
+            control.Tag = label;
+        }
+
+        private void LoadFilterData()
+        {
+            partType.Items.Clear();
+            partType.Items.Add(new FilterChoice(null, "الكل"));
+            partType.Items.Add(new FilterChoice((int)Master.PartType.Customer, "عميل"));
+            partType.Items.Add(new FilterChoice((int)Master.PartType.Vendor, "مورد"));
+            partType.SelectedIndex = 0;
+            partType.SelectedIndexChanged += (s, e) => LoadPartChoices();
+
+            var stores = Session.Store ?? new List<DAL.Store>();
+            branch.DataSource = stores.ToList();
+            branch.DisplayMember = "Name";
+            branch.ValueMember = "ID";
+            SetComboAll(branch);
+
+            var drawers = Session.Drawer ?? new List<DAL.Drawer>();
+            drawer.DataSource = drawers.ToList();
+            drawer.DisplayMember = "Name";
+            drawer.ValueMember = "ID";
+            SetComboAll(drawer);
+
+            // Add the filter labels and controls together, respecting RTL layout.
+            foreach (Control c in new Control[] { fromDate, toDate, partType, part, branch, drawer })
+            {
+                var label = c.Tag as Label;
+                if (label != null) filterPanel.Controls.Add(label);
+                filterPanel.Controls.Add(c);
+            }
+            LoadPartChoices();
+        }
+
+        private static void SetComboAll(ComboBox combo)
+        {
+            combo.SelectedIndex = -1;
+        }
+
+        private void LoadPartChoices()
+        {
+            var customersAndVendors = new List<DAL.CustomersAndVendore>();
+            if (Session.Customers != null) customersAndVendors.AddRange(Session.Customers);
+            if (Session.vendores != null) customersAndVendors.AddRange(Session.vendores);
+
+            int? selectedType = (partType.SelectedItem as FilterChoice)?.Value;
+            var choices = customersAndVendors
+                .Where(x => !selectedType.HasValue || x.PartType == selectedType.Value)
+                .Select(x => new FilterChoice(x.ID, x.Name))
+                .OrderBy(x => x.Text)
+                .ToList();
+            choices.Insert(0, new FilterChoice(null, "الكل"));
+            part.DataSource = choices;
+            part.DisplayMember = "Text";
+            part.ValueMember = "Value";
+            part.SelectedIndex = 0;
+        }
+
+        private void InvoiceList_Load(object sender, EventArgs e)
+        {
+            btn_Delete.Visible = true;
+            btn_Print.Visible = true;
+            btn_Refresh.Visible = true;
+            btn_New.Visible = true;
+            RefreshData();
+        }
+
+        public override void RefreshData()
+        {
+            using (var db = new DAL.DBDataContext())
+            {
+                var query = db.InvoiceHeaders.Where(x => x.InvoiceType == (byte)Type);
+                if (fromDate.Checked)
+                    query = query.Where(x => x.Date >= fromDate.Value.Date);
+                if (toDate.Checked)
+                {
+                    var endDate = toDate.Value.Date.AddDays(1);
+                    query = query.Where(x => x.Date < endDate);
+                }
+
+                var selectedPartType = (partType.SelectedItem as FilterChoice)?.Value;
+                if (selectedPartType.HasValue)
+                    query = query.Where(x => x.PartType == selectedPartType.Value);
+
+                var selectedPart = (part.SelectedItem as FilterChoice)?.Value;
+                if (selectedPart.HasValue)
+                    query = query.Where(x => x.PartID == selectedPart.Value);
+
+                if (branch.SelectedValue != null && branch.SelectedValue != DBNull.Value)
+                {
+                    int id;
+                    if (int.TryParse(Convert.ToString(branch.SelectedValue), out id))
+                        query = query.Where(x => x.Branch == id);
+                }
+                if (drawer.SelectedValue != null && drawer.SelectedValue != DBNull.Value)
+                {
+                    int id;
+                    if (int.TryParse(Convert.ToString(drawer.SelectedValue), out id))
+                        query = query.Where(x => x.Drawer == id);
+                }
+
+                var rows = query.OrderByDescending(x => x.Date).ThenByDescending(x => x.ID)
+                    .Select(x => new InvoiceListRow
+                    {
+                        ID = x.ID,
+                        Code = x.Code,
+                        Date = x.Date,
+                        PartType = x.PartType,
+                        PartID = x.PartID,
+                        Branch = x.Branch,
+                        ItemsCount = db.InvoiceDetails.Count(d => d.InvoiceID == x.ID),
+                        PostedToStore = x.PostedToStore,
+                        Total = x.Total,
+                        DiscountRation = x.DiscountRation,
+                        DiscountValue = x.DiscountValue,
+                        Tax = x.Tax,
+                        TaxValue = x.TaxValue,
+                        Expences = x.Expences,
+                        Net = x.Net,
+                        Paid = x.Paid,
+                        Drawer = x.Drawer,
+                        Remaing = x.Remaing,
+                        PayStatus = x.Remaing == 0 ? "مسددة" : x.Remaing == x.Net ? "غير مسددة" : "مسددة جزئياً"
+                    }).ToList();
+
+                partNames.Clear();
+                branchNames.Clear();
+                drawerNames.Clear();
+                if (Session.Customers != null)
+                    foreach (var item in Session.Customers) partNames[item.ID] = item.Name;
+                if (Session.vendores != null)
+                    foreach (var item in Session.vendores) partNames[item.ID] = item.Name;
+                if (Session.Store != null)
+                    foreach (var item in Session.Store) branchNames[item.ID] = item.Name;
+                if (Session.Drawer != null)
+                    foreach (var item in Session.Drawer) drawerNames[item.ID] = item.Name;
+
+                gridView1.DataSource = rows;
+                ConfigureColumns();
+                filterStatus.Text = "عدد الفواتير: " + rows.Count;
+                LoadDetailsForSelectedRow();
+            }
+        }
+
+        private void ConfigureColumns()
+        {
+            string[] captions =
+            {
+                "ID|كود", "Code|الرقم", "Date|التاريخ", "PartType|نوع الطرف", "PartID|اسم الطرف",
+                "Branch|الفرع", "ItemsCount|عدد الأصناف", "PostedToStore|مرحل للمخزن",
+                "Total|الإجمالي", "DiscountValue|قيمة الخصم", "DiscountRation|نسبة الخصم",
+                "Tax|نسبة الضريبة", "TaxValue|قيمة الضريبة", "Expences|مصروفات",
+                "Net|الصافي", "Paid|المدفوع", "Drawer|الخزنة", "Remaing|المتبقي", "PayStatus|حالة السداد"
+            };
+            foreach (var pair in captions)
+            {
+                var values = pair.Split('|');
+                if (gridView1.Columns.Contains(values[0]))
+                    gridView1.Columns[values[0]].HeaderText = values[1];
+            }
+            if (gridView1.Columns.Contains("Date"))
+                gridView1.Columns["Date"].DefaultCellStyle.Format = "dd-MM-yyyy hh:mm tt";
+            if (gridView1.Columns.Contains("PostedToStore"))
+                gridView1.Columns["PostedToStore"].HeaderText = "مرحل للمخزن";
+            gridView1.RightToLeft = RightToLeft.Yes;
+        }
+
+        private void Grid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0 || gridView1.Columns[e.ColumnIndex].Name != "PartType") return;
+            int value;
+            if (int.TryParse(Convert.ToString(e.Value), out value))
+                e.Value = value == (int)Master.PartType.Customer ? "عميل" :
+                          value == (int)Master.PartType.Vendor ? "مورد" : Convert.ToString(e.Value);
+            e.FormattingApplied = true;
+
+            if (gridView1.Columns[e.ColumnIndex].Name == "PartID")
+            {
                 int id;
-                if (int.TryParse(Convert.ToString(value), out id) && id > 0 && !ids.Contains(id))
-                    ids.Add(id);
+                if (int.TryParse(Convert.ToString(e.Value), out id) && partNames.ContainsKey(id))
+                {
+                    e.Value = partNames[id];
+                    e.FormattingApplied = true;
+                }
             }
-
-            if (ids.Count == 0)
-            {
-                XtraMessageBox.Show("حدد فاتورة واحدة على الأقل من صفوف البيانات.");
-                return null;
-            }
-
-            return ids;
         }
-        /// <summary>
-        /// دالة تسمية رؤوس تفاصيل الفاتورة
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GridControl1_ViewRegistered(object sender, DevExpress.XtraGrid.ViewOperationEventArgs e)
+
+        private void Grid_SelectionChanged(object sender, EventArgs e)
         {
-            var view = e.View as GridView;
-            if (view != null && view.LevelName == "Prodects")
+            LoadDetailsForSelectedRow();
+        }
+
+        private void LoadDetailsForSelectedRow()
+        {
+            if (gridView1.CurrentRow == null || !gridView1.Columns.Contains("ID"))
             {
-                view.OptionsView.ShowViewCaption = true;
-                view.ViewCaption = "الأصناف";//تسمية تاب العنوان
-                view.Columns["Product"].Caption = "الصنف";
-                view.Columns["Unit"].Caption = "الوحدة";
-                view.Columns["Price"].Caption = "السعر";
-                view.Columns["ItemQty"].Caption = "الكمية";
-                view.Columns["DiscountValue"].Caption = "الخصم";
-                view.Columns["TotalCostValue"].Caption = "الاجمالي";
+                detailsGrid.DataSource = null;
+                return;
+            }
+            int invoiceId;
+            if (!int.TryParse(Convert.ToString(gridView1.CurrentRow.Cells["ID"].Value), out invoiceId))
+                return;
+
+            using (var db = new DAL.DBDataContext())
+            {
+                var details = (from item in db.InvoiceDetails.Where(x => x.InvoiceID == invoiceId)
+                               join product in db.Products on item.ItemID equals product.ID into products
+                               from product in products.DefaultIfEmpty()
+                               join unit in db.UnitNames on item.ItemUnitID equals unit.ID into units
+                               from unit in units.DefaultIfEmpty()
+                               select new InvoiceDetailListRow
+                               {
+                                   Product = product == null ? "" : product.Name,
+                                   Unit = unit == null ? "" : unit.Name,
+                                   Price = item.Price,
+                                   Quantity = item.ItemQty,
+                                   Discount = item.DiscountValue,
+                                   Total = item.TotalCostValue
+                               }).ToList();
+                detailsGrid.DataSource = details;
+                if (detailsGrid.Columns.Contains("Product")) detailsGrid.Columns["Product"].HeaderText = "الصنف";
+                if (detailsGrid.Columns.Contains("Unit")) detailsGrid.Columns["Unit"].HeaderText = "الوحدة";
+                if (detailsGrid.Columns.Contains("Price")) detailsGrid.Columns["Price"].HeaderText = "السعر";
+                if (detailsGrid.Columns.Contains("Quantity")) detailsGrid.Columns["Quantity"].HeaderText = "الكمية";
+                if (detailsGrid.Columns.Contains("Discount")) detailsGrid.Columns["Discount"].HeaderText = "الخصم";
+                if (detailsGrid.Columns.Contains("Total")) detailsGrid.Columns["Total"].HeaderText = "الإجمالي";
             }
         }
 
-
-        /// <summary>
-        ///  فتح نافذة الفيلتر
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="e"></param>
-        void OpenFilter(object s,EventArgs e)
+        private ContextMenuStrip CreateContextMenu()
         {
-            flyoutPanel1.ShowPopup();
+            var menu = new ContextMenuStrip();
+            menu.Items.Add("فتح الفاتورة", null, (s, e) => OpenSelectedInvoice());
+            menu.Items.Add("طباعة المحدد", null, (s, e) => Print());
+            menu.Items.Add("حذف المحدد", null, (s, e) => Delete());
+            return menu;
         }
+
         public override void OpenForm(int id)
         {
-            frm_Main.OpenForm(new frm_Invoice(Type,id));
+            frm_Main.OpenForm(new frm_Invoice(Type, id));
         }
 
         public override void New()
         {
             frm_Main.OpenForm(new frm_Invoice(Type));
         }
-        /// <summary>
-        /// تعبئة الفورم ببيانات الفواتير حسب النوع
-        /// </summary>
-        public override void RefreshData()
+
+        private void OpenSelectedInvoice()
         {
-            DateTime? fromDate = null;
-            DateTime? ToDate = null;
+            if (gridView1.CurrentRow == null) return;
+            int id;
+            if (int.TryParse(Convert.ToString(gridView1.CurrentRow.Cells["ID"].Value), out id) && id > 0)
+                OpenForm(id);
+        }
 
-            if (dateEdit1.DateTime.Year > 1950)
-                fromDate = dateEdit1.DateTime;
-            if (dateEdit2.DateTime.Year > 1950)
-                ToDate = dateEdit2.DateTime;
-
-            
-
-            using (var db = new DAL.DBDataContext())
+        private List<int> GetSelectedInvoiceIds()
+        {
+            var ids = new List<int>();
+            foreach (DataGridViewRow row in gridView1.SelectedRows)
             {
-                var query = from inv in db.InvoiceHeaders.Where(x=>x.InvoiceType==(byte)Type)    
-                            select new
-                            {
-                                inv.ID,
-                                inv.Code,
-                                inv.Date,
-                                inv.PartType,
-                                inv.PartID,
-                                inv.Branch,
-                                ItemsCount = db.InvoiceDetails.Where(x => x.InvoiceID == inv.ID).Count(),
-                                inv.PostedToStore,
-                                inv.Total,
-                                inv.DiscountRation,
-                                inv.DiscountValue,
-                                inv.Tax,
-                                inv.TaxValue,
-                                inv.Expences,
-                                inv.Net,
-                                inv.Paid,
-                                inv.Drawer,
-                                inv.Remaing,
-                                PayStatus =(inv.Remaing==0)? "مسددة": (inv.Remaing == inv.Net) ? "غير مسددة" : "مسددة جزئيا",
-                                Prodects = (from itm in db.InvoiceDetails.Where(x => x.InvoiceID == inv.ID)
-                                            from pro in db.Products.Where(x => x.ID == itm.ItemID).DefaultIfEmpty()
-                                            from unt in db.UnitNames.Where(x => x.ID == itm.ItemUnitID).DefaultIfEmpty()
-                                            select new
-                                            {
-                                                Product = pro.Name,
-                                                Unit = unt.Name,
-                                                itm.Price,
-                                                itm.ItemQty,
-                                                itm.DiscountValue,
-                                                itm.TotalCostValue
-                                            }).ToList(),
-                            };
-
-                if (fromDate != null)
-                    query = query.Where(x => x.Date.Date >= fromDate.Value.Date);                           // فلترة النتائج بحسب التاريخ
-                if (ToDate != null)
-                    query = query.Where(x => x.Date.Date <= ToDate.Value.Date);                             // فلترة النتائج بحسب التاريخ
-                if (glkp_PartID.IsEditValueValide(false))
-                    query = query.Where(x => x.PartID == Convert.ToInt32(glkp_PartID.EditValue));           // فلترة النتائج بحسب طرف التعامل
-                if (lkp_PartType.IsEditValueValide(false))
-                    query = query.Where(x => x.PartType == Convert.ToInt32(lkp_PartType.EditValue));        // فلترة النتائج بحسب نوع طرف التعامل
-                if (lkp_Drawer.IsEditValueValide(false))
-                    query = query.Where(x => x.Drawer == Convert.ToInt32(lkp_Drawer.EditValue));            // فلترة النتائج بحسب الخزنة
-                if (lkp_Branch.IsEditValueValide(false))
-                    query = query.Where(x => x.Branch == Convert.ToInt32(lkp_Branch.EditValue));            // فلترة النتائج بحسب المخزن
-
-
-                gridControl1.DataSource = query;
-                var Parts = new List<DAL.CustomersAndVendore>();                                            // جلب بيانات طرف التعامل
-                Parts.AddRange(Session.Customers);
-                Parts.AddRange(Session.vendores);
-
-                var ins = query.FirstOrDefault();
-                repoBranch.InitializeData(Session.Store, gridView1.Columns[nameof(ins.Branch)], gridControl1);             //لعرض اسم المخزن بدل رقمه
-                repoDrawer.InitializeData(Session.Drawer, gridView1.Columns[nameof(ins.Drawer)], gridControl1);            //لعرض اسم الخزنة بدل رقمها
-                repoPartType.InitializeData(Master.InvoicesPartTypesList, gridView1.Columns[nameof(ins.PartType)], gridControl1);  //لعرض اسم نوع طرف التعامل بدل رقمه
-                repoPart.InitializeData(Parts, gridView1.Columns[nameof(ins.PartID)], gridControl1);                       //لعرض اسم طرف التعامل بدل رقمه
-
+                int id;
+                if (row.IsNewRow || !int.TryParse(Convert.ToString(row.Cells["ID"].Value), out id) ||
+                    id <= 0 || ids.Contains(id)) continue;
+                ids.Add(id);
             }
-            base.RefreshData();
-        }
-        private void Frm_InvoiceList_Load(object sender, EventArgs e)
-        {
-            switch (Type)//تغييرات في الفاتورة حسب نوعها
+            if (ids.Count == 0)
             {
-                case Master.InvoiceType.Purchase:
-                    this.Text = "فواتير المشتريات";// تسمية الفورم حسب نوع الفاتورة
-                    this.Name = Class.Screens.ViewPurchaseInvoice.ScreenName;// تغيير اسم فورم الفاتورة
-                    break;
-                case Master.InvoiceType.Sales:
-                    this.Text = "فواتير المبيعات";// تسمية الفورم حسب نوع الفاتورة
-                    this.Name = Class.Screens.ViewSalesInvoice.ScreenName;// تغيير اسم فورم الفاتورة
-                    break;
-                case Master.InvoiceType.PurchaseReturn:
-                    this.Text = "فواتير مردود المشتريات";// تسمية الفورم حسب نوع الفاتورة
-                    this.Name = Class.Screens.ViewPurchaseReturnInvoice.ScreenName;// تغيير اسم فورم الفاتورة
-                    break;
-                case Master.InvoiceType.SalesReturn:
-                    this.Text = "فواتير مردود المبيعات";// تسمية الفورم حسب نوع الفاتورة
-                    this.Name = Class.Screens.ViewSalesReturnInvoice.ScreenName;// تغيير اسم فورم الفاتورة
-                    break;
-                default:
-                    throw new NotImplementedException();
+                MessageBox.Show("حدد فاتورة واحدة على الأقل.", "قائمة الفواتير",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return null;
             }
-            lkp_PartType.InitializeData(Class.Master.InvoicesPartTypesList);// Extention Method /* تصبح الدالة وكأنها اضافة تظهر بعد النقطة بشكل عادي 28 */
-            lkp_PartType.Properties.PopulateColumns();
-            //lkp_PartType.Properties.Columns["ID"].Visible = false;//في معلومات طرف التعامل ID اخفاء عمود 
-            lkp_Branch.InitializeData(Session.Store);
-            lkp_Drawer.InitializeData(Session.Drawer);
-
-            dateEdit1.AddClearValueButton();
-            dateEdit2.AddClearValueButton();
-            lkp_Branch.AddClearValueButton();
-            lkp_Drawer.AddClearValueButton();
-            lkp_PartType.AddClearValueButton();
-            glkp_PartID.AddClearValueButton();
-
-            TranslateCaption();
-            
-            btn_Refresh.Visibility = DevExpress.XtraBars.BarItemVisibility.Always;
-            btn_Print.Visibility = DevExpress.XtraBars.BarItemVisibility.Always;
-        }
-        void TranslateCaption()
-        {
-            gridView1.ColumnPanelRowHeight = 75;
-            gridView1.Columns["ID"].Caption = "كود";
-            gridView1.Columns["Code"].Caption = "الرقم";
-            gridView1.Columns["Date"].Caption = "التاريخ";
-            gridView1.Columns["PartType"].Caption = "طرف التعامل";
-            gridView1.Columns["PartID"].Caption = "اسم طرف التعامل";
-            gridView1.Columns["Branch"].Caption = "الفرع";
-            gridView1.Columns["ItemsCount"].Caption = "عدد الأصناف";
-            gridView1.Columns["PostedToStore"].Caption = "مرحل من المخزن";
-            gridView1.Columns["Total"].Caption = "الاجمالي";
-            gridView1.Columns["DiscountValue"].Caption = "ق الخصم";
-            gridView1.Columns["DiscountRation"].Caption = "ن الخصم";
-            gridView1.Columns["Tax"].Caption = "ن الضريبة";
-            gridView1.Columns["TaxValue"].Caption = "ق الضريبة";
-            gridView1.Columns["Expences"].Caption = "مصروفات أخرى";
-            gridView1.Columns["Net"].Caption = "الصافي";
-            gridView1.Columns["Paid"].Caption = "المدفوع";
-            gridView1.Columns["Drawer"].Caption = "الخزنة";
-            gridView1.Columns["Remaing"].Caption = "المتبقي";
-            gridView1.Columns["PayStatus"].Caption = "حالة السداد";
-
-            gridView1.Columns["Date"].DisplayFormat.FormatString = "dd-MM-yyyy hh:mm:tt"; // تغيير فورمات العرض في العمود الى تاريخ
-            gridView1.Columns["Date"].DisplayFormat.FormatType= FormatType.Custom ;       // تغيير فورمات العرض في العمود الى تاريخ
+            return ids;
         }
 
-        private void Btn_Apply_Click(object sender, EventArgs e)
-        {
-            RefreshData();
-            //flyoutPanel1.HidePopup();// غلق النافذة
-        }
-
-        /// <summary>
-        /// دالة تجلب العملاء والموردين في شاشة الفيلتر عند اختيار نوع طرف التعامل
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Lkp_PartType_EditValueChanged(object sender, EventArgs e)
-        {
-            if (lkp_PartType.IsEditValueOfTypeInt())
-            {
-                int partType = Convert.ToInt32(lkp_PartType.EditValue);
-                if (partType == (int)Master.PartType.Customer)
-                {
-                    glkp_PartID.InitializeData(Session.Customers);
-                    lyc_Part.Text = "العميل";
-                }
-                else if (partType == (int)Master.PartType.Vendor)
-                {
-                    glkp_PartID.InitializeData(Session.vendores);
-                    lyc_Part.Text = "المورد";
-                }
-
-            }
-        }
-
-        private void Btn_Clear_Click(object sender, EventArgs e)
-        {
-            dateEdit1.EditValue =
-            dateEdit2.EditValue =
-            lkp_Branch.EditValue =
-            lkp_Drawer.EditValue =
-            lkp_PartType.EditValue =
-            glkp_PartID.EditValue = null;
-        }
-        /// <summary>
-        /// اخفاء نافذة الفيلتر
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Btn_FlyClose_Click(object sender, EventArgs e)
-        {
-            flyoutPanel1.HidePopup();
-        }
-        /// <summary>
-        /// عرض الفيلتر في التقرير
-        /// </summary>
-        /// <returns></returns>
-        public string GetFilters()
-        {
-            var str = "";
-
-            if (dateEdit1.EditValue != null)
-                str += " | " +  lyc_FromDate.Text + " : " + dateEdit1.Text;
-            if (dateEdit2.EditValue != null)
-                str += " | " + lyc_ToDate.Text + " : " + dateEdit2.Text;
-            if (lkp_Branch.EditValue != null)
-                str += " | " + lyc_Branch.Text + " : " + lkp_Branch.Text;
-            if (lkp_Drawer.EditValue != null)
-                str += " | " + lyc_Drawer.Text + " : " + lkp_Drawer.Text;
-            if (lkp_PartType.EditValue != null)
-                str += " | " + lyc_PartType.Text + " : " + lkp_PartType.Text;
-            if (glkp_PartID.EditValue != null)
-                str += " | " + lyc_Part.Text + " : " + glkp_PartID.Text;                       
-            return str;
-        }
-
-        /// <summary>
-        /// طباعة الفورم في التقرير
-        /// </summary>
         public override void Print()
         {
-            Reporting.rpt_GridPrint.Print(gridControl1,"كشف "+ this.Text, GetFilters());
-            //PartName = this.Name; // لتسجيل حركات المستخدم
-            //base.Print();
+            if (!CheckActionAuthorization(Name, Master.Actions.Print)) return;
+            var ids = GetSelectedInvoiceIds();
+            if (ids != null) frm_Invoice.Print(ids, Type, Name);
         }
 
+        public override void Delete()
+        {
+            if (!CheckActionAuthorization(Name, Master.Actions.Delete)) return;
+            var ids = GetSelectedInvoiceIds();
+            if (ids != null) frm_Invoice.Delete(ids, Type, Name);
+            RefreshData();
+        }
 
+        private void ClearFilters()
+        {
+            fromDate.Checked = toDate.Checked = false;
+            partType.SelectedIndex = 0;
+            LoadPartChoices();
+            part.SelectedIndex = 0;
+            branch.SelectedIndex = -1;
+            drawer.SelectedIndex = -1;
+            RefreshData();
+        }
+
+        private sealed class FilterChoice
+        {
+            public int? Value { get; private set; }
+            public string Text { get; private set; }
+            public FilterChoice(int? value, string text) { Value = value; Text = text; }
+            public override string ToString() { return Text; }
+        }
+
+        private sealed class InvoiceListRow
+        {
+            public int ID { get; set; }
+            public string Code { get; set; }
+            public DateTime Date { get; set; }
+            public int PartType { get; set; }
+            public int PartID { get; set; }
+            public int Branch { get; set; }
+            public int ItemsCount { get; set; }
+            public bool PostedToStore { get; set; }
+            public double Total { get; set; }
+            public double DiscountRation { get; set; }
+            public double DiscountValue { get; set; }
+            public double Tax { get; set; }
+            public double TaxValue { get; set; }
+            public double Expences { get; set; }
+            public double Net { get; set; }
+            public double Paid { get; set; }
+            public int Drawer { get; set; }
+            public double Remaing { get; set; }
+            public string PayStatus { get; set; }
+        }
+
+        private sealed class InvoiceDetailListRow
+        {
+            public string Product { get; set; }
+            public string Unit { get; set; }
+            public double Price { get; set; }
+            public double Quantity { get; set; }
+            public double Discount { get; set; }
+            public double Total { get; set; }
+        }
     }
 }
