@@ -320,19 +320,43 @@ namespace SalesLinq.Forms
 
         private void Grid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.RowIndex < 0 || gridView1.Columns[e.ColumnIndex].Name != "PartType") return;
-            int value;
-            if (int.TryParse(Convert.ToString(e.Value), out value))
-                e.Value = value == (int)Master.PartType.Customer ? "عميل" :
-                          value == (int)Master.PartType.Vendor ? "مورد" : Convert.ToString(e.Value);
-            e.FormattingApplied = true;
+            if (e.RowIndex < 0) return;
+            var columnName = gridView1.Columns[e.ColumnIndex].Name;
 
-            if (gridView1.Columns[e.ColumnIndex].Name == "PartID")
+            if (columnName == "PartType")
+            {
+                int value;
+                if (int.TryParse(Convert.ToString(e.Value), out value))
+                {
+                    e.Value = value == (int)Master.PartType.Customer ? "عميل" :
+                              value == (int)Master.PartType.Vendor ? "مورد" : Convert.ToString(e.Value);
+                    e.FormattingApplied = true;
+                }
+            }
+            else if (columnName == "PartID")
             {
                 int id;
                 if (int.TryParse(Convert.ToString(e.Value), out id) && partNames.ContainsKey(id))
                 {
                     e.Value = partNames[id];
+                    e.FormattingApplied = true;
+                }
+            }
+            else if (columnName == "Branch")
+            {
+                int id;
+                if (int.TryParse(Convert.ToString(e.Value), out id) && branchNames.ContainsKey(id))
+                {
+                    e.Value = branchNames[id];
+                    e.FormattingApplied = true;
+                }
+            }
+            else if (columnName == "Drawer")
+            {
+                int id;
+                if (int.TryParse(Convert.ToString(e.Value), out id) && drawerNames.ContainsKey(id))
+                {
+                    e.Value = drawerNames[id];
                     e.FormattingApplied = true;
                 }
             }
