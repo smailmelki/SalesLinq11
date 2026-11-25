@@ -13,6 +13,7 @@ namespace SalesLinq.Forms
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            components.Add(listPrint);
         }
     }
 }
