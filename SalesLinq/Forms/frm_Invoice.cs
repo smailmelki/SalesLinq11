@@ -2016,8 +2016,11 @@ namespace SalesLinq.Forms
             var forms = Application.OpenForms.Cast<Form>().Where(x => x.Name == this.Name + "List");// يبحث عن الفورم باسمها
             foreach (var frm in forms)
             {
-                if (frm != null && frm is frm_MasterList)
+                if (frm == null) continue;
+                if (frm is frm_MasterList)
                     ((frm_MasterList)frm).RefreshData();
+                else if (frm is NativeMasterListForm)
+                    ((NativeMasterListForm)frm).RefreshData();
             }
         }
         /// <summary>
