@@ -191,6 +191,7 @@
     <Compile Include="Forms\frm_DrawerList.Designer.cs">
       <DependentUpon>frm_DrawerList.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\InvoiceDetailsGridFactory.cs" />
     <Compile Include="Forms\frm_Invoice.cs">
       <SubType>Form</SubType>
     </Compile>
