@@ -97,31 +97,31 @@ namespace SalesLinq.Forms
             detailsGrid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 
             filterPanel.Dock = DockStyle.Top;
-            filterPanel.Height = 118;
+            filterPanel.Height = 150;
             filterPanel.Padding = new Padding(8);
             filterPanel.BackColor = Color.White;
             Controls.Add(contentSplit);
             Controls.Add(filterPanel);
             filterPanel.BringToFront();
 
-            ConfigureFilterControl(fromDate, "من تاريخ", 8, 8, 150);
-            ConfigureFilterControl(toDate, "حتى تاريخ", 170, 8, 150);
-            ConfigureFilterControl(partType, "نوع الطرف", 332, 8, 150);
-            ConfigureFilterControl(part, "الطرف", 494, 8, 190);
-            ConfigureFilterControl(branch, "الفرع", 696, 8, 150);
-            ConfigureFilterControl(drawer, "الخزنة", 858, 8, 150);
+            ConfigureFilterControl(fromDate, "من تاريخ", 8, 6, 245);
+            ConfigureFilterControl(toDate, "حتى تاريخ", 275, 6, 245);
+            ConfigureFilterControl(partType, "نوع الطرف", 542, 6, 245);
+            ConfigureFilterControl(part, "الطرف", 8, 62, 245);
+            ConfigureFilterControl(branch, "الفرع", 275, 62, 245);
+            ConfigureFilterControl(drawer, "الخزنة", 542, 62, 245);
 
             applyFilters.Text = "تطبيق";
-            applyFilters.SetBounds(8, 68, 85, 30);
+            applyFilters.SetBounds(8, 118, 85, 26);
             applyFilters.Click += (s, e) => RefreshData();
             clearFilters.Text = "مسح";
-            clearFilters.SetBounds(100, 68, 85, 30);
+            clearFilters.SetBounds(100, 118, 85, 26);
             clearFilters.Click += (s, e) => ClearFilters();
             toggleFilters.Text = "إخفاء الفلاتر";
-            toggleFilters.SetBounds(192, 68, 120, 30);
+            toggleFilters.SetBounds(192, 118, 120, 26);
             toggleFilters.Click += (s, e) => filterPanel.Visible = !filterPanel.Visible;
             filterStatus.AutoSize = false;
-            filterStatus.SetBounds(325, 68, 650, 30);
+            filterStatus.SetBounds(325, 118, 450, 26);
             filterStatus.TextAlign = ContentAlignment.MiddleRight;
             filterPanel.Controls.AddRange(new Control[] { applyFilters, clearFilters, toggleFilters, filterStatus });
 
@@ -198,7 +198,7 @@ namespace SalesLinq.Forms
 
             int? selectedType = (partType.SelectedItem as FilterChoice)?.Value;
             var choices = customersAndVendors
-                .Where(x => !selectedType.HasValue || x.PartType == selectedType.Value)
+                .Where(x => !selectedType.HasValue || (selectedType.Value == (int)Master.PartType.Customer && x.IsCustomer) || (selectedType.Value == (int)Master.PartType.Vendor && !x.IsCustomer))
                 .Select(x => new FilterChoice(x.ID, x.Name))
                 .OrderBy(x => x.Text)
                 .ToList();
@@ -215,7 +215,7 @@ namespace SalesLinq.Forms
             btn_Print.Visible = true;
             btn_Refresh.Visible = true;
             btn_New.Visible = true;
-            RefreshData();
+            toolStrip.BringToFront();
         }
 
         public override void RefreshData()
