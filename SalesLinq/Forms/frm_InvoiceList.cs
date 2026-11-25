@@ -163,13 +163,13 @@ namespace SalesLinq.Forms
             partType.SelectedIndex = 0;
             partType.SelectedIndexChanged += (s, e) => LoadPartChoices();
 
-            var stores = Session.Store ?? new List<DAL.Store>();
+            var stores = Session.Store.ToList();
             branch.DataSource = stores.ToList();
             branch.DisplayMember = "Name";
             branch.ValueMember = "ID";
             SetComboAll(branch);
 
-            var drawers = Session.Drawer ?? new List<DAL.Drawer>();
+            var drawers = Session.Drawer.ToList();
             drawer.DataSource = drawers.ToList();
             drawer.DisplayMember = "Name";
             drawer.ValueMember = "ID";
