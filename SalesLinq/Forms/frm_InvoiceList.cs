@@ -39,6 +39,8 @@ namespace SalesLinq.Forms
         public frm_InvoiceList(Master.InvoiceType type)
         {
             InitializeComponent();
+            ClientSize = new Size(1080, 700);
+            MinimumSize = new Size(900, 600);
             Type = type;
             Text = GetTitle(type);
             Name = GetScreenName(type);
