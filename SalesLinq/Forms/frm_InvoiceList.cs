@@ -27,6 +27,8 @@ namespace SalesLinq.Forms
         private readonly Label filterStatus = new Label();
         private readonly Panel filterPanel = new Panel();
         private readonly DataGridView detailsGrid = new DataGridView();
+        private readonly Label detailsCaption = new Label();
+        private bool isRefreshing;
         private readonly SplitContainer contentSplit = new SplitContainer();
         private readonly Dictionary<int, string> partNames = new Dictionary<int, string>();
         private readonly Dictionary<int, string> branchNames = new Dictionary<int, string>();
@@ -88,6 +90,15 @@ namespace SalesLinq.Forms
             contentSplit.Panel1.Controls.Add(gridView1);
             contentSplit.Panel2.Controls.Add(detailsGrid);
             detailsGrid.Dock = DockStyle.Fill;
+            detailsCaption.Text = "تفاصيل أصناف الفاتورة المحددة";
+            detailsCaption.Dock = DockStyle.Top;
+            detailsCaption.Height = 30;
+            detailsCaption.TextAlign = ContentAlignment.MiddleRight;
+            detailsCaption.Padding = new Padding(8, 0, 8, 0);
+            detailsCaption.BackColor = Color.FromArgb(244, 247, 251);
+            detailsCaption.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            contentSplit.Panel2.Controls.Add(detailsCaption);
+            detailsCaption.BringToFront();
             detailsGrid.ReadOnly = true;
             detailsGrid.AllowUserToAddRows = false;
             detailsGrid.AllowUserToDeleteRows = false;
@@ -294,8 +305,10 @@ namespace SalesLinq.Forms
                 if (Session.Drawer != null)
                     foreach (var item in Session.Drawer) drawerNames[item.ID] = item.Name;
 
+                isRefreshing = true;
                 gridView1.DataSource = rows;
                 ConfigureColumns();
+                isRefreshing = false;
                 filterStatus.Text = "عدد الفواتير: " + rows.Count;
                 LoadDetailsForSelectedRow();
             }
@@ -383,7 +396,7 @@ namespace SalesLinq.Forms
 
         private void Grid_SelectionChanged(object sender, EventArgs e)
         {
-            LoadDetailsForSelectedRow();
+            if (!isRefreshing) LoadDetailsForSelectedRow();
         }
 
         private void LoadDetailsForSelectedRow()
