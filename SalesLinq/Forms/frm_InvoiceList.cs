@@ -2,6 +2,7 @@ using SalesLinq.Class;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -30,6 +31,8 @@ namespace SalesLinq.Forms
         private readonly Dictionary<int, string> partNames = new Dictionary<int, string>();
         private readonly Dictionary<int, string> branchNames = new Dictionary<int, string>();
         private readonly Dictionary<int, string> drawerNames = new Dictionary<int, string>();
+        private readonly PrintDocument listPrint = new PrintDocument();
+        private int printRow;
 
         public frm_InvoiceList(Master.InvoiceType type)
         {
@@ -75,6 +78,8 @@ namespace SalesLinq.Forms
             gridView1.CellFormatting += Grid_CellFormatting;
             gridView1.SelectionChanged += Grid_SelectionChanged;
             gridView1.ContextMenuStrip = CreateContextMenu();
+            listPrint.DefaultPageSettings.Landscape = true;
+            listPrint.PrintPage += PrintListPage;
 
             contentSplit.Dock = DockStyle.Fill;
             contentSplit.Orientation = Orientation.Horizontal;
@@ -408,7 +413,7 @@ namespace SalesLinq.Forms
         {
             var menu = new ContextMenuStrip();
             menu.Items.Add("فتح الفاتورة", null, (s, e) => OpenSelectedInvoice());
-            menu.Items.Add("طباعة المحدد", null, (s, e) => Print());
+            menu.Items.Add("طباعة الفواتير المحددة", null, (s, e) => PrintSelectedInvoices());
             menu.Items.Add("حذف المحدد", null, (s, e) => Delete());
             return menu;
         }
@@ -453,8 +458,70 @@ namespace SalesLinq.Forms
         public override void Print()
         {
             if (!CheckActionAuthorization(Name, Master.Actions.Print)) return;
+            if (gridView1.Rows.Count == 0) return;
+            printRow = 0;
+            using (var preview = new PrintPreviewDialog())
+            {
+                preview.Document = listPrint;
+                preview.Width = 1050;
+                preview.Height = 720;
+                preview.ShowDialog(this);
+            }
+        }
+
+        private void PrintSelectedInvoices()
+        {
             var ids = GetSelectedInvoiceIds();
             if (ids != null) frm_Invoice.Print(ids, Type, Name);
+        }
+
+        private void PrintListPage(object sender, PrintPageEventArgs e)
+        {
+            using (var title = new Font("Segoe UI", 13F, FontStyle.Bold))
+            using (var header = new Font("Segoe UI", 7.5F, FontStyle.Bold))
+            using (var cellFont = new Font("Segoe UI", 7F))
+            using (var pen = new Pen(Color.LightGray))
+            {
+                float y = e.MarginBounds.Top;
+                e.Graphics.DrawString("كشف " + Text, title, Brushes.Black, e.MarginBounds, new StringFormat { Alignment = StringAlignment.Center });
+                y += 35;
+                var cols = gridView1.Columns.Cast<DataGridViewColumn>().Where(x => x.Visible).ToList();
+                int sum = cols.Sum(x => Math.Max(35, x.Width));
+                float scale = e.MarginBounds.Width / (float)sum;
+                int[] widths = cols.Select(x => Math.Max(28, (int)(Math.Max(35, x.Width) * scale))).ToArray();
+                float tableWidth = widths.Sum();
+                float xPos = e.MarginBounds.Right - tableWidth;
+                for (int c = 0; c < cols.Count; c++)
+                {
+                    var rect = new RectangleF(xPos, y, widths[c], 25);
+                    e.Graphics.FillRectangle(Brushes.AliceBlue, rect);
+                    e.Graphics.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
+                    e.Graphics.DrawString(cols[c].HeaderText, header, Brushes.Black, rect, new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+                    xPos += widths[c];
+                }
+                y += 25;
+                while (printRow < gridView1.Rows.Count)
+                {
+                    var row = gridView1.Rows[printRow++];
+                    if (row.IsNewRow) continue;
+                    if (y + 22 > e.MarginBounds.Bottom)
+                    {
+                        printRow--;
+                        e.HasMorePages = true;
+                        return;
+                    }
+                    xPos = e.MarginBounds.Right - tableWidth;
+                    for (int c = 0; c < cols.Count; c++)
+                    {
+                        var rect = new RectangleF(xPos, y, widths[c], 22);
+                        e.Graphics.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
+                        e.Graphics.DrawString(Convert.ToString(row.Cells[cols[c].Index].FormattedValue), cellFont, Brushes.Black, rect, new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center, Trimming = StringTrimming.EllipsisCharacter });
+                        xPos += widths[c];
+                    }
+                    y += 22;
+                }
+                e.HasMorePages = false;
+            }
         }
 
         public override void Delete()
